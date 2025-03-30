@@ -3,12 +3,16 @@ package com.java.util;
 import util.PropertiesUtil;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 public final class PropertiesUtil2 {
     private static final Properties PROPERTIES = new Properties();
 
     static {
+        System.out.println("Загрузка db.properties...");
+        InputStream inputStream = PropertiesUtil.class.getClassLoader().getResourceAsStream("db.properties");
+        System.out.println("inputStream = " + inputStream);
         loadProperties();
     }
 
