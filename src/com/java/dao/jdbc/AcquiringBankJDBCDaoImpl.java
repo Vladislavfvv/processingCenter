@@ -6,6 +6,7 @@ import com.java.model.AcquiringBank;
 import com.java.util.ConnectionManager2;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -28,7 +29,7 @@ private final Connection connection;
     }
 
     private static final String CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS processingCenterSchema.acquiring_bank2 (id serial primary key, bic varchar(9) not null, abbreviated_name varchar(255) not null);";
-    private static final String CREATE_TABLE_SQ2 = "CREATE TABLE IF NOT EXISTS processingCenterSchema.acquiring_bank2 (id serial primary key, bic varchar(9) not null, abbreviated_name varchar(255) not null);";
+
     String CREATE_TABLE_SQL3 = """
              CREATE TABLE IF NOT EXISTS acquiring_bank3 (id SERIAL PRIMARY KEY,\s
              bic VARCHAR(9) NOT NULL,\s
@@ -40,8 +41,11 @@ private final Connection connection;
     private static final String DELETE_ALL_SQL = "DELETE FROM processingCenterSchema.acquiring_bank";
     private static final String DELETE_SQL = "DELETE FROM processingCenterSchema.acquiring_bank where id = ?";
     private static final String INSERT_SQL = "INSERT INTO acquiring_bank(bic, abbreviated_name) values(?,?)";
-    private static final String SELECT_SQL = "SELECT * FROM processingCenterSchema.acquiring_bank WHERE id = ?";
-    private static final String SELECT_ALL_SQL = "SELECT * FROM processingCenterSchema.acquiring_bank";
+    private static final String FIND_ALL_SQL = "SELECT id, bic, abbreviated_name FROM processingCenter.acquiring_bank;";
+    private static final String FIND_BY_ID_SQL = FIND_ALL_SQL + " WHERE id = ?";
+    //получение по идентификатору
+//    private static final String FIND_BY_ID_SQL = "SELECT id, bic, abbreviated_name " +
+//            "FROM processingCenterSchema.acquiring_bank WHERE id = ?";
     private static final String UPDATE_SQL = "UPDATE processingCenterSchema.acquiring_bank SET bic = ?, abbreviated_name = ? WHERE id = ?";
 
 
@@ -71,9 +75,7 @@ private final Connection connection;
         }
     }
 
-    //получение по идентификатору
-    private static final String FIND_BY_ID_SQL = "SELECT id, bic, abbreviated_name " +
-            "FROM processingCenterSchema.acquiring_bank WHERE id = ?";
+
 
 
     //Если подключен ломбок - использовать аннотацию сникесроуз
@@ -103,6 +105,34 @@ private final Connection connection;
             throw new DaoException("Ошибка при поиске AcquiringBank value", e);
         }
     }
+
+
+    @Override
+    public List<AcquiringBank> findAll() {
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_SQL);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            List<AcquiringBank> acquiringBanks = new ArrayList<>();
+            while (resultSet.next()) {
+                acquiringBanks.add(buildAcquiringBank(resultSet));
+            }
+            return acquiringBanks;
+        } catch (SQLException e) {
+            throw new DaoException(e);
+        }
+    }
+
+    private AcquiringBank buildAcquiringBank(ResultSet resultSet) throws SQLException {
+        return new AcquiringBank(
+                resultSet.getLong("id"),
+                resultSet.getString("bic"),
+                resultSet.getString("abbreviated_name")
+        );
+    }
+
+
+
 
     @Override
     public boolean update(AcquiringBank value) {
@@ -137,10 +167,9 @@ private final Connection connection;
 
 
 
-    @Override
-    public List<AcquiringBank> getAll() {
-        return List.of();
-    }
+
+
+
 
     @Override
     public void createTable() {

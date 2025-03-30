@@ -29,7 +29,7 @@ public class AccountJDBCDaoImpl implements DAOInterface<Long, Account> {
 
 
     @Override
-    public List<Account> getAll() {
+    public List<Account> findAll() {
         return List.of();
     }
 

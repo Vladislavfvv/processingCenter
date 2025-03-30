@@ -2,8 +2,10 @@ package com.java.dao;
 
 import com.java.dao.jdbc.CardJDBCDaoImpl;
 import com.java.dao.jdbc.AcquiringBankJDBCDaoImpl;
+import com.java.dao.jdbc.SalesPointJDBCImpl;
 import com.java.model.AcquiringBank;
 import com.java.model.Card;
+import com.java.model.SalesPoint;
 
 import java.sql.Connection;
 
@@ -41,6 +43,11 @@ public class DAOFactory {
     // Метод для получения DAO для AcquiringBank
     public static DAOInterface<Long, AcquiringBank> getAcquiringBankDAO(Connection connection) {
         return new AcquiringBankJDBCDaoImpl(connection);
+    }
+
+    // Метод для получения DAO для AcquiringBank
+    public static DAOInterface<Long, SalesPoint> getSalesPointDAO(Connection connection) {
+        return new SalesPointJDBCImpl(connection);
     }
 
     // Метод для получения DAO для Account

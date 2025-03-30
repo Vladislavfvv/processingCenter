@@ -35,7 +35,7 @@ public class CardJDBCDaoImpl implements DAOInterface<Long, Card> {
 
 
     @Override
-    public List<Card> getAll() {
+    public List<Card> findAll() {
         return List.of();
     }
 

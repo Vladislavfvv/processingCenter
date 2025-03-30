@@ -34,6 +34,6 @@ public class CardService {
     }
 
     public List<Card> getAllCards() {
-        return cardDAO.getAll();
+        return cardDAO.findAll();
     }
 }

@@ -8,7 +8,7 @@ public interface DAOInterface<K, E> {
     boolean update(E value);
     boolean delete(K id);
     Optional<E> findById(K id);
-    List<E> getAll();
+    List<E> findAll();
     void createTable();
     boolean dropTable();
     boolean deleteAll();

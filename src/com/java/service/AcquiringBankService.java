@@ -3,7 +3,6 @@ package com.java.service;
 import com.java.dao.DAOFactory;
 import com.java.dao.DAOInterface;
 import com.java.model.AcquiringBank;
-import org.postgresql.core.ConnectionFactory;
 
 import java.sql.Connection;
 import java.util.List;
@@ -36,7 +35,7 @@ public class AcquiringBankService {
     }
 
     public List<AcquiringBank> getAllAcquiringBanks() {
-        return acquiringBankDAO.getAll();
+        return acquiringBankDAO.findAll();
     }
 
 
