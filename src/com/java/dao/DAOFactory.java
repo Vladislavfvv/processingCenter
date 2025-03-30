@@ -34,12 +34,12 @@ public class DAOFactory {
 
     //DAOFactory всегда получает соединение извне и не хранит его внутри.
     // Метод для получения DAO для Card
-    public static DAOInterface<Card> getCardDAO(Connection connection) {
+    public static DAOInterface<Long, Card> getCardDAO(Connection connection) {
         return new CardJDBCDaoImpl(connection);
     }
 
     // Метод для получения DAO для AcquiringBank
-    public static DAOInterface<AcquiringBank> getAcquiringBankDAO(Connection connection) {
+    public static DAOInterface<Long, AcquiringBank> getAcquiringBankDAO(Connection connection) {
         return new AcquiringBankJDBCDaoImpl(connection);
     }
 

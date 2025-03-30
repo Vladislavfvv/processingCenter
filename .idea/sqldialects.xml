@@ -3,5 +3,6 @@
   <component name="SqlDialectMappings">
     <file url="file://$PROJECT_DIR$/Create.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Insert.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/src/com/java/dao/jdbc/AcquiringBankJDBCDaoImpl.java" dialect="PostgreSQL" />
   </component>
 </project>

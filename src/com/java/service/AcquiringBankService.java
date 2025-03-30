@@ -11,11 +11,10 @@ import java.util.Optional;
 
 public class AcquiringBankService {
 
-    private final DAOInterface<AcquiringBank> acquiringBankDAO;
-    private final Connection connection;
+    private final DAOInterface<Long, AcquiringBank> acquiringBankDAO;
+
     public AcquiringBankService(Connection connection) {
         // Получаем DAO через фабрику
-        this.connection = connection;
         this.acquiringBankDAO = DAOFactory.getAcquiringBankDAO(connection);
     }
 

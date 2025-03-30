@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 
-public class AcquiringBankJDBCDaoImpl implements DAOInterface<AcquiringBank> {
+public class AcquiringBankJDBCDaoImpl implements DAOInterface<Long, AcquiringBank> {
     private static final Logger logger = Logger.getLogger(AcquiringBankJDBCDaoImpl.class.getClassLoader().getClass().getName());
 
 //    private static final AcquiringBankJDBCDaoImpl INSTANCE = new AcquiringBankJDBCDaoImpl();
@@ -27,8 +27,8 @@ private final Connection connection;
         this.connection = connection;
     }
 
-    private static final String CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS processingCenterSchema.acquiring_bank2 (id serial primary key, bic varchar(9) not null, abbreviated_name varchar(255) not null";
-    private static final String CREATE_TABLE_SQ2 = "CREATE TABLE IF NOT EXISTS processingCenterSchema.acquiring_bank2 (id serial primary key, bic varchar(9) not null, abbreviated_name varchar(255) not null";
+    private static final String CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS processingCenterSchema.acquiring_bank2 (id serial primary key, bic varchar(9) not null, abbreviated_name varchar(255) not null);";
+    private static final String CREATE_TABLE_SQ2 = "CREATE TABLE IF NOT EXISTS processingCenterSchema.acquiring_bank2 (id serial primary key, bic varchar(9) not null, abbreviated_name varchar(255) not null);";
     String CREATE_TABLE_SQL3 = """
              CREATE TABLE IF NOT EXISTS acquiring_bank3 (id SERIAL PRIMARY KEY,\s
              bic VARCHAR(9) NOT NULL,\s
@@ -39,7 +39,7 @@ private final Connection connection;
     private static final String TRUNCATE_SQL = "TRUNCATE TABLE processingCenterSchema.acquiring_bank";
     private static final String DELETE_ALL_SQL = "DELETE FROM processingCenterSchema.acquiring_bank";
     private static final String DELETE_SQL = "DELETE FROM processingCenterSchema.acquiring_bank where id = ?";
-    private static final String INSERT_SQL = "INSERT INTO processingCenterSchema.acquiring_bank(bic, abbreviated_name) values(?,?)";
+    private static final String INSERT_SQL = "INSERT INTO acquiring_bank(bic, abbreviated_name) values(?,?)";
     private static final String SELECT_SQL = "SELECT * FROM processingCenterSchema.acquiring_bank WHERE id = ?";
     private static final String SELECT_ALL_SQL = "SELECT * FROM processingCenterSchema.acquiring_bank";
     private static final String UPDATE_SQL = "UPDATE processingCenterSchema.acquiring_bank SET bic = ?, abbreviated_name = ? WHERE id = ?";
@@ -48,6 +48,12 @@ private final Connection connection;
     @Override
     public AcquiringBank insert(AcquiringBank acquiringBank) {
         try (Connection connection = ConnectionManager2.open()) {
+            // Проверяем наличие таблицы перед вставкой
+            if (!isTableExists(connection, "acquiring_bank")) {
+                logger.warning("Таблица acquiring_bank не существует. Создаю...");
+                createTable();
+            }
+
             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SQL, Statement.RETURN_GENERATED_KEYS);//второй параметр для получения идентификатора созданной сущности
             preparedStatement.setString(1, acquiringBank.getBic());
             preparedStatement.setString(2, acquiringBank.getAbbreviatedName());
@@ -137,7 +143,7 @@ private final Connection connection;
     }
 
     @Override
-    public boolean createTable() {
+    public void createTable() {
         try (Connection connection = ConnectionManager2.open()) {
             Statement statement = connection.createStatement();
             statement.executeUpdate(CREATE_TABLE_SQL);
@@ -146,7 +152,22 @@ private final Connection connection;
             logger.severe(e.getMessage());
             throw new DaoException(e);
         }
-        return true;
+    }
+
+    private boolean isTableExists(Connection connection, String tableName) {
+        String sql = "SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'processingcenterschema' AND table_name = ?)";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, tableName);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getBoolean(1);
+                }
+            }
+        } catch (SQLException e) {
+            logger.severe("Ошибка при проверке таблицы: " + e.getMessage());
+            throw new DaoException(e);
+        }
+        return false;
     }
 
     @Override

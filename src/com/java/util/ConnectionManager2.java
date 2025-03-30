@@ -1,7 +1,5 @@
 package com.java.util;
 
-import util.PropertiesUtil;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -19,7 +17,7 @@ public final class ConnectionManager2 {
 
     static {
         try {
-            MAX_POOL_SIZE = Integer.parseInt(PropertiesUtil.get("pool.size"));
+            MAX_POOL_SIZE = Integer.parseInt(PropertiesUtil2.get("pool.size"));
         } catch (NumberFormatException e) {
             throw new RuntimeException("Ошибка парсинга pool.size. Убедитесь, что значение является числом.", e);
         }

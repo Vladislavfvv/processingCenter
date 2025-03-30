@@ -7,7 +7,7 @@ import java.sql.Connection;
 import java.util.List;
 import java.util.Optional;
 
-public class CardJDBCDaoImpl implements DAOInterface<Card> {
+public class CardJDBCDaoImpl implements DAOInterface<Long, Card> {
     private final Connection connection;
 
     public CardJDBCDaoImpl(Connection connection) {
@@ -40,8 +40,7 @@ public class CardJDBCDaoImpl implements DAOInterface<Card> {
     }
 
     @Override
-    public boolean createTable() {
-        return false;
+    public void createTable() {
     }
 
     @Override

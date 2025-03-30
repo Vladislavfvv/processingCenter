@@ -32,10 +32,12 @@ public class Main {
 
         Connection connection = ConnectionManager2.open(); // Получаем соединение из пула
        // CardService cardService = new CardService(connection); // Передаем его в CardService
+
         AcquiringBankService acquiringBankService = new AcquiringBankService(connection);
         // Используем CardService
 
         AcquiringBank acquiringBank = new AcquiringBank("123456789", "PriorBank");
+
         acquiringBankService.createAcquiringBank(acquiringBank);
         //Card card = new Card(...);
        // cardService.createCard(card);

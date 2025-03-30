@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class CardService {
-    private final DAOInterface<Card> cardDAO;
+    private final DAOInterface<Long, Card> cardDAO;
     private final Connection connection;
     public CardService(Connection connection) {
         // Получаем DAO через фабрику

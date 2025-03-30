@@ -3,13 +3,13 @@ package com.java.dao;
 import java.util.List;
 import java.util.Optional;
 
-public interface DAOInterface<E> {
+public interface DAOInterface<K, E> {
     E insert(E value);
     boolean update(E value);
-    boolean delete(Long key);
-    Optional<E> findById(Long key);
+    boolean delete(K id);
+    Optional<E> findById(K id);
     List<E> getAll();
-    boolean createTable();
+    void createTable();
     boolean dropTable();
     boolean deleteAll();
 }

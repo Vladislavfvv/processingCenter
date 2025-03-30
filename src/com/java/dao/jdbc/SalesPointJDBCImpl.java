@@ -1,19 +1,19 @@
 package com.java.dao.jdbc;
 
 import com.java.dao.DAOInterface;
-import com.java.model.Account;
+import com.java.model.SalesPoint;
 
 import java.util.List;
 import java.util.Optional;
 
-public class AccountJDBCDaoImpl implements DAOInterface<Long, Account> {
+public class SalesPointJDBCImpl implements DAOInterface<Long, SalesPoint> {
     @Override
-    public Account insert(Account value) {
+    public SalesPoint insert(SalesPoint value) {
         return null;
     }
 
     @Override
-    public boolean update(Account value) {
+    public boolean update(SalesPoint value) {
         return false;
     }
 
@@ -23,13 +23,12 @@ public class AccountJDBCDaoImpl implements DAOInterface<Long, Account> {
     }
 
     @Override
-    public Optional<Account> findById(Long key) {
-        return null;
+    public Optional<SalesPoint> findById(Long key) {
+        return Optional.empty();
     }
 
-
     @Override
-    public List<Account> getAll() {
+    public List<SalesPoint> getAll() {
         return List.of();
     }
 

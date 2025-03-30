@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS processingCenterSchema.issuing_bank
     bin              varchar(5)   not null,
     abbreviated_name varchar(255) not null
     );
-CREATE TABLE IF NOT EXISTS processingCenterSchema.acquiring_bank
+CREATE TABLE IF NOT EXISTS acquiring_bank
 (
     id               bigserial primary key,
     bic              varchar(9)   not null,
