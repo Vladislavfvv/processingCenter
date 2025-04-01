@@ -8,4 +8,8 @@ public class DaoException extends RuntimeException {
     public DaoException(String message, Throwable throwable) {
         super(message, throwable);//с сообщением
     }
+
+    public DaoException(String s) {
+        super(s);
+    }
 }

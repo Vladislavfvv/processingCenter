@@ -21,19 +21,22 @@ public class SalesPointService {
         return salesPointDAO.insert(salesPoint);
     }
 
-    public boolean updateSalesPoint(SalesPoint salesPoint) {
+    public boolean update(SalesPoint salesPoint) {
         return salesPointDAO.update(salesPoint);
     }
 
-    public boolean deleteSalesPoint(Long salesPointId) {
+    public boolean delete(Long salesPointId) {
         return salesPointDAO.delete(salesPointId);
     }
 
-    public Optional<SalesPoint> getSalesPoint(Long salesPointId) {
+    public Optional<SalesPoint> findById(Long salesPointId) {
         return salesPointDAO.findById(salesPointId);
     }
 
-    public List<SalesPoint> getAllSalesPoints() {
+    public List<SalesPoint> findAll() {
         return salesPointDAO.findAll();
     }
+
+
 }
+/////////

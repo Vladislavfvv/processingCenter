@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 public class AcquiringBankJDBCDaoImpl implements DAOInterface<Long, AcquiringBank> {
-    private static final Logger logger = Logger.getLogger(AcquiringBankJDBCDaoImpl.class.getClassLoader().getClass().getName());
+    private static final Logger logger = Logger.getLogger(AcquiringBankJDBCDaoImpl.class.getName());
 
 //    private static final AcquiringBankJDBCDaoImpl INSTANCE = new AcquiringBankJDBCDaoImpl();
 //
@@ -28,7 +28,8 @@ private final Connection connection;
         this.connection = connection;
     }
 
-    private static final String CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS processingCenterSchema.acquiring_bank2 (id serial primary key, bic varchar(9) not null, abbreviated_name varchar(255) not null);";
+    private static final String CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS processingCenterSchema.acquiring_bank (id serial primary key, bic varchar(9) not null, abbreviated_name varchar(255) not null);";
+    //private static final String CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS processingCenterSchema.acquiring_bank2 (id serial primary key, bic varchar(9) not null, abbreviated_name varchar(255) not null);";
 
     String CREATE_TABLE_SQL3 = """
              CREATE TABLE IF NOT EXISTS acquiring_bank3 (id SERIAL PRIMARY KEY,\s
@@ -199,31 +200,31 @@ private final Connection connection;
         return false;
     }
 
-    @Override
-    public boolean dropTable() {
-        try (Connection connection = ConnectionManager2.open()) {
-            Statement statement = connection.createStatement();
-            statement.executeUpdate(DROP_TABLE_SQL);
-            logger.info("Table dropped");
-        } catch (SQLException e) {
-            logger.severe(e.getMessage());
-            throw new DaoException(e);
-        }
-        return true;
-    }
-
-    @Override
-    public boolean deleteAll() {
-        try (Connection connection = ConnectionManager2.open()) {
-            Statement statement = connection.createStatement();
-            statement.executeUpdate(DELETE_ALL_SQL);
-            logger.info("All records were deleted from the AcquiringBank table");
-        } catch (SQLException e) {
-            logger.severe(e.getMessage());
-            throw new DaoException(e);
-        }
-        return true;
-    }
+//    @Override
+//    public boolean dropTable() {
+//        try (Connection connection = ConnectionManager2.open()) {
+//            Statement statement = connection.createStatement();
+//            statement.executeUpdate(DROP_TABLE_SQL);
+//            logger.info("Table dropped");
+//        } catch (SQLException e) {
+//            logger.severe(e.getMessage());
+//            throw new DaoException(e);
+//        }
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean deleteAll() {
+//        try (Connection connection = ConnectionManager2.open()) {
+//            Statement statement = connection.createStatement();
+//            statement.executeUpdate(DELETE_ALL_SQL);
+//            logger.info("All records were deleted from the AcquiringBank table");
+//        } catch (SQLException e) {
+//            logger.severe(e.getMessage());
+//            throw new DaoException(e);
+//        }
+//        return true;
+//    }
 
 
 }

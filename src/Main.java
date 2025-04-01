@@ -3,14 +3,17 @@ import com.java.dao.DAOInterface;
 import com.java.exception.DaoException;
 import com.java.model.AcquiringBank;
 import com.java.model.Card;
+import com.java.model.SalesPoint;
 import com.java.service.AcquiringBankService;
 import com.java.service.CardService;
+import com.java.service.SalesPointService;
 import com.java.util.ConnectionManager2;
 import org.postgresql.Driver;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 import java.util.logging.Logger;
 
 
@@ -45,8 +48,18 @@ public class Main {
         // Закрываем соединение (возвращаем его в пул)
         // ConnectionManager2.close(connection);
 
+        SalesPoint salesPoint = new SalesPoint(
+            "First Shop", "Minsk, Nezavisimosty, 1", "123456789102", acquiringBank);
 
+        SalesPointService salesPointService = new SalesPointService(connection);
+        salesPointService.createSalesPoint(salesPoint);
 
+        //SalesPointJDBCImpl salesPointDAO = new SalesPointJDBCImpl(connection);
+        List<SalesPoint> salesPoints = salesPointService.findAll();
+
+        for (SalesPoint sp : salesPoints) {
+            System.out.println(sp);
+        }
 
         //----------------------------------------------------
  /*       System.out.println("Hello, World!");
