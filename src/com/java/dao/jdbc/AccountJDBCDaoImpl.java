@@ -40,6 +40,16 @@ public class AccountJDBCDaoImpl implements DAOInterface<Long, Account> {
     public void createTable() {
     }
 
+    @Override
+    public boolean deleteAll(String s) {
+        return false;
+    }
+
+    @Override
+    public boolean dropTable(String s) {
+        return false;
+    }
+
 //    @Override
 //    public boolean dropTable() {
 //        return false;

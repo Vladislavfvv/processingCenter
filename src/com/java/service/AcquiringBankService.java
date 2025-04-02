@@ -11,8 +11,10 @@ import java.util.Optional;
 public class AcquiringBankService {
 
     private final DAOInterface<Long, AcquiringBank> acquiringBankDAO;
+    private final Connection connection;
 
     public AcquiringBankService(Connection connection) {
+        this.connection = connection;
         // Получаем DAO через фабрику
         this.acquiringBankDAO = DAOFactory.getAcquiringBankDAO(connection);
     }
@@ -25,23 +27,16 @@ public class AcquiringBankService {
         return acquiringBankDAO.update(acquiringBank);
     }
 
-
     public boolean deleteAcquiringBank(Long acquiringBankId) {
         return acquiringBankDAO.delete(acquiringBankId);
     }
 
-    public Optional<AcquiringBank> getCard(Long acquiringBankId) {
+    public Optional<AcquiringBank> getAcquiringBank(Long acquiringBankId) {
         return acquiringBankDAO.findById(acquiringBankId);
     }
 
     public List<AcquiringBank> getAllAcquiringBanks() {
         return acquiringBankDAO.findAll();
     }
-
-
-
-
-
-
 
 }

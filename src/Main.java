@@ -1,19 +1,12 @@
-import com.java.dao.DAOFactory;
-import com.java.dao.DAOInterface;
-import com.java.exception.DaoException;
 import com.java.model.AcquiringBank;
-import com.java.model.Card;
 import com.java.model.SalesPoint;
 import com.java.service.AcquiringBankService;
-import com.java.service.CardService;
 import com.java.service.SalesPointService;
 import com.java.util.ConnectionManager2;
-import org.postgresql.Driver;
 
 import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 
@@ -34,34 +27,81 @@ public class Main {
 //        DAOFactory.closeConnection();
 
         Connection connection = ConnectionManager2.open(); // Получаем соединение из пула
-       // CardService cardService = new CardService(connection); // Передаем его в CardService
+
 
         AcquiringBankService acquiringBankService = new AcquiringBankService(connection);
-        // Используем CardService
+        SalesPointService salesPointService = new SalesPointService(connection);
+
 
         AcquiringBank acquiringBank = new AcquiringBank("123456789", "PriorBank");
-
         acquiringBankService.createAcquiringBank(acquiringBank);
+
+
+        SalesPoint salesPoint = new SalesPoint("First Shop", "Minsk, Nezavisimosty, 1", "123456789102", acquiringBank);
+        salesPointService.createSalesPoint(salesPoint);
+
+
+
+
+
+          System.out.println(salesPointService.findById(3L));
+
+        List<SalesPoint> salesPoints = salesPointService.findAll();
+        for (SalesPoint sp : salesPoints) {
+            System.out.println(sp.toString());
+        }
+
+        salesPointService.delete(5L);
+
+        System.out.println(" ---------------------------------------------------- ");
+
+        for (SalesPoint sp : salesPoints) {
+            System.out.println(sp.toString());
+        }
+
+//типа транзакции - метод обновления SalesPoint записи
+
+        updateMethod(salesPointService, acquiringBankService, connection);
+
+
+//        // Очистить все записи из таблицы sales_point
+//        boolean clearResult = salesPointService.clearSalesPoints();
+//        if (clearResult) {
+//            System.out.println("Таблица sales_point была очищена.");
+//        } else {
+//            System.out.println("Не удалось очистить таблицу sales_point.");
+//        }
+
+        // Удалить таблицу sales_point
+//        boolean removeResult = salesPointService.removeSalesPointsTable();
+//        if (removeResult) {
+//            System.out.println("Таблица sales_point была удалена.");
+//        } else {
+//            System.out.println("Не удалось удалить таблицу sales_point.");
+//        }
+
+
+
+// Используем CardService
+        // CardService cardService = new CardService(connection); // Передаем его в CardService
         //Card card = new Card(...);
-       // cardService.createCard(card);
+        // cardService.createCard(card);
 
         // Закрываем соединение (возвращаем его в пул)
         // ConnectionManager2.close(connection);
 
-        SalesPoint salesPoint = new SalesPoint(
-            "First Shop", "Minsk, Nezavisimosty, 1", "123456789102", acquiringBank);
 
-        SalesPointService salesPointService = new SalesPointService(connection);
-        salesPointService.createSalesPoint(salesPoint);
 
-        //SalesPointJDBCImpl salesPointDAO = new SalesPointJDBCImpl(connection);
-        List<SalesPoint> salesPoints = salesPointService.findAll();
 
-        for (SalesPoint sp : salesPoints) {
-            System.out.println(sp);
-        }
 
-        //----------------------------------------------------
+
+
+
+
+
+
+
+
  /*       System.out.println("Hello, World!");
         Class<Driver> driverClass = Driver.class;
         String DROP_TABLE_SQL = "DROP TABLE IF EXISTS acquiring_bank3";
@@ -94,6 +134,27 @@ public class Main {
         }
 */
 
+    }
+
+    public static void updateMethod(SalesPointService salesPointService, AcquiringBankService acquiringBankService, Connection connection) {
+        Optional<SalesPoint> existingSalesPoint = salesPointService.findById(4L);
+        if (existingSalesPoint.isPresent()) {
+            SalesPoint salesPointNew = existingSalesPoint.get();
+            // Изменените полей salesPoint
+            salesPointNew.setPosName("Second Shop");
+            salesPointNew.setPosAddress("Moscow");
+            salesPointNew.setPosInn("111111111111");
+            salesPointNew.setAcquiringBank(acquiringBankService.getAcquiringBank(14L).orElse(null));
+
+            boolean result = salesPointService.update(salesPointNew);
+            if (result) {
+                System.out.println("SalesPoint обновлен");
+            } else {
+                System.out.println("Ошибка при обновлении SalesPoint");
+            }
+        } else {
+            System.out.println("Не найден SalesPoint с таким ID");
+        }
     }
 
 

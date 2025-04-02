@@ -43,26 +43,29 @@ public class SalesPointJDBCDaoImpl extends DAOAbstract implements DAOInterface<L
     private static final String JoinTables = "SELECT sp.id, sp.pos_name, sp.pos_address, sp.pos_inn, ab.id AS acquiring_bank_id, ab.bic, ab.abbreviatedName FROM SalesPoint sp JOIN AcquiringBank ab ON sp.acquiring_bank_id = ab.id;";
 
     private static final String FIND_BY_ID = "SELECT sp.id, sp.pos_name, sp.pos_address, sp.pos_inn, ab.id AS acquiring_bank_id, ab.bic, ab.abbreviated_name " +
-            "FROM processingCenterSchema.sales_point sp " +
-            "JOIN processingCenterSchema.acquiring_bank ab ON sp.acquiring_bank_id = ab.id " +
+            "FROM sales_point sp " +
+            "JOIN acquiring_bank ab ON sp.acquiring_bank_id = ab.id " +
             "WHERE sp.id = ?";
 
     private static final String FIND_ALL_SQL = "SELECT sp.id, sp.pos_name, sp.pos_address, sp.pos_inn, " +
-            "ab.id AS bank_id, ab.bic, ab.abbreviated_name " +
-            "FROM processingCenterSchema.sales_point sp " +
-            "JOIN processingCenterSchema.acquiring_bank ab ON sp.acquiring_bank_id = ab.id";
+            "ab.id AS acquiring_bank_id, ab.bic, ab.abbreviated_name " +
+            "FROM sales_point sp " +
+            "JOIN acquiring_bank ab ON sp.acquiring_bank_id = ab.id";
 
 
     //   private final AcquiringBankJDBCDaoImpl acquiringBankJDBCDao = DAOFactory.getAcquiringBankDAO(connection);
 
     private static final String DROP_TABLE_SQL = "DROP TABLE IF EXISTS sales_point";
-    private static final String DELETE_ALL_SQL = "DELETE FROM processingCenterSchema.sales_point";
-    private static final String DELETE_SQL = "DELETE FROM processingCenterSchema.sales_point where id = ?";
-    private static final String UPDATE_SQL = "UPDATE processingCenterSchema.sales_point SET pos_name = ?, pos_address = ?, pos_inn = ?, acquiring_bank_id = ?  WHERE id = ?";
+    private static final String DELETE_ALL_SQL = "DELETE FROM sales_point";
+    private static final String DELETE_SQL = "DELETE FROM sales_point where id = ?";
+    private static final String UPDATE_SQL = "UPDATE sales_point SET pos_name = ?, pos_address = ?, pos_inn = ?, acquiring_bank_id = ?  WHERE id = ?";
+   // private static final String UPDATE_SQL = "UPDATE processingCenterSchema.sales_point SET pos_name = ?, pos_address = ?, pos_inn = ?, acquiring_bank_id = ?  WHERE id = ?";
     //AcquiringBank
+
+
     private SalesPoint buildSalesPoint(ResultSet resultSet) throws SQLException {
         // Получаем банк из DAO
-        Optional<AcquiringBank> optionalBank = acquiringBankJDBCDao.findById(resultSet.getLong("acquiring_bank_id"));
+        Optional<AcquiringBank> optionalBank = acquiringBankJDBCDao.findById(resultSet.getLong("acquiring_bank_id"), connection);
         AcquiringBank acquiringBank = optionalBank.orElse(null);
 
 //        AcquiringBank acquiringBank = new AcquiringBank(
@@ -91,7 +94,8 @@ public class SalesPointJDBCDaoImpl extends DAOAbstract implements DAOInterface<L
                     + "pos_address VARCHAR(255) NOT NULL, "
                     + "pos_inn VARCHAR(12) NOT NULL, "
                     + "acquiring_bank_id BIGINT NOT NULL, "
-                    + "CONSTRAINT fk_acquiring_bank FOREIGN KEY (acquiring_bank_id) REFERENCES processingCenterSchema.acquiring_bank(id) ON DELETE CASCADE);";
+                    + "CONSTRAINT fk_acquiring_bank FOREIGN KEY (acquiring_bank_id) REFERENCES processingCenterSchema.acquiring_bank(id) ON DELETE CASCADE ON UPDATE CASCADE);";
+
             statement.executeUpdate(CREATE_TABLE_SQL);
             logger.info("Table created");
         } catch (SQLException e) {
@@ -144,6 +148,12 @@ public class SalesPointJDBCDaoImpl extends DAOAbstract implements DAOInterface<L
             return false; // Нельзя обновить объект без ID
         }
 
+        logger.info("Обновление SalesPoint с ID = " + value.getId() +
+                ", posName = " + value.getPosName() +
+                ", posAddress = " + value.getPosAddress() +
+                ", posInn = " + value.getPosInn() +
+                ", acquiringBankId = " + value.getAcquiringBank().getId());
+
         try (PreparedStatement statement = connection.prepareStatement(UPDATE_SQL)) {
             statement.setString(1, value.getPosName());
             statement.setString(2, value.getPosAddress());
@@ -152,6 +162,7 @@ public class SalesPointJDBCDaoImpl extends DAOAbstract implements DAOInterface<L
             statement.setLong(5, value.getId()); // WHERE id = ?
 
             int rowsUpdated = statement.executeUpdate();
+            logger.info("SalesPoint c  id = " + value.getId() + " был обновлен");
             return rowsUpdated > 0; // Возвращаем true, если обновилась хотя бы 1 строка
         } catch (SQLException e) {
             logger.severe("Ошибка при обновлении SalesPoint: " + e.getMessage());
@@ -159,19 +170,51 @@ public class SalesPointJDBCDaoImpl extends DAOAbstract implements DAOInterface<L
         }
     }
 
+//    @Override
+//    public boolean delete(Long key) {
+//        try (Connection connection = ConnectionManager2.open();
+//             PreparedStatement preparedStatement = connection.prepareStatement(DELETE_SQL)) {
+//            preparedStatement.setLong(1, key);
+//            logger.info("SalesPoint c  id = " + key + " удалено");
+//            return preparedStatement.executeUpdate() > 0;//если получилось удалить, тогда возвращаем true, иначе - false
+//        } catch (SQLException e) {
+//            logger.severe(e.getMessage());
+//            throw new DaoException(e);
+//        }
+//
+//    }
+
+
     @Override
     public boolean delete(Long key) {
-        try (Connection connection = ConnectionManager2.open();
-             PreparedStatement preparedStatement = connection.prepareStatement(DELETE_SQL)) {
-            preparedStatement.setLong(1, key);
-            logger.info("SalesPoint c  id = " + key + " удалено");
-            return preparedStatement.executeUpdate() > 0;//если получилось удалить, тогда возвращаем true, иначе - false
+        try (Connection connection = ConnectionManager2.open()) {
+            connection.setAutoCommit(false); // Отключаем автокоммит
+
+            try (PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM acquiring_bank WHERE id = ?")) {
+                preparedStatement.setLong(1, key);
+                int rowsAffected = preparedStatement.executeUpdate();
+
+                if (rowsAffected > 0) {
+                    logger.info("acquiringBank with id = " + key + " was deleted");
+                }
+
+                connection.commit(); // Фиксируем удаление
+                return rowsAffected > 0;
+            } catch (SQLException e) {
+                connection.rollback(); // Откат в случае ошибки
+                logger.severe("Ошибка при удалении: " + e.getMessage());
+                throw new DaoException(e);
+            }
         } catch (SQLException e) {
-            logger.severe(e.getMessage());
+            logger.severe("Ошибка транзакции: " + e.getMessage());
             throw new DaoException(e);
         }
-
     }
+
+
+
+
+
 
 //    @Override
 //    public Optional<SalesPoint> findById(Long key) {
@@ -259,19 +302,20 @@ public class SalesPointJDBCDaoImpl extends DAOAbstract implements DAOInterface<L
              ResultSet resultSet = statement.executeQuery()) {
 
             while (resultSet.next()) {
-                AcquiringBank acquiringBank = new AcquiringBank(
-                        resultSet.getLong("bank_id"),
-                        resultSet.getString("bic"),
-                        resultSet.getString("abbreviated_name")
-                );
-
-                SalesPoint salesPoint = new SalesPoint(
-                        resultSet.getLong("id"),
-                        resultSet.getString("pos_name"),
-                        resultSet.getString("pos_address"),
-                        resultSet.getString("pos_inn"),
-                        acquiringBank
-                );
+               SalesPoint salesPoint =  buildSalesPoint(resultSet);
+//                AcquiringBank acquiringBank = new AcquiringBank(
+//                        resultSet.getLong("bank_id"),
+//                        resultSet.getString("bic"),
+//                        resultSet.getString("abbreviated_name")
+//                );
+//
+//                SalesPoint salesPoint = new SalesPoint(
+//                        resultSet.getLong("id"),
+//                        resultSet.getString("pos_name"),
+//                        resultSet.getString("pos_address"),
+//                        resultSet.getString("pos_inn"),
+//                        acquiringBank
+//                );
                 salesPoints.add(salesPoint);
             }
         } catch (SQLException e) {

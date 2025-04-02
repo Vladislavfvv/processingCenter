@@ -51,10 +51,12 @@ public class SalesPoint {
     }
 
     public void setPosInn(String posInn) {
-        if (posInn == null || posInn.length() != 12) {
+        if (posInn == null) {
+            throw new IllegalArgumentException("ИНН не должен быть пустым");
+        } else if (posInn.length() != 12) {
             throw new IllegalArgumentException("ИНН должен содержать ровно 12 символов.");
         }
-        this.posInn = posInn;
+       else this.posInn = posInn;
     }
 
     public AcquiringBank getAcquiringBank() {

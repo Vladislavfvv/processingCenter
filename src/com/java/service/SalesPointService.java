@@ -37,6 +37,23 @@ public class SalesPointService {
         return salesPointDAO.findAll();
     }
 
+    // Метод для очистки всех записей из таблицы sales_point
+    public boolean clearSalesPoints() {
+        try {
+            return salesPointDAO.deleteAll("processingcenterschema.sales_point");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
+    // Метод для удаления таблицы sales_point
+    public boolean removeSalesPointsTable() {
+        try {
+            return salesPointDAO.dropTable("processingcenterschema.sales_point");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
-/////////

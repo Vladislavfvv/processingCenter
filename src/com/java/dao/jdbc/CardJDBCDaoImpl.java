@@ -45,6 +45,16 @@ public class CardJDBCDaoImpl implements DAOInterface<Long, Card> {
     public void createTable() {
     }
 
+    @Override
+    public boolean deleteAll(String s) {
+        return false;
+    }
+
+    @Override
+    public boolean dropTable(String s) {
+        return false;
+    }
+
 //    @Override
 //    public boolean dropTable() {
 //        return false;

@@ -38,16 +38,16 @@ private final Connection connection;
             \s""";
 
     private static final String DROP_TABLE_SQL = "DROP TABLE IF EXISTS acquiring_bank";
-    private static final String TRUNCATE_SQL = "TRUNCATE TABLE processingCenterSchema.acquiring_bank";
-    private static final String DELETE_ALL_SQL = "DELETE FROM processingCenterSchema.acquiring_bank";
-    private static final String DELETE_SQL = "DELETE FROM processingCenterSchema.acquiring_bank where id = ?";
+    private static final String TRUNCATE_SQL = "TRUNCATE TABLE acquiring_bank";
+    private static final String DELETE_ALL_SQL = "DELETE FROM acquiring_bank";
+    private static final String DELETE_SQL = "DELETE FROM acquiring_bank where id = ?";
     private static final String INSERT_SQL = "INSERT INTO acquiring_bank(bic, abbreviated_name) values(?,?)";
-    private static final String FIND_ALL_SQL = "SELECT id, bic, abbreviated_name FROM processingCenter.acquiring_bank;";
-    private static final String FIND_BY_ID_SQL = FIND_ALL_SQL + " WHERE id = ?";
+    private static final String FIND_ALL_SQL = "SELECT id, bic, abbreviated_name FROM acquiring_bank;";
+    private static final String FIND_BY_ID_SQL = "SELECT id, bic, abbreviated_name FROM acquiring_bank WHERE id = ?";
     //получение по идентификатору
 //    private static final String FIND_BY_ID_SQL = "SELECT id, bic, abbreviated_name " +
 //            "FROM processingCenterSchema.acquiring_bank WHERE id = ?";
-    private static final String UPDATE_SQL = "UPDATE processingCenterSchema.acquiring_bank SET bic = ?, abbreviated_name = ? WHERE id = ?";
+    private static final String UPDATE_SQL = "UPDATE acquiring_bank SET bic = ?, abbreviated_name = ? WHERE id = ?";
 
 
     @Override
@@ -83,7 +83,17 @@ private final Connection connection;
     @Override
     public Optional<AcquiringBank> findById(Long id) {
         try (Connection connection = ConnectionManager2.open()) {
-            PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_SQL);
+            return findById(id, connection);
+        } catch (SQLException e) {
+            logger.severe(e.getMessage());
+            throw new DaoException("Ошибка при поиске AcquiringBank value", e);
+        }
+    }
+
+
+
+    public Optional<AcquiringBank> findById(Long id, Connection connection) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_SQL);) {
             preparedStatement.setLong(1, id);
 
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -106,6 +116,8 @@ private final Connection connection;
             throw new DaoException("Ошибка при поиске AcquiringBank value", e);
         }
     }
+
+
 
 
     @Override
@@ -182,6 +194,16 @@ private final Connection connection;
             logger.severe(e.getMessage());
             throw new DaoException(e);
         }
+    }
+
+    @Override
+    public boolean deleteAll(String s) {
+        return false;
+    }
+
+    @Override
+    public boolean dropTable(String s) {
+        return false;
     }
 
     private boolean isTableExists(Connection connection, String tableName) {

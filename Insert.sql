@@ -41,9 +41,9 @@ INSERT INTO processingCenterSchema.sales_point (pos_name,
                                                 pos_address,
                                                 pos_inn,
                                                 acquiring_bank_id)
-VALUES ('Shop №1', 'City 1-st 1', '12345678', 1),
-       ('Shop №2 ', 'City, 2-st 2 ', '1591487', 2),
-       ('Shop №3', 'City, 3-st 3 ', '1235962', 1);
+VALUES ('Shop №1', 'City 1-st 1', '123456788888', 1),
+       ('Shop №2 ', 'City, 2-st 2 ', '159148777777', 2),
+       ('Shop №3', 'City, 3-st 3 ', '123596222222', 1);
 
 INSERT INTO processingCenterSchema.merchant_category_code (mcc,
                                                            mcc_name)

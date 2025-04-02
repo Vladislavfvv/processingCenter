@@ -1,20 +1,11 @@
-CREATE DATABASE processingCenter;
-CREATE SCHEMA processingCenterSchema;
 
-DROP TABLE IF EXISTS processingCenterSchema.card_status;
-DROP TABLE IF EXISTS processingCenterSchema.payment_system;
-DROP TABLE IF EXISTS processingCenterSchema.currency;
-DROP TABLE IF EXISTS processingCenterSchema.issuing_bank;
-DROP TABLE IF EXISTS processingCenterSchema.acquiring_bank;
-DROP TABLE IF EXISTS processingCenterSchema.sales_point;
-DROP TABLE IF EXISTS processingCenterSchema.terminal;
-DROP TABLE IF EXISTS processingCenterSchema.response_code;
-DROP TABLE IF EXISTS processingCenterSchema.transaction_type;
-DROP TABLE IF EXISTS processingCenterSchema.account;
-DROP TABLE IF EXISTS processingCenterSchema.card;
-DROP TABLE IF EXISTS processingCenterSchema.transaction;
-DROP SCHEMA IF EXISTS processingCenter.processingCenterSchema;
-DROP DATABASE IF EXISTS processingCenter;
+
+CREATE DATABASE processingCenter;
+-- переключиться на БД
+\c processingCenter;
+CREATE SCHEMA IF NOT EXISTS processingCenterSchema;
+-- установка схемы по умолчанию
+SET search_path TO processingCenterSchema;
 
 
 CREATE TABLE IF NOT EXISTS processingCenterSchema.card_status
@@ -41,7 +32,7 @@ CREATE TABLE IF NOT EXISTS processingCenterSchema.issuing_bank
     bin              varchar(5)   not null,
     abbreviated_name varchar(255) not null
     );
-CREATE TABLE IF NOT EXISTS acquiring_bank
+CREATE TABLE IF NOT EXISTS processingCenterSchema.acquiring_bank
 (
     id               bigserial primary key,
     bic              varchar(9)   not null,
@@ -86,7 +77,7 @@ CREATE TABLE IF NOT EXISTS processingCenterSchema.transaction_type
     );
 CREATE TABLE IF NOT EXISTS processingCenterSchema.account
 (
-    id              bigserial primary key,
+    id              bigserial UNIQUE primary key,
     account_number  varchar(50),
     balance         decimal,
     currency_id     bigint REFERENCES processingCenterSchema.currency (id) ON DELETE CASCADE

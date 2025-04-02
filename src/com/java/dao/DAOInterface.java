@@ -10,6 +10,10 @@ public interface DAOInterface<K, E> {
     Optional<E> findById(K id);
     List<E> findAll();
     void createTable();
+
+    boolean deleteAll(String s);
+
+    boolean dropTable(String s);
 //    boolean dropTable();
 //    boolean deleteAll();
 }
