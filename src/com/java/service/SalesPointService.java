@@ -8,7 +8,7 @@ import java.sql.Connection;
 import java.util.List;
 import java.util.Optional;
 
-public class SalesPointService {
+public class SalesPointService  {
     private final DAOInterface<Long, SalesPoint> salesPointDAO;
     private final Connection connection;
     public SalesPointService(Connection connection) {
@@ -17,7 +17,7 @@ public class SalesPointService {
         this.salesPointDAO = DAOFactory.getSalesPointDAO(connection);
     }
 
-    public SalesPoint createSalesPoint(SalesPoint salesPoint) {
+    public SalesPoint create(SalesPoint salesPoint) {
         return salesPointDAO.insert(salesPoint);
     }
 
@@ -37,8 +37,28 @@ public class SalesPointService {
         return salesPointDAO.findAll();
     }
 
-    // Метод для очистки всех записей из таблицы sales_point
+    @Override
+    public void createTable() {
+
+    }
+
+    @Override
+    public boolean deleteAll(String s) {
+        return false;
+    }
+
+    @Override
+    public boolean dropTable(String s) {
+        return false;
+    }
+
+    @Override
     public boolean clearSalesPoints() {
+        return false;
+    }
+
+    // Метод для очистки всех записей из таблицы sales_point
+    public boolean deleteAll() {
         try {
             return salesPointDAO.deleteAll("processingcenterschema.sales_point");
         } catch (Exception e) {

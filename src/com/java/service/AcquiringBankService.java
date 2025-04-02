@@ -19,24 +19,45 @@ public class AcquiringBankService {
         this.acquiringBankDAO = DAOFactory.getAcquiringBankDAO(connection);
     }
 
-    public AcquiringBank createAcquiringBank(AcquiringBank acquiringBank) {
+    public AcquiringBank create(AcquiringBank acquiringBank) {
         return acquiringBankDAO.insert(acquiringBank);
     }
 
-    public boolean updateAcquiringBank(AcquiringBank acquiringBank) {
+    public boolean update(AcquiringBank acquiringBank) {
         return acquiringBankDAO.update(acquiringBank);
     }
 
-    public boolean deleteAcquiringBank(Long acquiringBankId) {
+    public boolean delete(Long acquiringBankId) {
         return acquiringBankDAO.delete(acquiringBankId);
     }
 
-    public Optional<AcquiringBank> getAcquiringBank(Long acquiringBankId) {
+    public Optional<AcquiringBank> findById(Long acquiringBankId) {
         return acquiringBankDAO.findById(acquiringBankId);
     }
 
-    public List<AcquiringBank> getAllAcquiringBanks() {
+    public List<AcquiringBank> findAll() {
         return acquiringBankDAO.findAll();
+    }
+
+
+    // Метод для очистки всех записей из таблицы acquiring_bank
+    public boolean clearAcquiringBank() {
+        try {
+            return acquiringBankDAO.deleteAll("processingcenterschema.acquiring_bank");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // Метод для удаления таблицы acquiring_bank
+    public boolean removeAcquiringBankTable() {
+        try {
+            return acquiringBankDAO.dropTable("processingcenterschema.acquiring_bank");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
 }

@@ -34,11 +34,11 @@ public class Main {
 
 
         AcquiringBank acquiringBank = new AcquiringBank("123456789", "PriorBank");
-        acquiringBankService.createAcquiringBank(acquiringBank);
+        acquiringBankService.create(acquiringBank);
 
 
         SalesPoint salesPoint = new SalesPoint("First Shop", "Minsk, Nezavisimosty, 1", "123456789102", acquiringBank);
-        salesPointService.createSalesPoint(salesPoint);
+        salesPointService.create(salesPoint);
 
 
 
@@ -144,7 +144,7 @@ public class Main {
             salesPointNew.setPosName("Second Shop");
             salesPointNew.setPosAddress("Moscow");
             salesPointNew.setPosInn("111111111111");
-            salesPointNew.setAcquiringBank(acquiringBankService.getAcquiringBank(14L).orElse(null));
+            salesPointNew.setAcquiringBank(acquiringBankService.findById(14L).orElse(null));
 
             boolean result = salesPointService.update(salesPointNew);
             if (result) {

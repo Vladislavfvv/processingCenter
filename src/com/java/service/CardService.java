@@ -17,23 +17,23 @@ public class CardService {
         this.cardDAO = DAOFactory.getCardDAO(connection);
     }
 
-    public Card createCard(Card card) {
+    public Card create(Card card) {
         return cardDAO.insert(card);
     }
 
-    public boolean updateCard(Card card) {
+    public boolean update(Card card) {
         return cardDAO.update(card);
     }
 
-    public boolean deleteCard(Long cardId) {
+    public boolean delete(Long cardId) {
         return cardDAO.delete(cardId);
     }
 
-    public Optional<Card> getCard(Long cardId) {
+    public Optional<Card> findById(Long cardId) {
         return cardDAO.findById(cardId);
     }
 
-    public List<Card> getAllCards() {
+    public List<Card> findAll() {
         return cardDAO.findAll();
     }
 }
