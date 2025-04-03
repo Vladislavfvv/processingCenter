@@ -33,7 +33,10 @@ public class AcquiringBank {
     }
 
     public void setAbbreviatedName(String abbreviatedName) {
-        if (abbreviatedName == null || abbreviatedName.length() > 255) {
+        if (abbreviatedName == null) {
+            throw new IllegalArgumentException("Название не может быть нулем");
+        }
+        if(abbreviatedName.length() > 255){
             throw new IllegalArgumentException("Название не должно превышать 255 символов.");
         }
         this.abbreviatedName = abbreviatedName;
@@ -44,7 +47,10 @@ public class AcquiringBank {
     }
 
     public void setBic(String bic) {
-        if (bic == null || bic.length() != 9) {
+        if (bic == null) {
+            throw new IllegalArgumentException("BIC не может быть нулем");
+        }
+        if (bic.length() != 9) {
             throw new IllegalArgumentException("BIC должен содержать ровно 9 символов.");
         }
         this.bic = bic;

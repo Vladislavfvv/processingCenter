@@ -1,5 +1,6 @@
 package com.java.dao.jdbc;
 
+import com.java.dao.DAOAbstract;
 import com.java.dao.DAOInterface;
 import com.java.exception.DaoException;
 import com.java.model.AcquiringBank;
@@ -11,21 +12,22 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 
-public class AcquiringBankJDBCDaoImpl implements DAOInterface<Long, AcquiringBank> {
+public class AcquiringBankJDBCDaoImpl extends DAOAbstract implements DAOInterface<Long, AcquiringBank> {
     private static final Logger logger = Logger.getLogger(AcquiringBankJDBCDaoImpl.class.getName());
 
-//    private static final AcquiringBankJDBCDaoImpl INSTANCE = new AcquiringBankJDBCDaoImpl();
-//
-//    private AcquiringBankJDBCDaoImpl() {
-//    }
-//
-//    public static AcquiringBankJDBCDaoImpl getInstance() {
-//        return INSTANCE;
-//    }
-private final Connection connection;
-
     public AcquiringBankJDBCDaoImpl(Connection connection) {
-        this.connection = connection;
+        super(connection);
+        //this.connection = connection;
+        //    private static final AcquiringBankJDBCDaoImpl INSTANCE = new AcquiringBankJDBCDaoImpl();
+        //
+        //    private AcquiringBankJDBCDaoImpl() {
+        //    }
+        //
+        //    public static AcquiringBankJDBCDaoImpl getInstance() {
+        //        return INSTANCE;
+        //    }
+        //private final Connection connection;
+        DAOAbstract daoAbstract = new DAOAbstract(connection);
     }
 
     private static final String CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS processingCenterSchema.acquiring_bank (id serial primary key, bic varchar(9) not null, abbreviated_name varchar(255) not null);";
@@ -52,7 +54,7 @@ private final Connection connection;
 
     @Override
     public AcquiringBank insert(AcquiringBank acquiringBank) {
-        try (Connection connection = ConnectionManager2.open()) {
+        try {
             // Проверяем наличие таблицы перед вставкой
             if (!isTableExists(connection, "acquiring_bank")) {
                 logger.warning("Таблица acquiring_bank не существует. Создаю...");
@@ -77,8 +79,6 @@ private final Connection connection;
     }
 
 
-
-
     //Если подключен ломбок - использовать аннотацию сникесроуз
     @Override
     public Optional<AcquiringBank> findById(Long id) {
@@ -89,8 +89,6 @@ private final Connection connection;
             throw new DaoException("Ошибка при поиске AcquiringBank value", e);
         }
     }
-
-
 
     public Optional<AcquiringBank> findById(Long id, Connection connection) {
         try (PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_SQL);) {
@@ -117,14 +115,10 @@ private final Connection connection;
         }
     }
 
-
-
-
     @Override
     public List<AcquiringBank> findAll() {
 
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_SQL);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_SQL);) {
             ResultSet resultSet = preparedStatement.executeQuery();
             List<AcquiringBank> acquiringBanks = new ArrayList<>();
             while (resultSet.next()) {
@@ -145,12 +139,9 @@ private final Connection connection;
     }
 
 
-
-
     @Override
     public boolean update(AcquiringBank value) {
-        try (Connection connection = ConnectionManager2.open();
-             PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_SQL)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_SQL)) {
             preparedStatement.setString(1, value.getBic());
             preparedStatement.setString(2, value.getAbbreviatedName());
             preparedStatement.setLong(3, value.getId());
@@ -166,27 +157,19 @@ private final Connection connection;
 
     @Override
     public boolean delete(Long key) {
-        try (Connection connection = ConnectionManager2.open();
-             PreparedStatement preparedStatement = connection.prepareStatement(DELETE_SQL)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(DELETE_SQL)) {
             preparedStatement.setLong(1, key);
             logger.info("acquiringBank with id = " + key + "  was deleted");
             return preparedStatement.executeUpdate() > 0;//если получилось удалить, тогда возвращаем true, иначе - false
         } catch (SQLException e) {
             logger.severe(e.getMessage());
-            throw new DaoException( e);
+            throw new DaoException(e);
         }
     }
 
-
-
-
-
-
-
-
     @Override
     public void createTable() {
-        try (Connection connection = ConnectionManager2.open()) {
+        try {
             Statement statement = connection.createStatement();
             statement.executeUpdate(CREATE_TABLE_SQL);
             logger.info("Table created");
@@ -198,29 +181,30 @@ private final Connection connection;
 
     @Override
     public boolean deleteAll(String s) {
-        return false;
+        return DAOAbstract.deleteAllService("processingcenterschema.acquiring_bank");
     }
 
     @Override
     public boolean dropTable(String s) {
-        return false;
+        return DAOAbstract.dropTableService("processingcenterschema.acquiring_bank");
     }
 
-    private boolean isTableExists(Connection connection, String tableName) {
-        String sql = "SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'processingcenterschema' AND table_name = ?)";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setString(1, tableName);
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    return resultSet.getBoolean(1);
-                }
-            }
-        } catch (SQLException e) {
-            logger.severe("Ошибка при проверке таблицы: " + e.getMessage());
-            throw new DaoException(e);
-        }
-        return false;
-    }
+
+//    private boolean isTableExists(Connection connection, String tableName) {
+//        String sql = "SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'processingcenterschema' AND table_name = ?)";
+//        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+//            preparedStatement.setString(1, tableName);
+//            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+//                if (resultSet.next()) {
+//                    return resultSet.getBoolean(1);
+//                }
+//            }
+//        } catch (SQLException e) {
+//            logger.severe("Ошибка при проверке таблицы: " + e.getMessage());
+//            throw new DaoException(e);
+//        }
+//        return false;
+//    }
 
 //    @Override
 //    public boolean dropTable() {

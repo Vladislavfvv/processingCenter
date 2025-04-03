@@ -37,25 +37,25 @@ public class SalesPointService  {
         return salesPointDAO.findAll();
     }
 
-    @Override
-    public void createTable() {
-
-    }
-
-    @Override
-    public boolean deleteAll(String s) {
-        return false;
-    }
-
-    @Override
-    public boolean dropTable(String s) {
-        return false;
-    }
-
-    @Override
-    public boolean clearSalesPoints() {
-        return false;
-    }
+//    @Override
+//    public void createTable() {
+//
+//    }
+//
+//    @Override
+//    public boolean deleteAll(String s) {
+//        return false;
+//    }
+//
+//    @Override
+//    public boolean dropTable(String s) {
+//        return false;
+//    }
+//
+//    @Override
+//    public boolean clearSalesPoints() {
+//        return false;
+//    }
 
     // Метод для очистки всех записей из таблицы sales_point
     public boolean deleteAll() {

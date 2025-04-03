@@ -35,6 +35,12 @@ public class SalesPoint {
     }
 
     public void setPosName(String posName) {
+        if (posName == null) {
+            throw new IllegalArgumentException("posName не может быть нулем");
+        }
+        if (posName.length() > 255) {
+            throw new IllegalArgumentException("posName не может содержать больше  255 символов.");
+        }
         this.posName = posName;
     }
 
@@ -43,6 +49,12 @@ public class SalesPoint {
     }
 
     public void setPosAddress(String posAddress) {
+        if (posAddress == null) {
+            throw new IllegalArgumentException("posAddress не может быть нулем");
+        }
+        if (posAddress.length() > 255) {
+            throw new IllegalArgumentException("posAddress не может содержать больше  255 символов.");
+        }
         this.posAddress = posAddress;
     }
 

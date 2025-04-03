@@ -1,18 +1,17 @@
 package com.java.dao;
 
-import com.java.dao.jdbc.AcquiringBankJDBCDaoImpl;
 import com.java.exception.DaoException;
 import com.java.util.ConnectionManager2;
 
 import java.sql.*;
 import java.util.logging.Logger;
 
-public abstract class DAOAbstract {
+public class DAOAbstract {
     private static final Logger logger = Logger.getLogger(DAOAbstract.class.getName());
-    protected final Connection connection;
+    protected static Connection connection = null;
 
     public DAOAbstract(Connection connection) {
-        this.connection = connection;
+        DAOAbstract.connection = ConnectionManager2.open();
     }
 
 
@@ -35,7 +34,7 @@ public abstract class DAOAbstract {
     /**
      * Удаляет все записи из таблицы
      */
-    public boolean deleteAll(String tableName) {
+    public static boolean deleteAllService(String tableName) {
         String sql = "DELETE FROM " + tableName + ";";
         try (Statement statement = connection.createStatement()) {
             statement.executeUpdate(sql);
@@ -49,7 +48,7 @@ public abstract class DAOAbstract {
     /**
      * Удаляет таблицу
      */
-    public boolean dropTable(String tableName) {
+    public static boolean dropTableService(String tableName) {
         String sql = "DROP TABLE IF EXISTS " + tableName + " CASCADE;";
         try (Statement statement = connection.createStatement()) {
             statement.executeUpdate(sql);

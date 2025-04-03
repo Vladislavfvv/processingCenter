@@ -52,6 +52,7 @@ public class Main {
         }
 
         salesPointService.delete(5L);
+       // salesPoints.
 
         System.out.println(" ---------------------------------------------------- ");
 

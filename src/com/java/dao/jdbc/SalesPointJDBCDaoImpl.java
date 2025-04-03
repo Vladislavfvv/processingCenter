@@ -12,11 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
-//import java.util.logging.Logger;
 
-public class SalesPointJDBCDaoImpl extends DAOAbstract implements DAOInterface<Long, SalesPoint> {
+
+public class SalesPointJDBCDaoImpl implements DAOInterface<Long, SalesPoint> {
     private static final Logger logger = Logger.getLogger(SalesPointJDBCDaoImpl.class.getName());
-//    private final Connection connection;
+    private final Connection connection;
     private final AcquiringBankJDBCDaoImpl acquiringBankJDBCDao;
 //    public SalesPointJDBCImpl(Connection connection) {
 //        this.connection = connection;
@@ -25,16 +25,19 @@ public class SalesPointJDBCDaoImpl extends DAOAbstract implements DAOInterface<L
 //    }
 
     public SalesPointJDBCDaoImpl(Connection connection) {
-        super(connection);
+        this.connection = connection;
+        DAOAbstract daoAbstract = new DAOAbstract(connection);
         this.acquiringBankJDBCDao = new AcquiringBankJDBCDaoImpl(connection); // Инициализируем DAO после получения connection
     }
 
-    public boolean clearSalesPoints() {
-        return deleteAll("processingcenterschema.sales_point");
+    @Override
+    public boolean deleteAll(String s) {
+        return DAOAbstract.deleteAllService("processingcenterschema.sales_point");
     }
 
-    public boolean removeSalesPointsTable() {
-        return dropTable("processingcenterschema.sales_point");
+    @Override
+    public boolean dropTable(String s) {
+        return DAOAbstract.dropTableService("processingcenterschema.sales_point");
     }
 
 
@@ -59,7 +62,7 @@ public class SalesPointJDBCDaoImpl extends DAOAbstract implements DAOInterface<L
     private static final String DELETE_ALL_SQL = "DELETE FROM sales_point";
     private static final String DELETE_SQL = "DELETE FROM sales_point where id = ?";
     private static final String UPDATE_SQL = "UPDATE sales_point SET pos_name = ?, pos_address = ?, pos_inn = ?, acquiring_bank_id = ?  WHERE id = ?";
-   // private static final String UPDATE_SQL = "UPDATE processingCenterSchema.sales_point SET pos_name = ?, pos_address = ?, pos_inn = ?, acquiring_bank_id = ?  WHERE id = ?";
+    // private static final String UPDATE_SQL = "UPDATE processingCenterSchema.sales_point SET pos_name = ?, pos_address = ?, pos_inn = ?, acquiring_bank_id = ?  WHERE id = ?";
     //AcquiringBank
 
 
@@ -86,7 +89,7 @@ public class SalesPointJDBCDaoImpl extends DAOAbstract implements DAOInterface<L
 
     @Override
     public void createTable() {
-        try (Connection connection = ConnectionManager2.open()) {
+        try {
             Statement statement = connection.createStatement();
             String CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS processingCenterSchema.sales_point ("
                     + "id SERIAL PRIMARY KEY, "
@@ -106,7 +109,7 @@ public class SalesPointJDBCDaoImpl extends DAOAbstract implements DAOInterface<L
 
     @Override
     public SalesPoint insert(SalesPoint value) {
-        try (Connection connection = ConnectionManager2.open()) {
+        try {
             // Проверяем наличие таблицы перед вставкой
             if (!DAOAbstract.isTableExists(connection, "acquiring_bank")) {
                 logger.warning("Таблица acquiring_bank не существует. Создаю...");
@@ -187,7 +190,7 @@ public class SalesPointJDBCDaoImpl extends DAOAbstract implements DAOInterface<L
 
     @Override
     public boolean delete(Long key) {
-        try (Connection connection = ConnectionManager2.open()) {
+        try {
             connection.setAutoCommit(false); // Отключаем автокоммит
 
             try (PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM acquiring_bank WHERE id = ?")) {
@@ -212,10 +215,6 @@ public class SalesPointJDBCDaoImpl extends DAOAbstract implements DAOInterface<L
     }
 
 
-
-
-
-
 //    @Override
 //    public Optional<SalesPoint> findById(Long key) {
 //        try (PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID)) {
@@ -236,7 +235,7 @@ public class SalesPointJDBCDaoImpl extends DAOAbstract implements DAOInterface<L
     @Override
     public Optional<SalesPoint> findById(Long key) {
         try (Connection connection = ConnectionManager2.open()) {
-           return findById(key, connection);
+            return findById(key, connection);
         } catch (SQLException e) {
             logger.severe(e.getMessage());
             throw new DaoException(e);
@@ -245,7 +244,7 @@ public class SalesPointJDBCDaoImpl extends DAOAbstract implements DAOInterface<L
 
 
     public Optional<SalesPoint> findById(Long key, Connection connection) {
-        try ( PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID)) {
             preparedStatement.setLong(1, key);
             ResultSet resultSet = preparedStatement.executeQuery();
             SalesPoint salesPoint = null;
@@ -259,8 +258,6 @@ public class SalesPointJDBCDaoImpl extends DAOAbstract implements DAOInterface<L
             throw new DaoException(e);
         }
     }
-
-
 
 
 //    private boolean isTableExists(Connection connection, String tableName) {
@@ -302,7 +299,7 @@ public class SalesPointJDBCDaoImpl extends DAOAbstract implements DAOInterface<L
              ResultSet resultSet = statement.executeQuery()) {
 
             while (resultSet.next()) {
-               SalesPoint salesPoint =  buildSalesPoint(resultSet);
+                SalesPoint salesPoint = buildSalesPoint(resultSet);
 //                AcquiringBank acquiringBank = new AcquiringBank(
 //                        resultSet.getLong("bank_id"),
 //                        resultSet.getString("bic"),
