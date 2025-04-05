@@ -1,5 +1,7 @@
 package com.java.model;
 
+import java.util.Objects;
+
 public class Currency {
     private Long id;
     private String currencyDigitalCode;
@@ -46,6 +48,28 @@ public class Currency {
 
     public void setCurrencyName(String currencyName) {
         this.currencyName = currencyName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Currency currency = (Currency) o;
+        return Objects.equals(id, currency.id) && Objects.equals(currencyDigitalCode, currency.currencyDigitalCode) && Objects.equals(currencyLetterCode, currency.currencyLetterCode) && Objects.equals(currencyName, currency.currencyName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, currencyDigitalCode, currencyLetterCode, currencyName);
+    }
+
+    @Override
+    public String toString() {
+        return "Currency{" +
+                "id=" + id +
+                ", currencyDigitalCode='" + currencyDigitalCode + '\'' +
+                ", currencyLetterCode='" + currencyLetterCode + '\'' +
+                ", currencyName='" + currencyName + '\'' +
+                '}';
     }
 }
 

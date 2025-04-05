@@ -2,7 +2,7 @@ package com.java.dao;
 
 import com.java.dao.jdbc.*;
 import com.java.model.*;
-
+import com.java.model.Currency;
 import java.sql.Connection;
 
 public class DAOFactory {
@@ -56,6 +56,18 @@ public class DAOFactory {
 
     public static DAOInterface<Long, PaymentSystem> getPaymentSystemDAO(Connection connection) {
         return new PaymentSystemJDBCDaoImpl(connection);
+    }
+
+    public static DAOInterface<Long, Currency> getCurrencyDAO(Connection connection) {
+        return new CurrencyJDBCDaoImpl(connection);
+    }
+
+    public static DAOInterface<Long, MerchantCategoryCode> getMerchantCategoryCodeDAO(Connection connection) {
+        return new MerchantCategoryCodeJDBCImpl(connection);
+    }
+
+    public static DAOInterface<Long, Terminal> getTerminalDAO(Connection connection) {
+        return new TerminalJDBCDaoImpl(connection);
     }
 
 

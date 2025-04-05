@@ -7,4 +7,11 @@ public class TransactionType {
 
     public TransactionType() {
     }
+
+    public TransactionType(Long id, String transactionTypeName, char operator) {
+        this.id = id;
+        this.transactionTypeName = transactionTypeName;
+        this.operator = operator;
+    }
 }
+
