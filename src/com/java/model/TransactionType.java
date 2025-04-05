@@ -4,4 +4,7 @@ public class TransactionType {
     private Long id;
     private String transactionTypeName;
     private char operator;
+
+    public TransactionType() {
+    }
 }
