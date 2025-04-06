@@ -150,6 +150,6 @@ public class ResponseCodeJDBCImpl extends DAOAbstract implements DAOInterface<Lo
 
     @Override
     public boolean dropTable(String s) {
-        return dropTable("processingcenterschema.card_status");
+        return dropTableService("processingcenterschema.card_status");
     }
 }

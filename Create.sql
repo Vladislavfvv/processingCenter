@@ -50,13 +50,13 @@ CREATE TABLE IF NOT EXISTS processingCenterSchema.sales_point
 CREATE TABLE IF NOT EXISTS processingCenterSchema.merchant_category_code
 (
     id       bigserial primary key,
-    mcc      varchar(4),
-    mcc_name varchar(255)
+    mcc      varchar(4) not null ,
+    mcc_name varchar(255) not null
     );
 CREATE TABLE IF NOT EXISTS processingCenterSchema.terminal
 (
     id          bigserial primary key,
-    terminal_id varchar(9),
+    terminal_id varchar(9) not null ,
     mcc_id      bigint REFERENCES processingCenterSchema.merchant_category_code (id) ON DELETE CASCADE
                                                               ON UPDATE CASCADE,
     pos_id      bigint REFERENCES processingCenterSchema.sales_point (id) ON DELETE CASCADE
@@ -65,20 +65,20 @@ CREATE TABLE IF NOT EXISTS processingCenterSchema.terminal
 CREATE TABLE IF NOT EXISTS processingCenterSchema.response_code
 (
     id                bigserial primary key,
-    error_code        varchar(2),
-    error_description varchar(255),
-    error_level       varchar(255)
+    error_code        varchar(2) not null ,
+    error_description varchar(255) not null ,
+    error_level       varchar(255) not null
     );
 CREATE TABLE IF NOT EXISTS processingCenterSchema.transaction_type
 (
     id                    bigserial primary key,
-    transaction_type_name varchar(255),
-    operator              varchar(1)
+    transaction_type_name varchar(255) not null,
+    operator              varchar(1) not null
     );
 CREATE TABLE IF NOT EXISTS processingCenterSchema.account
 (
     id              bigserial UNIQUE primary key,
-    account_number  varchar(50),
+    account_number  varchar(50) not null,
     balance         decimal,
     currency_id     bigint REFERENCES processingCenterSchema.currency (id) ON DELETE CASCADE
                                                     ON UPDATE CASCADE,

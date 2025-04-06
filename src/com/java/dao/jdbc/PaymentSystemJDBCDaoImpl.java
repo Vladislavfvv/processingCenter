@@ -43,7 +43,7 @@ public class PaymentSystemJDBCDaoImpl extends DAOAbstract implements DAOInterfac
     public PaymentSystem insert(PaymentSystem paymentSystem) {
         try {
             if (!DAOAbstract.isTableExists(connection, "payment_system")) {
-                logger.warning("Таблица card_status не существует. Создаю...");
+                logger.warning("Таблица payment_system не существует. Создаю...");
                 createTable();
             }
             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SQL, Statement.RETURN_GENERATED_KEYS);////второй параметр для получения идентификатора созданной сущности
@@ -141,6 +141,6 @@ public class PaymentSystemJDBCDaoImpl extends DAOAbstract implements DAOInterfac
 
     @Override
     public boolean dropTable(String s) {
-        return dropTable("processingcenterschema.payment_system");
+        return dropTableService("processingcenterschema.payment_system");
     }
 }

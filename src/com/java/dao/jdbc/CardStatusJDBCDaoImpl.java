@@ -139,7 +139,7 @@ public class CardStatusJDBCDaoImpl extends DAOAbstract implements DAOInterface<L
 
     @Override
     public boolean dropTable(String s) {
-        return dropTable("processingcenterschema.card_status");
+        return dropTableService("processingcenterschema.card_status");
     }
 
 //    private boolean isTableExists(Connection connection, String tableName) {

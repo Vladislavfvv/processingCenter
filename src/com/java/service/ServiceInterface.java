@@ -26,8 +26,8 @@ public interface ServiceInterface<E, K> {
 
 
     // Метод для очистки всех записей из таблицы sales_point
-    boolean clearSalesPoints();
-
-    // Метод для удаления таблицы sales_point
-    boolean removeSalesPointsTable();
+//    boolean clearSalesPoints();
+//
+//    // Метод для удаления таблицы sales_point
+//    boolean removeSalesPointsTable();
 }

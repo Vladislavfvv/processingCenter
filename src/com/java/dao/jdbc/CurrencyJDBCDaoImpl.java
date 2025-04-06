@@ -7,6 +7,7 @@ import java.sql.*;
 
 import com.java.exception.DaoException;
 import com.java.model.Currency;
+import com.java.util.ConnectionManager2;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,17 +31,16 @@ public class CurrencyJDBCDaoImpl extends DAOAbstract implements DAOInterface<Lon
     private static final String DELETE_CURRENCY_BY_ID = "DELETE FROM currency WHERE id = ?";
     private static final String INSERT_CURRENCY = "INSERT INTO currency VALUES (?, ?, ?)";
 
+    public CurrencyJDBCDaoImpl(Connection connection) {
+        super(connection);
+    }
+
     private Currency buildCurrency(ResultSet resultSet) throws SQLException {
         return new Currency(resultSet.getLong("id"),
                 resultSet.getString("currency_digital_code"),
                 resultSet.getString("currency_letter_code"),
                 resultSet.getString("currency_name")
         );
-    }
-
-
-    public CurrencyJDBCDaoImpl(Connection connection) {
-        super(connection);
     }
 
     @Override
@@ -97,6 +97,15 @@ public class CurrencyJDBCDaoImpl extends DAOAbstract implements DAOInterface<Lon
 
     @Override
     public Optional<Currency> findById(Long id) {
+        try (Connection connection = ConnectionManager2.open()) {
+           return findById(id, connection);
+        } catch (SQLException e) {
+            logger.severe(e.getMessage());
+            throw new DaoException("Ошибка при поиске currency ", e);
+        }
+    }
+
+    public Optional<Currency> findById(long id, Connection connection) {
         try (PreparedStatement preparedStatement = connection.prepareStatement(GET_CURRENCY_BY_ID)) {
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -114,6 +123,7 @@ public class CurrencyJDBCDaoImpl extends DAOAbstract implements DAOInterface<Lon
             throw new DaoException("Ошибка при поиске currency ", e);
         }
     }
+
 
     @Override
     public List<Currency> findAll() {
@@ -143,11 +153,14 @@ public class CurrencyJDBCDaoImpl extends DAOAbstract implements DAOInterface<Lon
     }
 
     @Override
-    public boolean deleteAll(String s) {return deleteAllService("processingcenterschema.currency");
+    public boolean deleteAll(String s) {
+        return deleteAllService("processingcenterschema.currency");
     }
 
     @Override
     public boolean dropTable(String s) {
-        return dropTable("processingcenterschema.currency");
+        return dropTableService("processingcenterschema.currency");
     }
+
+
 }

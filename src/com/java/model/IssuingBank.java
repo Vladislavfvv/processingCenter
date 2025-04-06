@@ -1,5 +1,7 @@
 package com.java.model;
 
+import java.util.Objects;
+
 public class IssuingBank {
     private Long id;
     private String bic;
@@ -46,5 +48,27 @@ public class IssuingBank {
 
     public void setAbbreviatedName(String abbreviatedName) {
         this.abbreviatedName = abbreviatedName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        IssuingBank that = (IssuingBank) o;
+        return Objects.equals(id, that.id) && Objects.equals(bic, that.bic) && Objects.equals(bin, that.bin) && Objects.equals(abbreviatedName, that.abbreviatedName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, bic, bin, abbreviatedName);
+    }
+
+    @Override
+    public String toString() {
+        return "IssuingBank{" +
+                "id=" + id +
+                ", bic='" + bic + '\'' +
+                ", bin='" + bin + '\'' +
+                ", abbreviatedName='" + abbreviatedName + '\'' +
+                '}';
     }
 }

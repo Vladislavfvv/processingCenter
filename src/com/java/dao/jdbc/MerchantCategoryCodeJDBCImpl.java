@@ -35,9 +35,6 @@ public class MerchantCategoryCodeJDBCImpl extends DAOAbstract implements DAOInte
         );
     }
 
-
-
-
     public MerchantCategoryCodeJDBCImpl(Connection connection) {
         super(connection);
     }
@@ -45,8 +42,8 @@ public class MerchantCategoryCodeJDBCImpl extends DAOAbstract implements DAOInte
     @Override
     public MerchantCategoryCode insert(MerchantCategoryCode value) {
         try {
-            if (!DAOAbstract.isTableExists(connection, "response_code")) {
-                logger.warning("Таблица response_code не существует. Создаю...");
+            if (!DAOAbstract.isTableExists(connection, "merchant_category_code")) {
+                logger.warning("Таблица merchant_category_code не существует. Создаю...");
                 createTable();
             }
             PreparedStatement preparedStatement = connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);////второй параметр для получения идентификатора созданной сущности
@@ -156,7 +153,7 @@ public class MerchantCategoryCodeJDBCImpl extends DAOAbstract implements DAOInte
 
     @Override
     public boolean dropTable(String s) {
-        return dropTable("processingcenterschema.merchant_category_code");
+        return dropTableService("processingcenterschema.merchant_category_code");
     }
 
 

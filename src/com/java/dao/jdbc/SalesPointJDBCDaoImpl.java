@@ -1,6 +1,7 @@
 package com.java.dao.jdbc;
 
 import com.java.dao.DAOAbstract;
+import com.java.dao.DAOFactory;
 import com.java.dao.DAOInterface;
 import com.java.exception.DaoException;
 import com.java.model.AcquiringBank;
@@ -17,17 +18,19 @@ import java.util.logging.Logger;
 public class SalesPointJDBCDaoImpl implements DAOInterface<Long, SalesPoint> {
     private static final Logger logger = Logger.getLogger(SalesPointJDBCDaoImpl.class.getName());
     private final Connection connection;
-    private final AcquiringBankJDBCDaoImpl acquiringBankJDBCDao;
+    private final DAOInterface<Long, AcquiringBank> acquiringBankJDBCDao;
+
 //    public SalesPointJDBCImpl(Connection connection) {
 //        this.connection = connection;
 //        this.acquiringBankJDBCDao = new AcquiringBankJDBCDaoImpl(connection); // Инициализируем DAO после получения connection
 //
 //    }
 
-    public SalesPointJDBCDaoImpl(Connection connection) {
+    public SalesPointJDBCDaoImpl(Connection connection ) {
         this.connection = connection;
-        DAOAbstract daoAbstract = new DAOAbstract(connection);
-        this.acquiringBankJDBCDao = new AcquiringBankJDBCDaoImpl(connection); // Инициализируем DAO после получения connection
+       // DAOAbstract daoAbstract = new DAOAbstract(connection);
+        this.acquiringBankJDBCDao = DAOFactory.getAcquiringBankDAO(connection); // Инициализируем DAO после получения connection
+
     }
 
     @Override
@@ -43,7 +46,7 @@ public class SalesPointJDBCDaoImpl implements DAOInterface<Long, SalesPoint> {
 
     // private static final String FIND_BY_ID = "SELECT id, pos_name, pos_address, pos_inn, acquiring_bank_id, bic, abbreviatedName FROM salespoint";
 
-    private static final String JoinTables = "SELECT sp.id, sp.pos_name, sp.pos_address, sp.pos_inn, ab.id AS acquiring_bank_id, ab.bic, ab.abbreviatedName FROM SalesPoint sp JOIN AcquiringBank ab ON sp.acquiring_bank_id = ab.id;";
+   // private static final String JoinTables = "SELECT sp.id, sp.pos_name, sp.pos_address, sp.pos_inn, ab.id AS acquiring_bank_id, ab.bic, ab.abbreviatedName FROM SalesPoint sp JOIN AcquiringBank ab ON sp.acquiring_bank_id = ab.id;";
 
     private static final String FIND_BY_ID = "SELECT sp.id, sp.pos_name, sp.pos_address, sp.pos_inn, ab.id AS acquiring_bank_id, ab.bic, ab.abbreviated_name " +
             "FROM sales_point sp " +
