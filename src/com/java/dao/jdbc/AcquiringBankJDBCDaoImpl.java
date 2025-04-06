@@ -15,6 +15,8 @@ import java.util.logging.Logger;
 public class AcquiringBankJDBCDaoImpl extends DAOAbstract implements DAOInterface<Long, AcquiringBank> {
     private static final Logger logger = Logger.getLogger(AcquiringBankJDBCDaoImpl.class.getName());
 
+
+
     public AcquiringBankJDBCDaoImpl(Connection connection) {
         super(connection);
         //this.connection = connection;
@@ -27,17 +29,17 @@ public class AcquiringBankJDBCDaoImpl extends DAOAbstract implements DAOInterfac
         //        return INSTANCE;
         //    }
         //private final Connection connection;
-        DAOAbstract daoAbstract = new DAOAbstract(connection);
+      //  DAOAbstract daoAbstract = new DAOAbstract(connection);
     }
 
-    private static final String CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS processingCenterSchema.acquiring_bank (id serial primary key, bic varchar(9) not null, abbreviated_name varchar(255) not null);";
+    private static final String CREATE_TABLE_ACQUIRING_BANK = "CREATE TABLE IF NOT EXISTS processingCenterSchema.acquiring_bank (id serial primary key, bic varchar(9) not null, abbreviated_name varchar(255) not null);";
     //private static final String CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS processingCenterSchema.acquiring_bank2 (id serial primary key, bic varchar(9) not null, abbreviated_name varchar(255) not null);";
 
-    String CREATE_TABLE_SQL3 = """
-             CREATE TABLE IF NOT EXISTS acquiring_bank3 (id SERIAL PRIMARY KEY,\s
-             bic VARCHAR(9) NOT NULL,\s
-             abbreviated_name VARCHAR(255) NOT NULL);\s
-            \s""";
+//    String CREATE_TABLE_SQL3 = """
+//             CREATE TABLE IF NOT EXISTS acquiring_bank3 (id SERIAL PRIMARY KEY,\s
+//             bic VARCHAR(9) NOT NULL,\s
+//             abbreviated_name VARCHAR(255) NOT NULL);\s
+//            \s""";
 
     private static final String DROP_TABLE_SQL = "DROP TABLE IF EXISTS acquiring_bank";
     private static final String TRUNCATE_SQL = "TRUNCATE TABLE acquiring_bank";
@@ -58,7 +60,7 @@ public class AcquiringBankJDBCDaoImpl extends DAOAbstract implements DAOInterfac
             // Проверяем наличие таблицы перед вставкой
             if (!isTableExists(connection, "acquiring_bank")) {
                 logger.warning("Таблица acquiring_bank не существует. Создаю...");
-                createTable();
+                createTableQuery(CREATE_TABLE_ACQUIRING_BANK);
             }
 
             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SQL, Statement.RETURN_GENERATED_KEYS);//второй параметр для получения идентификатора созданной сущности
@@ -167,17 +169,23 @@ public class AcquiringBankJDBCDaoImpl extends DAOAbstract implements DAOInterfac
         }
     }
 
+//    @Override
+//    public void createTable() {
+//        try {
+//            Statement statement = connection.createStatement();
+//            statement.executeUpdate(CREATE_TABLE_SQL);
+//            logger.info("Table created");
+//        } catch (SQLException e) {
+//            logger.severe(e.getMessage());
+//            throw new DaoException(e);
+//        }
+//    }
+
     @Override
-    public void createTable() {
-        try {
-            Statement statement = connection.createStatement();
-            statement.executeUpdate(CREATE_TABLE_SQL);
-            logger.info("Table created");
-        } catch (SQLException e) {
-            logger.severe(e.getMessage());
-            throw new DaoException(e);
-        }
+    public boolean createTableQuery(String sql) {
+        return createTableService(CREATE_TABLE_ACQUIRING_BANK);
     }
+
 
     @Override
     public boolean deleteAll(String s) {

@@ -46,8 +46,8 @@ public class PaymentSystemService implements ServiceInterface<PaymentSystem, Lon
     }
 
     @Override
-    public void createTable() {
-        paymentSystemDAO.createTable();
+    public void createTable(String sql) {
+        paymentSystemDAO.createTableQuery(sql);
     }
 
     @Override

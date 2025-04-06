@@ -12,8 +12,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 
-
-
 public class CardJDBCDaoImpl extends DAOAbstract implements DAOInterface<Long, Card> {
     private static final Logger logger = Logger.getLogger(CardJDBCDaoImpl.class.getName());
 
@@ -48,11 +46,13 @@ public class CardJDBCDaoImpl extends DAOAbstract implements DAOInterface<Long, C
             "    sent_to_issuing_bank       timestamp\n" +
             "    );";
 
-    private static final String FIND_ALL_CARD = "SELECT id, card_number, expiration_date, holder_name, card_status_id, payment_system_id, account_id, received_from_issuing_bank, sent_to_issuing_bank" +
-            "FROM processingCenterSchema.card";
+    private static final String FIND_ALL_CARD =
+            "SELECT id, card_number, expiration_date, holder_name, card_status_id, payment_system_id, account_id, received_from_issuing_bank, sent_to_issuing_bank " + // <== добавь пробел в конце
+                    "FROM processingCenterSchema.card";
 
-    private static final String FIND_CARD_BY_ID = "SELECT id, card_number, expiration_date, holder_name, card_status_id, payment_system_id, account_id, received_from_issuing_bank, sent_to_issuing_bank" +
-            " FROM processingCenterSchema.card WHERE id = ?";
+    private static final String FIND_CARD_BY_ID =
+            "SELECT id, card_number, expiration_date, holder_name, card_status_id, payment_system_id, account_id, received_from_issuing_bank, sent_to_issuing_bank " + // <== добавь пробел в конце
+                    "FROM processingCenterSchema.card WHERE id = ?;";
 
     private static final String DROP_TABLE_CARD = "DROP TABLE IF EXISTS processingCenterSchema.card CASCADE";
     private static final String DELETE_ALL_CARD = "DELETE FROM processingCenterSchema.card";
@@ -63,34 +63,57 @@ public class CardJDBCDaoImpl extends DAOAbstract implements DAOInterface<Long, C
     private static final String INSERT_CARD = "INSERT INTO processingCenterSchema.card (card_number, expiration_date, holder_name, card_status_id, payment_system_id, account_id, received_from_issuing_bank, sent_to_issuing_bank) " +
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id";
 
+    private boolean validateCardReferences(Card value) throws SQLException {
+        if (value == null || value.getCardStatusId() == null || value.getPaymentSystemId() == null || value.getAccountId() == null)
+            return false;
+        if (cardStatusDAOImpl.findById(value.getCardStatusId().getId()).isEmpty()) return false;
+        if (paymentSystemDAOImpl.findById(value.getPaymentSystemId().getId()).isEmpty()) return false;
+        if (accountDAOImpl.findById(value.getAccountId().getId()).isEmpty()) return false;
+        return true;
+    }
+
+
     @Override
     public Card insert(Card value) {
         Connection connection = this.connection;
         try {
             connection.setAutoCommit(false); // начинаем транзакцию
 
-            // Проверка на null
-            if (value == null || value.getCardStatusId() == null || value.getPaymentSystemId() == null || value.getAccountId() == null) {
-                logger.warning("CARD или его поля (cardStatus, paymentSystem, account) равны null.");
+            if (!validateCardReferences(value)) {
+                logger.warning("CARD требует доработки - не прошел валидацию");
                 connection.rollback();
                 return null;
             }
 
-            // Проверка на существование кард-статуса
-            Optional<CardStatus> optionalCurrency = cardStatusDAOImpl.findById(value.getCardStatusId().getId());
-            if (optionalCurrency.isEmpty()) {
-                logger.warning("CqrdStatus с id = " + value.getCardStatusId().getId() + " не найден.");
-                connection.rollback();
-                return null;
-            }
-
-            // Проверка на существование банка
-            Optional<PaymentSystem> optionalIssuingBank = paymentSystemDAOImpl.findById(value.getPaymentSystemId().getId());
-            if (optionalIssuingBank.isEmpty()) {
-                logger.warning("IssuingBank с id = " + value.getPaymentSystemId().getId() + " не найден.");
-                connection.rollback();
-                return null;
-            }
+//            // Проверка на null
+//            if (value == null || value.getCardStatusId() == null || value.getPaymentSystemId() == null || value.getAccountId() == null) {
+//                logger.warning("CARD или его поля (cardStatus, paymentSystem, account) равны null.");
+//                connection.rollback();
+//                return null;
+//            }
+//
+//            // Проверка на существование кард-статуса
+//            Optional<CardStatus> optionalCurrency = cardStatusDAOImpl.findById(value.getCardStatusId().getId());
+//            if (optionalCurrency.isEmpty()) {
+//                logger.warning("CqrdStatus с id = " + value.getCardStatusId().getId() + " не найден.");
+//                connection.rollback();
+//                return null;
+//            }
+//
+//            // Проверка на существование банка
+//            Optional<PaymentSystem> optionalIssuingBank = paymentSystemDAOImpl.findById(value.getPaymentSystemId().getId());
+//            if (optionalIssuingBank.isEmpty()) {
+//                logger.warning("IssuingBank с id = " + value.getPaymentSystemId().getId() + " не найден.");
+//                connection.rollback();
+//                return null;
+//            }
+//
+//            Optional<Account> optionalAccount = accountDAOImpl.findById(value.getAccountId().getId());
+//            if (optionalAccount.isEmpty()) {
+//                logger.warning("Account с id = " + value.getAccountId().getId() + " не найден.");
+//                connection.rollback();
+//                return null;
+//            }
 
             try (PreparedStatement ps = connection.prepareStatement(INSERT_CARD)) {
                 ps.setString(1, value.getCardNumber());
@@ -138,26 +161,33 @@ public class CardJDBCDaoImpl extends DAOAbstract implements DAOInterface<Long, C
         try {
             connection.setAutoCommit(false);
 
-            // Проверка на null
-            if (value == null || value.getCardStatusId() == null || value.getPaymentSystemId() == null || value.getAccountId() == null) {
-                logger.warning("Card или его поля (card_status_id, payment_system_id, account_id) равны null. А так быть не должно");
+            if (!validateCardReferences(value)) {
+                logger.warning("CARD требует доработки - не прошел валидацию");
                 connection.rollback();
                 return false;
             }
 
-            // Проверка существования кард-статуса
-            if (cardStatusDAOImpl.findById(value.getCardStatusId().getId()).isEmpty()) {
-                logger.warning("Кард-статус с id = " + value.getCardStatusId().getId() + " не найден.");
-                connection.rollback();
-                return false;
-            }
 
-            // Проверка существования банка
-            if (paymentSystemDAOImpl.findById(value.getPaymentSystemId().getId()).isEmpty()) {
-                logger.warning("PaymentSystem с id = " + value.getPaymentSystemId().getId() + " не найден.");
-                connection.rollback();
-                return false;
-            }
+//            // Проверка на null
+//            if (value == null || value.getCardStatusId() == null || value.getPaymentSystemId() == null || value.getAccountId() == null) {
+//                logger.warning("Card или его поля (card_status_id, payment_system_id, account_id) равны null. А так быть не должно");
+//                connection.rollback();
+//                return false;
+//            }
+//
+//            // Проверка существования кард-статуса
+//            if (cardStatusDAOImpl.findById(value.getCardStatusId().getId()).isEmpty()) {
+//                logger.warning("Кард-статус с id = " + value.getCardStatusId().getId() + " не найден.");
+//                connection.rollback();
+//                return false;
+//            }
+//
+//            // Проверка существования банка
+//            if (paymentSystemDAOImpl.findById(value.getPaymentSystemId().getId()).isEmpty()) {
+//                logger.warning("PaymentSystem с id = " + value.getPaymentSystemId().getId() + " не найден.");
+//                connection.rollback();
+//                return false;
+//            }
 
             try (PreparedStatement ps = connection.prepareStatement(UPDATE_CARD)) {
                 ps.setString(1, value.getCardNumber());
@@ -289,16 +319,10 @@ public class CardJDBCDaoImpl extends DAOAbstract implements DAOInterface<Long, C
     }
 
     @Override
-    public void createTable() {
-        try {
-            Statement statement = connection.createStatement();
-            statement.executeUpdate(CREATE_TABLE_CARD);
-            logger.info("Table created");
-        } catch (SQLException e) {
-            logger.severe(e.getMessage());
-            throw new DaoException(e);
-        }
+    public boolean createTableQuery(String sql) {
+        return createTableService(CREATE_TABLE_CARD);
     }
+
 
     @Override
     public boolean deleteAll(String s) {

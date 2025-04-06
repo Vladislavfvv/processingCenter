@@ -47,8 +47,8 @@ public class CurrencyService implements ServiceInterface<Currency, Long> {
     }
 
     @Override
-    public void createTable() {
-        currencyDAO.createTable();
+    public void createTable(String sql) {
+        currencyDAO.createTableQuery(sql);
     }
 
     @Override

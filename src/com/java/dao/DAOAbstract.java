@@ -6,7 +6,7 @@ import com.java.util.ConnectionManager2;
 import java.sql.*;
 import java.util.logging.Logger;
 
-public class DAOAbstract {
+public abstract class DAOAbstract {
     private static final Logger logger = Logger.getLogger(DAOAbstract.class.getName());
     protected static Connection connection = null;
 
@@ -59,6 +59,21 @@ public class DAOAbstract {
             throw new DaoException(e);
         }
     }
+
+
+
+    public static boolean createTableService(String sqlQuery) {
+        try {
+            Statement statement = connection.createStatement();
+            statement.executeUpdate(sqlQuery);
+            logger.info("Table created");
+            return true;
+        } catch (SQLException e) {
+            logger.severe(e.getMessage());
+            throw new DaoException(e);
+        }
+    }
+
 
 
 }

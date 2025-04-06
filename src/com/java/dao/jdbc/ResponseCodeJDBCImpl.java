@@ -18,7 +18,7 @@ public class ResponseCodeJDBCImpl extends DAOAbstract implements DAOInterface<Lo
         super(connection);
     }
 
-    private static final String CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS processingCenterSchema.response_code\n" +
+    private static final String CREATE_TABLE_RESPONSE_CODE = "CREATE TABLE IF NOT EXISTS processingCenterSchema.response_code\n" +
             "(\n" +
             "    id                bigserial primary key,\n" +
             "    error_code        varchar(2),\n" +
@@ -45,7 +45,7 @@ public class ResponseCodeJDBCImpl extends DAOAbstract implements DAOInterface<Lo
         try {
             if (!DAOAbstract.isTableExists(connection, "response_code")) {
                 logger.warning("Таблица response_code не существует. Создаю...");
-                createTable();
+                createTableQuery(CREATE_TABLE_RESPONSE_CODE);
             }
             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_RESPONSE_CODE, Statement.RETURN_GENERATED_KEYS);////второй параметр для получения идентификатора созданной сущности
             preparedStatement.setString(1, responseCode.getErrorCode());
@@ -131,17 +131,23 @@ public class ResponseCodeJDBCImpl extends DAOAbstract implements DAOInterface<Lo
         }
     }
 
+//    @Override
+//    public void createTable() {
+//        try {
+//            Statement statement = connection.createStatement();
+//            statement.executeUpdate(CREATE_TABLE_SQL);
+//            logger.info("Table created");
+//        } catch (SQLException e) {
+//            logger.severe(e.getMessage());
+//            throw new DaoException(e);
+//        }
+//    }
+
     @Override
-    public void createTable() {
-        try {
-            Statement statement = connection.createStatement();
-            statement.executeUpdate(CREATE_TABLE_SQL);
-            logger.info("Table created");
-        } catch (SQLException e) {
-            logger.severe(e.getMessage());
-            throw new DaoException(e);
-        }
+    public boolean createTableQuery(String sql) {
+        return createTableService(CREATE_TABLE_RESPONSE_CODE);
     }
+
 
     @Override
     public boolean deleteAll(String s) {

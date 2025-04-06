@@ -46,8 +46,8 @@ public class AccountService  implements ServiceInterface<Account, Long>{
     }
 
     @Override
-    public void createTable() {
-        accountDao.createTable();
+    public void createTable(String sql) {
+        accountDao.createTableQuery(sql);
     }
 
     @Override

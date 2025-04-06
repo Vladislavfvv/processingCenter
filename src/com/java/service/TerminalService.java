@@ -41,8 +41,8 @@ public class TerminalService implements ServiceInterface<Terminal, Long>{
     }
 
     @Override
-    public void createTable() {
-        terminalDAO.createTable();
+    public void createTable(String sql) {
+        terminalDAO.createTableQuery(sql);
     }
 
     @Override

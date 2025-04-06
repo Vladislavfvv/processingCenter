@@ -63,6 +63,10 @@ public class DAOFactory {
         return new AccountJDBCDaoImpl(connection);
     }
 
+    public static DAOInterface<Long, Transaction> getTransactionDAO(Connection connection) {
+        return new TransactionJDBCDaoImpl(connection);
+    }
+
         public static void closeConnection() {
         ConnectionManager2.close(connection);
     }

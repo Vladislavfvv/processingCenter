@@ -1,11 +1,11 @@
 
-
-CREATE DATABASE processingCenter;
--- переключиться на БД
-\c processingCenter;
-CREATE SCHEMA IF NOT EXISTS processingCenterSchema;
--- установка схемы по умолчанию
-SET search_path TO processingCenterSchema;
+--
+-- CREATE DATABASE processingCenter;
+-- -- переключиться на БД
+-- \c processingCenter;
+-- CREATE SCHEMA IF NOT EXISTS processingCenterSchema;
+-- -- установка схемы по умолчанию
+-- SET search_path TO processingCenterSchema;
 
 
 CREATE TABLE IF NOT EXISTS processingCenterSchema.card_status

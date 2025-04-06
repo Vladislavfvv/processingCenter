@@ -39,8 +39,8 @@ public class CardService implements ServiceInterface<Card, Long> {
     }
 
     @Override
-    public void createTable() {
-        cardDAO.createTable();
+    public void createTable(String sql) {
+        cardDAO.createTableQuery(sql);
     }
 
     @Override

@@ -18,16 +18,10 @@ public interface ServiceInterface<E, K> {
 
     List<E> findAll();
 
-    void createTable();
+    void createTable(String sql);
 
     boolean deleteAll(String s);
 
     boolean dropTable(String s);
 
-
-    // Метод для очистки всех записей из таблицы sales_point
-//    boolean clearSalesPoints();
-//
-//    // Метод для удаления таблицы sales_point
-//    boolean removeSalesPointsTable();
 }

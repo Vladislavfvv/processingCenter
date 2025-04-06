@@ -23,7 +23,6 @@ public class TerminalJDBCDaoImpl extends DAOAbstract implements DAOInterface<Lon
 
     public TerminalJDBCDaoImpl(Connection connection) {
         super(connection);
-        DAOAbstract daoAbstract = new DAOAbstract(connection);
         this.merchantCategoryCodeJDBCImpl = new MerchantCategoryCodeJDBCImpl(connection);
         this.salesPointJDBCDaoImpl = new SalesPointJDBCDaoImpl(connection);
     }
@@ -61,17 +60,17 @@ public class TerminalJDBCDaoImpl extends DAOAbstract implements DAOInterface<Lon
     public Terminal insert(Terminal value) {
         try {
             // Проверяем наличие таблицы перед вставкой
-            if (!DAOAbstract.isTableExists(connection, "merchant_category_code")) {
-                logger.warning("Таблица merchant_category_code не существует. Создаю...");
-                createTable();
-            }
-            if (!DAOAbstract.isTableExists(connection, "sales_point")) {
-                logger.warning("Таблица sales_point не существует. Создаю...");
-                createTable();
-            }
+//            if (!DAOAbstract.isTableExists(connection, "merchant_category_code")) {
+//                logger.warning("Таблица merchant_category_code не существует. Создаю...");
+//                createTable();
+//            }
+//            if (!DAOAbstract.isTableExists(connection, "sales_point")) {
+//                logger.warning("Таблица sales_point не существует. Создаю...");
+//                createTable();
+//            }
             if (!DAOAbstract.isTableExists(connection, "terminal")) {
                 logger.warning("Таблица terminal не существует. Создаю...");
-                createTable();
+                createTableQuery(CREATE_TABLE_TERMINAL);
             }
             // String INSERT_SQL = "INSERT INTO processingCenterSchema.sales_point (pos_name, pos_address, pos_inn, acquiring_bank_id) VALUES (?, ?, ?, ?) RETURNING id";
             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_IN_TERMINAL, Statement.RETURN_GENERATED_KEYS);//второй параметр для получения идентификатора созданной сущности
@@ -197,16 +196,22 @@ public class TerminalJDBCDaoImpl extends DAOAbstract implements DAOInterface<Lon
         return terminalList;
     }
 
+//    @Override
+//    public void createTable() {
+//        try {
+//            Statement statement = connection.createStatement();
+//            statement.executeUpdate(CREATE_TABLE_TERMINAL);
+//            logger.info("Table created");
+//        } catch (SQLException e) {
+//            logger.severe(e.getMessage());
+//            throw new DaoException(e);
+//        }
+//    }
+
+
     @Override
-    public void createTable() {
-        try {
-            Statement statement = connection.createStatement();
-            statement.executeUpdate(CREATE_TABLE_TERMINAL);
-            logger.info("Table created");
-        } catch (SQLException e) {
-            logger.severe(e.getMessage());
-            throw new DaoException(e);
-        }
+    public boolean createTableQuery(String sql) {
+        return createTableService(sql);
     }
 
     @Override

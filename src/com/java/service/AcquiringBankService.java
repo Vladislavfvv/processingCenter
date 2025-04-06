@@ -48,8 +48,8 @@ public class AcquiringBankService implements ServiceInterface<AcquiringBank, Lon
     }
 
     @Override
-    public void createTable() {
-        acquiringBankDAO.createTable();
+    public void createTable(String sql) {
+        acquiringBankDAO.createTableQuery(sql);
     }
 
     @Override

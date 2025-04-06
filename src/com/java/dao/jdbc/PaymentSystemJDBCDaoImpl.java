@@ -3,7 +3,6 @@ package com.java.dao.jdbc;
 import com.java.dao.DAOAbstract;
 import com.java.dao.DAOInterface;
 import com.java.exception.DaoException;
-import com.java.model.CardStatus;
 import com.java.model.PaymentSystem;
 
 import java.sql.*;
@@ -16,7 +15,7 @@ public class PaymentSystemJDBCDaoImpl extends DAOAbstract implements DAOInterfac
 
     private static final Logger logger = Logger.getLogger(CardStatusJDBCDaoImpl.class.getName());
 
-    private static final String CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS processingCenterSchema.payment_system\n" +
+    private static final String CREATE_TABLE_PAYMENT_SYSTEM = "CREATE TABLE IF NOT EXISTS processingCenterSchema.payment_system\n" +
             "(\n" +
             "    id                  bigserial primary key,\n" +
             "    payment_system_name varchar(50) UNIQUE not null\n" +
@@ -44,7 +43,7 @@ public class PaymentSystemJDBCDaoImpl extends DAOAbstract implements DAOInterfac
         try {
             if (!DAOAbstract.isTableExists(connection, "payment_system")) {
                 logger.warning("Таблица payment_system не существует. Создаю...");
-                createTable();
+                createTableQuery(CREATE_TABLE_PAYMENT_SYSTEM);
             }
             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SQL, Statement.RETURN_GENERATED_KEYS);////второй параметр для получения идентификатора созданной сущности
             preparedStatement.setString(1, paymentSystem.getPaymentSystemName());
@@ -122,17 +121,23 @@ public class PaymentSystemJDBCDaoImpl extends DAOAbstract implements DAOInterfac
         }
     }
 
+//    @Override
+//    public void createTable() {
+//        try {
+//            Statement statement = connection.createStatement();
+//            statement.executeUpdate(CREATE_TABLE_SQL);
+//            logger.info("Table created");
+//        } catch (SQLException e) {
+//            logger.severe(e.getMessage());
+//            throw new DaoException(e);
+//        }
+//    }
+
     @Override
-    public void createTable() {
-        try {
-            Statement statement = connection.createStatement();
-            statement.executeUpdate(CREATE_TABLE_SQL);
-            logger.info("Table created");
-        } catch (SQLException e) {
-            logger.severe(e.getMessage());
-            throw new DaoException(e);
-        }
+    public boolean createTableQuery(String sql) {
+        return createTableService(CREATE_TABLE_PAYMENT_SYSTEM);
     }
+
 
     @Override
     public boolean deleteAll(String s) {

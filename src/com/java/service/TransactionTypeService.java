@@ -47,8 +47,8 @@ private final Connection connection;
     }
 
     @Override
-    public void createTable() {
-        transactionTypeDAO.createTable();
+    public void createTable(String sql) {
+        transactionTypeDAO.createTableQuery(sql);
 
     }
 

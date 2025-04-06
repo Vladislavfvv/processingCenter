@@ -47,7 +47,7 @@ public class TransactionTypeJDBCDaoImpl extends DAOAbstract implements DAOInterf
         try {
             if (!DAOAbstract.isTableExists(connection, "transaction_type")) {
                 logger.warning("Таблица transaction_type не существует. Создаю...");
-                createTable();
+                createTableQuery(CREATE_TABLE_TRANSACTION_TYPE);
             }
             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_TRANSACTION_TYPE, Statement.RETURN_GENERATED_KEYS);////второй параметр для получения идентификатора созданной сущности
             preparedStatement.setString(1, value.getTransactionTypeName());
@@ -126,17 +126,23 @@ public class TransactionTypeJDBCDaoImpl extends DAOAbstract implements DAOInterf
         }
     }
 
+//    @Override
+//    public void createTable() {
+//        try {
+//            Statement statement = connection.createStatement();
+//            statement.executeUpdate(CREATE_TABLE_TRANSACTION_TYPE);
+//            logger.info("Table created");
+//        } catch (SQLException e) {
+//            logger.severe(e.getMessage());
+//            throw new DaoException(e);
+//        }
+//    }
+
     @Override
-    public void createTable() {
-        try {
-            Statement statement = connection.createStatement();
-            statement.executeUpdate(CREATE_TABLE_TRANSACTION_TYPE);
-            logger.info("Table created");
-        } catch (SQLException e) {
-            logger.severe(e.getMessage());
-            throw new DaoException(e);
-        }
+    public boolean createTableQuery(String sql) {
+        return createTableService(sql);
     }
+
 
     @Override
     public boolean deleteAll(String s) {

@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 
+import static com.java.dao.DAOAbstract.createTableService;
+
 
 public class SalesPointJDBCDaoImpl implements DAOInterface<Long, SalesPoint> {
     private static final Logger logger = Logger.getLogger(SalesPointJDBCDaoImpl.class.getName());
@@ -48,6 +50,16 @@ public class SalesPointJDBCDaoImpl implements DAOInterface<Long, SalesPoint> {
 
    // private static final String JoinTables = "SELECT sp.id, sp.pos_name, sp.pos_address, sp.pos_inn, ab.id AS acquiring_bank_id, ab.bic, ab.abbreviatedName FROM SalesPoint sp JOIN AcquiringBank ab ON sp.acquiring_bank_id = ab.id;";
 
+    private static final String CREATE_TABLE_SALES_POINT = "CREATE TABLE IF NOT EXISTS processingCenterSchema.sales_point ("
+            + "id SERIAL PRIMARY KEY, "
+            + "pos_name VARCHAR(255) NOT NULL, "
+            + "pos_address VARCHAR(255) NOT NULL, "
+            + "pos_inn VARCHAR(12) NOT NULL, "
+            + "acquiring_bank_id BIGINT NOT NULL, "
+            + "CONSTRAINT fk_acquiring_bank FOREIGN KEY (acquiring_bank_id) REFERENCES processingCenterSchema.acquiring_bank(id) ON DELETE CASCADE ON UPDATE CASCADE);";
+
+
+
     private static final String FIND_BY_ID = "SELECT sp.id, sp.pos_name, sp.pos_address, sp.pos_inn, ab.id AS acquiring_bank_id, ab.bic, ab.abbreviated_name " +
             "FROM sales_point sp " +
             "JOIN acquiring_bank ab ON sp.acquiring_bank_id = ab.id " +
@@ -71,7 +83,7 @@ public class SalesPointJDBCDaoImpl implements DAOInterface<Long, SalesPoint> {
 
     private SalesPoint buildSalesPoint(ResultSet resultSet) throws SQLException {
         // Получаем банк из DAO
-        Optional<AcquiringBank> optionalBank = acquiringBankJDBCDao.findById(resultSet.getLong("acquiring_bank_id"), connection);
+        Optional<AcquiringBank> optionalBank = acquiringBankJDBCDao.findById(resultSet.getLong("acquiring_bank_id"));
         AcquiringBank acquiringBank = optionalBank.orElse(null);
 
 //        AcquiringBank acquiringBank = new AcquiringBank(
@@ -90,37 +102,38 @@ public class SalesPointJDBCDaoImpl implements DAOInterface<Long, SalesPoint> {
     }
 
 
-    @Override
-    public void createTable() {
-        try {
-            Statement statement = connection.createStatement();
-            String CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS processingCenterSchema.sales_point ("
-                    + "id SERIAL PRIMARY KEY, "
-                    + "pos_name VARCHAR(255) NOT NULL, "
-                    + "pos_address VARCHAR(255) NOT NULL, "
-                    + "pos_inn VARCHAR(12) NOT NULL, "
-                    + "acquiring_bank_id BIGINT NOT NULL, "
-                    + "CONSTRAINT fk_acquiring_bank FOREIGN KEY (acquiring_bank_id) REFERENCES processingCenterSchema.acquiring_bank(id) ON DELETE CASCADE ON UPDATE CASCADE);";
+//    @Override
+//    public void createTable() {
+//        try {
+//            Statement statement = connection.createStatement();
+//
+//            statement.executeUpdate(CREATE_TABLE_SALES_POINT);
+//            logger.info("Table created");
+//        } catch (SQLException e) {
+//            logger.severe(e.getMessage());
+//            throw new DaoException(e);
+//        }
+//    }
 
-            statement.executeUpdate(CREATE_TABLE_SQL);
-            logger.info("Table created");
-        } catch (SQLException e) {
-            logger.severe(e.getMessage());
-            throw new DaoException(e);
-        }
+
+    @Override
+    public boolean createTableQuery(String sql) {
+        return createTableService(CREATE_TABLE_SALES_POINT);
     }
+
+
 
     @Override
     public SalesPoint insert(SalesPoint value) {
         try {
             // Проверяем наличие таблицы перед вставкой
-            if (!DAOAbstract.isTableExists(connection, "acquiring_bank")) {
-                logger.warning("Таблица acquiring_bank не существует. Создаю...");
-                createTable();
-            }
+//            if (!DAOAbstract.isTableExists(connection, "acquiring_bank")) {
+//                logger.warning("Таблица acquiring_bank не существует. Создаю...");
+//                createTableQuery();
+//            }
             if (!DAOAbstract.isTableExists(connection, "sales_point")) {
                 logger.warning("Таблица sales_point не существует. Создаю...");
-                createTable();
+                createTableQuery(CREATE_TABLE_SALES_POINT);
             }
             String INSERT_SQL = "INSERT INTO processingCenterSchema.sales_point (pos_name, pos_address, pos_inn, acquiring_bank_id) VALUES (?, ?, ?, ?) RETURNING id";
             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SQL, Statement.RETURN_GENERATED_KEYS);//второй параметр для получения идентификатора созданной сущности

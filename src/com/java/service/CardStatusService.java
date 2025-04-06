@@ -46,8 +46,8 @@ public class CardStatusService implements ServiceInterface<CardStatus, Long> {
     }
 
     @Override
-    public void createTable() {
-        cardStatusDAO.createTable();
+    public void createTable(String sql) {
+        cardStatusDAO.createTableQuery(sql);
     }
 
     @Override

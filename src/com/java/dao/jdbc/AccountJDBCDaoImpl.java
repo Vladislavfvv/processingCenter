@@ -290,17 +290,12 @@ public class AccountJDBCDaoImpl extends DAOAbstract implements DAOInterface<Long
         }
     }
 
+
     @Override
-    public void createTable() {
-        try {
-            Statement statement = connection.createStatement();
-            statement.executeUpdate(CREATE_TABLE_ACCOUNT);
-            logger.info("Table created");
-        } catch (SQLException e) {
-            logger.severe(e.getMessage());
-            throw new DaoException(e);
-        }
+    public boolean createTableQuery(String sql) {
+        return createTableService(CREATE_TABLE_ACCOUNT);
     }
+
 
     @Override
     public boolean deleteAll(String s) {

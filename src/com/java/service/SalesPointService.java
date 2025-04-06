@@ -45,8 +45,8 @@ public class SalesPointService implements ServiceInterface<SalesPoint, Long> {
     }
 
     @Override
-    public void createTable() {
-        salesPointDAO.createTable();
+    public void createTable(String sql) {
+        salesPointDAO.createTableQuery(sql);
     }
 
     @Override

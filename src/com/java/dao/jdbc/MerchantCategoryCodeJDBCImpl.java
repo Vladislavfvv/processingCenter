@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 public class MerchantCategoryCodeJDBCImpl extends DAOAbstract implements DAOInterface<Long, MerchantCategoryCode> {
     private static final Logger logger = Logger.getLogger(MerchantCategoryCodeJDBCImpl.class.getName());
 
-    private static final String CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS processingCenterSchema.merchant_category_code\n" +
+    private static final String CREATE_TABLE_MERCHANT = "CREATE TABLE IF NOT EXISTS processingCenterSchema.merchant_category_code\n" +
             "(\n" +
             "    id       bigserial primary key,\n" +
             "    mcc      varchar(4) not null,\n" +
@@ -44,7 +44,7 @@ public class MerchantCategoryCodeJDBCImpl extends DAOAbstract implements DAOInte
         try {
             if (!DAOAbstract.isTableExists(connection, "merchant_category_code")) {
                 logger.warning("Таблица merchant_category_code не существует. Создаю...");
-                createTable();
+                createTableQuery(CREATE_TABLE_MERCHANT);
             }
             PreparedStatement preparedStatement = connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);////второй параметр для получения идентификатора созданной сущности
             preparedStatement.setString(1, value.getMcc());
@@ -134,17 +134,23 @@ public class MerchantCategoryCodeJDBCImpl extends DAOAbstract implements DAOInte
         }
     }
 
+//    @Override
+//    public void createTable() {
+//        try {
+//            Statement statement = connection.createStatement();
+//            statement.executeUpdate(CREATE_TABLE_SQL);
+//            logger.info("Table created");
+//        } catch (SQLException e) {
+//            logger.severe(e.getMessage());
+//            throw new DaoException(e);
+//        }
+//    }
+
     @Override
-    public void createTable() {
-        try {
-            Statement statement = connection.createStatement();
-            statement.executeUpdate(CREATE_TABLE_SQL);
-            logger.info("Table created");
-        } catch (SQLException e) {
-            logger.severe(e.getMessage());
-            throw new DaoException(e);
-        }
+    public boolean createTableQuery(String sql) {
+        return createTableService(CREATE_TABLE_MERCHANT);
     }
+
 
     @Override
     public boolean deleteAll(String s) {

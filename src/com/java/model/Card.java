@@ -19,6 +19,18 @@ public class Card{
     public Card() {
     }
 
+
+    public Card(String cardNumber, Date expirationDate, String holderName, CardStatus cardStatusId, PaymentSystem paymentSystemId, Account accountId, Timestamp receivedFromIssuingBank, Timestamp sentToIssuingBank) {
+        this.cardNumber = cardNumber;
+        this.expirationDate = expirationDate;
+        this.holderName = holderName;
+        this.cardStatusId = cardStatusId;
+        this.paymentSystemId = paymentSystemId;
+        this.accountId = accountId;
+        this.receivedFromIssuingBank = receivedFromIssuingBank;
+        this.sentToIssuingBank = sentToIssuingBank;
+    }
+
     public Card(Long id, String cardNumber, Date expirationDate, String holderName, CardStatus cardStatusId, PaymentSystem paymentSystemId, Account accountId, Timestamp receivedFromIssuingBank, Timestamp sentToIssuingBank) {
         this.id = id;
         this.cardNumber = cardNumber;
@@ -30,6 +42,9 @@ public class Card{
         this.receivedFromIssuingBank = receivedFromIssuingBank;
         this.sentToIssuingBank = sentToIssuingBank;
     }
+
+
+
 
     public Long getId() {
         return id;
@@ -44,6 +59,9 @@ public class Card{
     }
 
     public void setCardNumber(String cardNumber) {
+        if (cardNumber.length() > 50) {
+            throw new IllegalArgumentException("cardNumber не должен содержать более  50 символов.");
+        }
         this.cardNumber = cardNumber;
     }
 
@@ -60,6 +78,9 @@ public class Card{
     }
 
     public void setHolderName(String holderName) {
+        if (holderName.length() > 50) {
+            throw new IllegalArgumentException("holderName не должен содержать более  50 символов.");
+        }
         this.holderName = holderName;
     }
 

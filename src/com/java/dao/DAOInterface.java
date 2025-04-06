@@ -9,11 +9,10 @@ public interface DAOInterface<K, E> {
     boolean delete(K id);
     Optional<E> findById(K id);
     List<E> findAll();
-    void createTable();
+    boolean createTableQuery(String sql);
 
     boolean deleteAll(String s);
 
     boolean dropTable(String s);
-//    boolean dropTable();
-//    boolean deleteAll();
+
 }

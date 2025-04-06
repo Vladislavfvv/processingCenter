@@ -19,41 +19,41 @@ public class IssuingBankService implements ServiceInterface<IssuingBank, Long> {
 
     @Override
     public IssuingBank create(IssuingBank value) {
-        return null;
+        return issuingBankDAO.insert(value);
     }
 
     @Override
     public boolean update(IssuingBank value) {
-        return false;
+        return issuingBankDAO.update(value);
     }
 
     @Override
     public boolean delete(Long id) {
-        return false;
+        return issuingBankDAO.delete(id);
     }
 
     @Override
     public Optional<IssuingBank> findById(Long id) {
-        return Optional.empty();
+        return issuingBankDAO.findById(id);
     }
 
     @Override
     public List<IssuingBank> findAll() {
-        return List.of();
+        return issuingBankDAO.findAll();
     }
 
     @Override
-    public void createTable() {
-
+    public void createTable(String sql) {
+        issuingBankDAO.createTableQuery(sql);
     }
 
     @Override
     public boolean deleteAll(String s) {
-        return false;
+        return issuingBankDAO.deleteAll(s);
     }
 
     @Override
     public boolean dropTable(String s) {
-        return false;
+        return issuingBankDAO.dropTable(s);
     }
 }

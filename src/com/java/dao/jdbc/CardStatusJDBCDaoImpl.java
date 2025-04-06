@@ -15,15 +15,12 @@ public class CardStatusJDBCDaoImpl extends DAOAbstract implements DAOInterface<L
     private static final Logger logger = Logger.getLogger(CardStatusJDBCDaoImpl.class.getName());
 
 
-
     public CardStatusJDBCDaoImpl(Connection connection) {
         super(connection);
 
     }
 
-    private static final String CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS processingCenterSchema.card_status (id  bigserial primary key, card_status_name varchar(255) UNIQUE not null);";
-    private static final String CREATE_CARD_STATUS = "INSERT INTO card_status VALUES (?, ?)";
-    private static final String DELETE_CARD_STATUS = "DELETE FROM card_status WHERE id = ?";
+    private static final String CREATE_TABLE_CARD_STATUS = "CREATE TABLE IF NOT EXISTS processingCenterSchema.card_status (id  bigserial primary key, card_status_name varchar(255) UNIQUE not null);";
     private static final String GET_ALL_CARD_STATUS = "SELECT id, card_status_name FROM card_status";
     private static final String UPDATE_CARD_STATUS = "UPDATE card_status SET card_status_name = ? WHERE id = ?";
     private static final String GET_CARD_STATUS_BY_ID = "SELECT id, card_status_name FROM card_status WHERE id = ?";
@@ -40,7 +37,7 @@ public class CardStatusJDBCDaoImpl extends DAOAbstract implements DAOInterface<L
         try {
             if (!DAOAbstract.isTableExists(connection, "card_status")) {
                 logger.warning("Таблица card_status не существует. Создаю...");
-                createTable();
+                createTableQuery(CREATE_TABLE_CARD_STATUS);
             }
             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SQL, Statement.RETURN_GENERATED_KEYS);////второй параметр для получения идентификатора созданной сущности
             preparedStatement.setString(1, cardStatus.getCardStatusName());
@@ -119,18 +116,24 @@ public class CardStatusJDBCDaoImpl extends DAOAbstract implements DAOInterface<L
         }
     }
 
-    @Override
-    public void createTable() {
-        try {
-            Statement statement = connection.createStatement();
-            statement.executeUpdate(CREATE_TABLE_SQL);
-            logger.info("Table created");
-        } catch (SQLException e) {
-            logger.severe(e.getMessage());
-            throw new DaoException(e);
-        }
+//    @Override
+//    public void createTable() {
+//        try {
+//            Statement statement = connection.createStatement();
+//            statement.executeUpdate(CREATE_TABLE_SQL);
+//            logger.info("Table created");
+//        } catch (SQLException e) {
+//            logger.severe(e.getMessage());
+//            throw new DaoException(e);
+//        }
+//
+//    }
 
+    @Override
+    public boolean createTableQuery(String sql) {
+        return createTableService(CREATE_TABLE_CARD_STATUS);
     }
+
 
     @Override
     public boolean deleteAll(String s) {

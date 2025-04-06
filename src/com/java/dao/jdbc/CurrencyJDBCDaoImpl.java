@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 public class CurrencyJDBCDaoImpl extends DAOAbstract implements DAOInterface<Long, Currency> {
     private static final Logger logger = Logger.getLogger(CurrencyJDBCDaoImpl.class.getName());
 
-    private static final String CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS processingCenterSchema.currency\n" +
+    private static final String CREATE_TABLE_CURRENCY = "CREATE TABLE IF NOT EXISTS processingCenterSchema.currency\n" +
             "(\n" +
             "    id                    bigserial primary key,\n" +
             "    currency_digital_code varchar(3)   not null,\n" +
@@ -48,7 +48,7 @@ public class CurrencyJDBCDaoImpl extends DAOAbstract implements DAOInterface<Lon
         try {
             if (!DAOAbstract.isTableExists(connection, "response_code")) {
                 logger.warning("Таблица response_code не существует. Создаю...");
-                createTable();
+                createTableQuery(CREATE_TABLE_CURRENCY);
             }
             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_CURRENCY, Statement.RETURN_GENERATED_KEYS);////второй параметр для получения идентификатора созданной сущности
             preparedStatement.setString(1, currency.getCurrencyDigitalCode());
@@ -140,17 +140,23 @@ public class CurrencyJDBCDaoImpl extends DAOAbstract implements DAOInterface<Lon
         }
     }
 
+//    @Override
+//    public void createTable() {
+//        try {
+//            Statement statement = connection.createStatement();
+//            statement.executeUpdate(CREATE_TABLE_SQL);
+//            logger.info("Table created");
+//        } catch (SQLException e) {
+//            logger.severe(e.getMessage());
+//            throw new DaoException(e);
+//        }
+//    }
+
     @Override
-    public void createTable() {
-        try {
-            Statement statement = connection.createStatement();
-            statement.executeUpdate(CREATE_TABLE_SQL);
-            logger.info("Table created");
-        } catch (SQLException e) {
-            logger.severe(e.getMessage());
-            throw new DaoException(e);
-        }
+    public boolean createTableQuery(String sql) {
+        return createTableService(CREATE_TABLE_CURRENCY);
     }
+
 
     @Override
     public boolean deleteAll(String s) {

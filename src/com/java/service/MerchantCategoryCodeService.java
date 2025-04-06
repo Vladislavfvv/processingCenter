@@ -40,8 +40,8 @@ public class MerchantCategoryCodeService implements ServiceInterface<MerchantCat
     }
 
     @Override
-    public void createTable() {
-        merchantCategoryCodeDAO.createTable();
+    public void createTable(String sql) {
+        merchantCategoryCodeDAO.createTableQuery(sql);
     }
 
     @Override

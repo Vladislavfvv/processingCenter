@@ -49,7 +49,7 @@ public class IssuingBankJDBCDaoImpl extends DAOAbstract implements DAOInterface<
         try {
             if (!DAOAbstract.isTableExists(connection, "issuing_bank")) {
                 logger.warning("Таблица issuing_bank не существует. Создаю...");
-                createTable();
+                createTableQuery(CREATE_TABLE_ISSUING_BANK);
             }
             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_ISSUING_BANK, Statement.RETURN_GENERATED_KEYS);////второй параметр для получения идентификатора созданной сущности
             preparedStatement.setString(1, value.getBic());
@@ -147,17 +147,24 @@ public class IssuingBankJDBCDaoImpl extends DAOAbstract implements DAOInterface<
         }
     }
 
+//    @Override
+//    public void createTable() {
+//        try {
+//            Statement statement = connection.createStatement();
+//            statement.executeUpdate(CREATE_TABLE_ISSUING_BANK);
+//            logger.info("Table created");
+//        } catch (SQLException e) {
+//            logger.severe(e.getMessage());
+//            throw new DaoException(e);
+//        }
+//    }
+
     @Override
-    public void createTable() {
-        try {
-            Statement statement = connection.createStatement();
-            statement.executeUpdate(CREATE_TABLE_ISSUING_BANK);
-            logger.info("Table created");
-        } catch (SQLException e) {
-            logger.severe(e.getMessage());
-            throw new DaoException(e);
-        }
+    public boolean createTableQuery(String sql) {
+        return createTableService(CREATE_TABLE_ISSUING_BANK);
     }
+
+
 
     @Override
     public boolean deleteAll(String s) {

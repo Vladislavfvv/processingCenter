@@ -42,8 +42,8 @@ public class ResponseCodeService implements ServiceInterface<ResponseCode, Long>
     }
 
     @Override
-    public void createTable() {
-        responseCodeDAO.createTable();
+    public void createTable(String sql) {
+        responseCodeDAO.createTableQuery(sql);
     }
 
     @Override
