@@ -8,13 +8,14 @@ import java.sql.Connection;
 import java.util.List;
 import java.util.Optional;
 
-public class CardService {
+public class CardService implements ServiceInterface<Card, Long> {
     private final DAOInterface<Long, Card> cardDAO;
     private final Connection connection;
+
     public CardService(Connection connection) {
         // Получаем DAO через фабрику
-        this.connection = connection;
         this.cardDAO = DAOFactory.getCardDAO(connection);
+        this.connection = connection;
     }
 
     public Card create(Card card) {
@@ -35,5 +36,20 @@ public class CardService {
 
     public List<Card> findAll() {
         return cardDAO.findAll();
+    }
+
+    @Override
+    public void createTable() {
+        cardDAO.createTable();
+    }
+
+    @Override
+    public boolean deleteAll(String s) {
+        return cardDAO.deleteAll(s);
+    }
+
+    @Override
+    public boolean dropTable(String s) {
+        return cardDAO.dropTable(s);
     }
 }

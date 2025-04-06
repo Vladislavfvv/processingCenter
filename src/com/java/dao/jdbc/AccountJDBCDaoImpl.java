@@ -230,7 +230,6 @@ public class AccountJDBCDaoImpl extends DAOAbstract implements DAOInterface<Long
 
     @Override
     public Optional<Account> findById(Long key) {
-
         try (PreparedStatement ps = connection.prepareStatement(FIND_ACCOUNT_BY_ID2)) {
             ps.setLong(1, key);
             ResultSet rs = ps.executeQuery();
@@ -243,8 +242,8 @@ public class AccountJDBCDaoImpl extends DAOAbstract implements DAOInterface<Long
                 long currencyId = rs.getLong("currency_id");
                 long bankId = rs.getLong("issuing_bank_id");
 
-                currencyJDBCDaoImpl.findById(currencyId).ifPresent(account::setCurrencyId);
-                issuingBankJDBCDaoImpl.findById(bankId).ifPresent(account::setIssuingBankId);
+                currencyJDBCDaoImpl.findById(currencyId).ifPresent(currency -> account.setCurrencyId(currency));
+                issuingBankJDBCDaoImpl.findById(bankId).ifPresent(bank -> account.setIssuingBankId(bank));
 
                 logger.info("Найден Account с id = " + key);
                 return Optional.of(account);
