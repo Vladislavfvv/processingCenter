@@ -3,9 +3,8 @@ package com.java.dao.jdbc;
 import com.java.dao.DAOAbstract;
 import com.java.dao.DAOInterface;
 import com.java.exception.DaoException;
-import com.java.model.Currency;
 import com.java.model.IssuingBank;
-import com.java.util.ConnectionManager2;
+import com.java.util.ConnectionManager;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -28,7 +27,7 @@ public class IssuingBankJDBCDaoImpl extends DAOAbstract implements DAOInterface<
     private static final String UPDATE_ISSUING_BANK = "UPDATE issuing_bank SET bic = ?, bin = ?, abbreviated_name = ? WHERE id = ?";
     private static final String GET_ISSUING_BANK_BY_ID = "SELECT id, bic, bin, abbreviated_name FROM issuing_bank WHERE id = ?";
     private static final String DELETE_ISSUING_BANK_BY_ID = "DELETE FROM issuing_bank WHERE id = ?";
-    private static final String INSERT_ISSUING_BANK = "INSERT INTO issuing_bank VALUES (?, ?, ?)";
+    private static final String INSERT_ISSUING_BANK = "INSERT INTO issuing_bank(bic, bin, abbreviated_name) VALUES (?, ?, ?)";
 
 
     public IssuingBankJDBCDaoImpl(Connection connection) {
@@ -45,16 +44,31 @@ public class IssuingBankJDBCDaoImpl extends DAOAbstract implements DAOInterface<
     }
 
     @Override
-    public IssuingBank insert(IssuingBank value) {
+    public IssuingBank insert(IssuingBank issuingBank) {
         try {
             if (!DAOAbstract.isTableExists(connection, "issuing_bank")) {
                 logger.warning("Таблица issuing_bank не существует. Создаю...");
                 createTableQuery(CREATE_TABLE_ISSUING_BANK);
             }
+
+            // Проверяем, существует ли уже issuing_bank с такими же полями
+            String checkExistenceQuery = "SELECT COUNT(*) FROM issuing_bank WHERE bic = ? AND bin = ? AND abbreviated_name = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(checkExistenceQuery)) {
+                preparedStatement.setString(1, issuingBank.getBic());
+                preparedStatement.setString(2, issuingBank.getBin());
+                preparedStatement.setString(3, issuingBank.getAbbreviatedName());
+                ResultSet resultSet = preparedStatement.executeQuery();
+                if (resultSet.next() && resultSet.getInt(1) > 0) {
+                    logger.info("IssuingBank с параметрами: " + issuingBank.getBic() + ", " + issuingBank.getBic() + ", " + issuingBank.getAbbreviatedName() + " уже существует.");
+                    // Если статус уже существует, возвращаем его
+                    return issuingBank;
+                }
+            }
+
             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_ISSUING_BANK, Statement.RETURN_GENERATED_KEYS);////второй параметр для получения идентификатора созданной сущности
-            preparedStatement.setString(1, value.getBic());
-            preparedStatement.setString(2, value.getBin());
-            preparedStatement.setString(3, value.getAbbreviatedName());
+            preparedStatement.setString(1, issuingBank.getBic());
+            preparedStatement.setString(2, issuingBank.getBin());
+            preparedStatement.setString(3, issuingBank.getAbbreviatedName());
             preparedStatement.executeUpdate();
 
 //            ResultSet resultSet = preparedStatement.getGeneratedKeys();
@@ -65,10 +79,10 @@ public class IssuingBankJDBCDaoImpl extends DAOAbstract implements DAOInterface<
 //            }
             ResultSet resultSet = preparedStatement.getGeneratedKeys();
             if (resultSet.next()) {
-                value.setId(resultSet.getLong(1)); // Получаем сгенерированный id
-                logger.info("IssuingBank with id: " + value.getId() + " was added.");
+                issuingBank.setId(resultSet.getLong(1)); // Получаем сгенерированный id
+                logger.info("IssuingBank with id: " + issuingBank.getId() + " was added.");
             }
-            return value;
+            return issuingBank;
         } catch (SQLException e) {
             logger.severe(e.getMessage());
             throw new DaoException(e);
@@ -102,7 +116,7 @@ public class IssuingBankJDBCDaoImpl extends DAOAbstract implements DAOInterface<
 
     @Override
     public Optional<IssuingBank> findById(Long id) {
-            try (Connection connection = ConnectionManager2.open()) {
+            try (Connection connection = ConnectionManager.open()) {
                 return findById(id, connection);
             } catch (SQLException e) {
                 logger.severe(e.getMessage());
@@ -168,12 +182,17 @@ public class IssuingBankJDBCDaoImpl extends DAOAbstract implements DAOInterface<
 
     @Override
     public boolean deleteAll(String s) {
-        return deleteAllService("processingcenterschema.issuing_bank");
+        return deleteAllService(s);
     }
 
     @Override
     public boolean dropTable(String s) {
-        return dropTableService("processingcenterschema.issuing_bank");
+        return dropTableService(s);
+    }
+
+    @Override
+    public Optional<IssuingBank> findByValue(String cardNumber) {
+        return Optional.empty();
     }
 
 

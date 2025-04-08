@@ -25,7 +25,11 @@ public class CardStatusJDBCDaoImpl extends DAOAbstract implements DAOInterface<L
     private static final String UPDATE_CARD_STATUS = "UPDATE card_status SET card_status_name = ? WHERE id = ?";
     private static final String GET_CARD_STATUS_BY_ID = "SELECT id, card_status_name FROM card_status WHERE id = ?";
     private static final String DELETE_CARD_STATUS_BY_ID = "DELETE FROM card_status WHERE id = ?";
-    private static final String INSERT_SQL = "INSERT INTO card_status VALUES (?, ?)";
+    private static final String INSERT_SQL = "INSERT INTO card_status (card_status_name) VALUES (?)";
+//    private static final String INSERT_SQL = "INSERT INTO processingCenterSchema.card_status (card_status_name)\n" +
+//            "    VALUES (?)\n" +
+//            "    ON CONFLICT (card_status_name)\n" +
+//            "    DO UPDATE SET card_status_name = EXCLUDED.card_status_name;";
 
     private CardStatus buildCardStatus(ResultSet resultSet) throws SQLException {
         return new CardStatus(resultSet.getLong("id"),
@@ -39,16 +43,32 @@ public class CardStatusJDBCDaoImpl extends DAOAbstract implements DAOInterface<L
                 logger.warning("Таблица card_status не существует. Создаю...");
                 createTableQuery(CREATE_TABLE_CARD_STATUS);
             }
-            PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SQL, Statement.RETURN_GENERATED_KEYS);////второй параметр для получения идентификатора созданной сущности
-            preparedStatement.setString(1, cardStatus.getCardStatusName());
-            preparedStatement.executeUpdate();
 
-            ResultSet resultSet = preparedStatement.getGeneratedKeys();
-            if (resultSet.next()) {
-                cardStatus.setCardStatusName(resultSet.getString(1));
+            // Проверяем, существует ли уже статус с таким же cardStatusName
+            String checkExistenceQuery = "SELECT COUNT(*) FROM card_status WHERE card_status_name = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(checkExistenceQuery)) {
+                preparedStatement.setString(1, cardStatus.getCardStatusName());
+                ResultSet resultSet = preparedStatement.executeQuery();
+                if (resultSet.next() && resultSet.getInt(1) > 0) {
+                    logger.info("CardStatusName: " + cardStatus.getCardStatusName() + " уже существует.");
+                    // Если статус уже существует, возвращаем его
+                    return cardStatus;
+                }
             }
-            logger.info("cardStatus with cardStatusName: " + cardStatus.getCardStatusName() + " was added.");
-            return cardStatus;
+
+            // Вставка нового статуса, если такого еще нет
+            try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SQL, Statement.RETURN_GENERATED_KEYS)) {
+                preparedStatement.setString(1, cardStatus.getCardStatusName());
+                preparedStatement.executeUpdate();
+
+                // Получение сгенерированного ID для нового статуса
+                ResultSet resultSet = preparedStatement.getGeneratedKeys();
+                if (resultSet.next()) {
+                    cardStatus.setId(resultSet.getLong(1));
+                }
+                logger.info("cardStatus с cardStatusName: " + cardStatus.getCardStatusName() + " добавлен.");
+                return cardStatus;
+            }
         } catch (SQLException e) {
             logger.severe(e.getMessage());
             throw new DaoException(e);
@@ -60,7 +80,7 @@ public class CardStatusJDBCDaoImpl extends DAOAbstract implements DAOInterface<L
         try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_CARD_STATUS)) {
             preparedStatement.setString(1, cardStatus.getCardStatusName());
             preparedStatement.setLong(2, cardStatus.getId());
-            logger.info("cardStatus with cardStatusName: " + cardStatus.getCardStatusName() + " was updated.");
+            logger.info("cardStatus с cardStatusName: " + cardStatus.getCardStatusName() + " обновлен.");
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new DaoException("Ошибка при обновлении cardStatus", e);
@@ -89,7 +109,7 @@ public class CardStatusJDBCDaoImpl extends DAOAbstract implements DAOInterface<L
                 cardStatus = new CardStatus(resultSet.getLong("id"),
                         resultSet.getString("card_status_name"));
 
-                logger.info("cardStatus with cardStatusName: " + cardStatus.getCardStatusName() + " was found.");
+                logger.info("cardStatus с cardStatusName: " + cardStatus.getCardStatusName() + " найден.");
                 return Optional.ofNullable(cardStatus);
             } else {
                 return Optional.empty();
@@ -116,18 +136,6 @@ public class CardStatusJDBCDaoImpl extends DAOAbstract implements DAOInterface<L
         }
     }
 
-//    @Override
-//    public void createTable() {
-//        try {
-//            Statement statement = connection.createStatement();
-//            statement.executeUpdate(CREATE_TABLE_SQL);
-//            logger.info("Table created");
-//        } catch (SQLException e) {
-//            logger.severe(e.getMessage());
-//            throw new DaoException(e);
-//        }
-//
-//    }
 
     @Override
     public boolean createTableQuery(String sql) {
@@ -137,12 +145,17 @@ public class CardStatusJDBCDaoImpl extends DAOAbstract implements DAOInterface<L
 
     @Override
     public boolean deleteAll(String s) {
-        return deleteAllService("processingcenterschema.card_status");
+        return deleteAllService(s);
     }
 
     @Override
     public boolean dropTable(String s) {
-        return dropTableService("processingcenterschema.card_status");
+        return dropTableService(s);
+    }
+
+    @Override
+    public Optional<CardStatus> findByValue(String cardNumber) {
+        return Optional.empty();
     }
 
 //    private boolean isTableExists(Connection connection, String tableName) {

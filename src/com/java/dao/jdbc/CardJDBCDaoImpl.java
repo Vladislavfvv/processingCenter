@@ -61,7 +61,7 @@ public class CardJDBCDaoImpl extends DAOAbstract implements DAOInterface<Long, C
             "SET card_number = ?, expiration_date = ?, holder_name = ?, card_status_id = ?, payment_system_id = ?, account_id = ?, received_from_issuing_bank = ?, sent_to_issuing_bank = ?  WHERE id = ?";
 
     private static final String INSERT_CARD = "INSERT INTO processingCenterSchema.card (card_number, expiration_date, holder_name, card_status_id, payment_system_id, account_id, received_from_issuing_bank, sent_to_issuing_bank) " +
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id";
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id";
 
     private boolean validateCardReferences(Card value) throws SQLException {
         if (value == null || value.getCardStatusId() == null || value.getPaymentSystemId() == null || value.getAccountId() == null)
@@ -74,12 +74,12 @@ public class CardJDBCDaoImpl extends DAOAbstract implements DAOInterface<Long, C
 
 
     @Override
-    public Card insert(Card value) {
+    public Card insert(Card card) {
         Connection connection = this.connection;
         try {
             connection.setAutoCommit(false); // начинаем транзакцию
 
-            if (!validateCardReferences(value)) {
+            if (!validateCardReferences(card)) {
                 logger.warning("CARD требует доработки - не прошел валидацию");
                 connection.rollback();
                 return null;
@@ -115,22 +115,42 @@ public class CardJDBCDaoImpl extends DAOAbstract implements DAOInterface<Long, C
 //                return null;
 //            }
 
+            // Проверяем, существует ли уже валюта с такими же кодами
+            String checkExistenceQuery = "SELECT COUNT(*) FROM card WHERE card_number = ? AND expiration_date = ? AND holder_name = ? AND card_status_id = ? AND payment_system_id = ? AND account_id = ? AND received_from_issuing_bank = ? AND sent_to_issuing_bank = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(checkExistenceQuery)) {
+                preparedStatement.setString(1, card.getCardNumber());
+                preparedStatement.setDate(2, card.getExpirationDate());
+                preparedStatement.setString(3, card.getHolderName());
+                preparedStatement.setLong(4, card.getCardStatusId().getId());
+                preparedStatement.setLong(5, card.getPaymentSystemId().getId());
+                preparedStatement.setLong(6, card.getAccountId().getId());
+                preparedStatement.setTimestamp(7, card.getReceivedFromIssuingBank());
+                preparedStatement.setTimestamp(8, card.getSentToIssuingBank());
+                ResultSet resultSet = preparedStatement.executeQuery();
+                if (resultSet.next() && resultSet.getInt(1) > 0) {
+                    logger.info("Карта с card: " + card.getCardNumber() + " уже существует.");
+                    // Если валюта уже существует, возвращаем её
+                    return card;
+                }
+            }
+
+
             try (PreparedStatement ps = connection.prepareStatement(INSERT_CARD)) {
-                ps.setString(1, value.getCardNumber());
-                ps.setDate(2, value.getExpirationDate());
-                ps.setString(3, value.getHolderName());
-                ps.setLong(4, value.getCardStatusId().getId());
-                ps.setLong(5, value.getPaymentSystemId().getId());
-                ps.setLong(6, value.getAccountId().getId());
-                ps.setTimestamp(7, value.getReceivedFromIssuingBank());
-                ps.setTimestamp(8, value.getSentToIssuingBank());
+                ps.setString(1, card.getCardNumber());
+                ps.setDate(2, card.getExpirationDate());
+                ps.setString(3, card.getHolderName());
+                ps.setLong(4, card.getCardStatusId().getId());
+                ps.setLong(5, card.getPaymentSystemId().getId());
+                ps.setLong(6, card.getAccountId().getId());
+                ps.setTimestamp(7, card.getReceivedFromIssuingBank());
+                ps.setTimestamp(8, card.getSentToIssuingBank());
 
                 ResultSet rs = ps.executeQuery();
                 if (rs.next()) {
-                    value.setId(rs.getLong("id"));
+                    card.setId(rs.getLong("id"));
                     connection.commit();
-                    logger.info("Card успешно сохранен с id = " + value.getId());
-                    return value;
+                    logger.info("Card успешно сохранен с id = " + card.getId());
+                    return card;
                 } else {
                     connection.rollback();
                     logger.warning("Card не был сохранен (отсутствует сгенерированный id).");
@@ -156,78 +176,163 @@ public class CardJDBCDaoImpl extends DAOAbstract implements DAOInterface<Long, C
     }
 
     @Override
-    public boolean update(Card value) {
-        Connection connection = this.connection;
-        try {
-            connection.setAutoCommit(false);
+    public boolean update(Card card) {
+        if (card.getId() == null) {
+            throw new DaoException("Card ID is null, cannot update.");
+        }
+        String UPDATE_CARD_SQL = "UPDATE cards SET card_number = ?, expiration_date = ?, received_from_issuing_bank = ?, sent_to_issuing_bank = ?, card_status_id = ?, payment_system_id = ?, account_id = ? WHERE id = ?";
 
-            if (!validateCardReferences(value)) {
-                logger.warning("CARD требует доработки - не прошел валидацию");
-                connection.rollback();
+        try (PreparedStatement ps = connection.prepareStatement(UPDATE_CARD_SQL)) {
+            ps.setString(1, card.getCardNumber());
+            ps.setDate(2, card.getExpirationDate());
+            ps.setTimestamp(3, card.getReceivedFromIssuingBank());
+            ps.setTimestamp(4, card.getSentToIssuingBank());
+            ps.setLong(5, card.getCardStatusId().getId());  // Предположим, что это объект с ID
+            ps.setLong(6, card.getPaymentSystemId().getId());
+            ps.setLong(7, card.getAccountId().getId());
+            ps.setLong(8, card.getId());  // Используем ID карты для обновления
+
+            int rowsAffected = ps.executeUpdate();
+            if (rowsAffected > 0) {
+                logger.info("Card с id = " + card.getId() + " успешно обновлена.");
+                return true;
+            } else {
+                logger.warning("Не удалось обновить Card с id = " + card.getId());
                 return false;
             }
-
-
-//            // Проверка на null
-//            if (value == null || value.getCardStatusId() == null || value.getPaymentSystemId() == null || value.getAccountId() == null) {
-//                logger.warning("Card или его поля (card_status_id, payment_system_id, account_id) равны null. А так быть не должно");
-//                connection.rollback();
-//                return false;
-//            }
-//
-//            // Проверка существования кард-статуса
-//            if (cardStatusDAOImpl.findById(value.getCardStatusId().getId()).isEmpty()) {
-//                logger.warning("Кард-статус с id = " + value.getCardStatusId().getId() + " не найден.");
-//                connection.rollback();
-//                return false;
-//            }
-//
-//            // Проверка существования банка
-//            if (paymentSystemDAOImpl.findById(value.getPaymentSystemId().getId()).isEmpty()) {
-//                logger.warning("PaymentSystem с id = " + value.getPaymentSystemId().getId() + " не найден.");
-//                connection.rollback();
-//                return false;
-//            }
-
-            try (PreparedStatement ps = connection.prepareStatement(UPDATE_CARD)) {
-                ps.setString(1, value.getCardNumber());
-                ps.setDate(2, value.getExpirationDate());
-                ps.setString(3, value.getHolderName());
-                ps.setLong(4, value.getCardStatusId().getId());
-                ps.setLong(5, value.getPaymentSystemId().getId());
-                ps.setLong(6, value.getAccountId().getId());
-                ps.setTimestamp(7, value.getReceivedFromIssuingBank());
-                ps.setTimestamp(8, value.getSentToIssuingBank());
-
-
-                int updated = ps.executeUpdate();
-                if (updated == 1) {
-                    connection.commit();
-                    logger.info("Account с id = " + value.getId() + " обновлен.");
-                    return true;
-                } else {
-                    connection.rollback();
-                    logger.warning("Account с id = " + value.getId() + " не найден для обновления.");
-                    return false;
-                }
-
-            } catch (SQLException e) {
-                connection.rollback();
-                logger.severe("Ошибка при обновлении Account: " + e.getMessage());
-                throw new DaoException(e);
-            }
-
         } catch (SQLException e) {
-            logger.severe("Ошибка управления транзакцией: " + e.getMessage());
+            logger.severe("Ошибка при обновлении Card с id = " + card.getId() + ": " + e.getMessage());
             throw new DaoException(e);
-        } finally {
-            try {
-                connection.setAutoCommit(true);
-            } catch (SQLException e) {
-                logger.warning("Не удалось включить автокоммит: " + e.getMessage());
-            }
         }
     }
+
+
+//    @Override
+//    public boolean update(Card value) {
+//        Connection connection = this.connection;
+//        try {
+//            connection.setAutoCommit(false);
+//
+//            try (PreparedStatement ps = connection.prepareStatement(UPDATE_CARD)) {
+//                ps.setString(1, value.getCardNumber());
+//                ps.setDate(2, value.getExpirationDate());
+//                ps.setString(3, value.getHolderName());
+//                ps.setLong(4, value.getCardStatusId().getId());
+//                ps.setLong(5, value.getPaymentSystemId().getId());
+//                ps.setLong(6, value.getAccountId().getId());
+//                ps.setTimestamp(7, value.getReceivedFromIssuingBank());
+//                ps.setTimestamp(8, value.getSentToIssuingBank());
+//
+//                // Ensure that value.getId() is not null
+//                if (value.getId() != null) {
+//                    ps.setLong(9, value.getId()); // Set the id correctly
+//                } else {
+//                    throw new DaoException("Card ID is null, cannot update.");
+//                }
+//
+//                int updated = ps.executeUpdate();
+//                if (updated == 1) {
+//                    connection.commit();
+//                    logger.info("Account с id = " + value.getId() + " обновлен.");
+//                    return true;
+//                } else {
+//                    connection.rollback();
+//                    logger.warning("Account с id = " + value.getId() + " не найден для обновления.");
+//                    return false;
+//                }
+//
+//            } catch (SQLException e) {
+//                connection.rollback();
+//                logger.severe("Ошибка при обновлении Account: " + e.getMessage());
+//                throw new DaoException(e);
+//            }
+//
+//        } catch (SQLException e) {
+//            logger.severe("Ошибка управления транзакцией: " + e.getMessage());
+//            throw new DaoException(e);
+//        } finally {
+//            try {
+//                connection.setAutoCommit(true);
+//            } catch (SQLException e) {
+//                logger.warning("Не удалось включить автокоммит: " + e.getMessage());
+//            }
+//        }
+//    }
+
+
+//    @Override
+//    public boolean update(Card value) {
+//        Connection connection = this.connection;
+//        try {
+//            connection.setAutoCommit(false);
+//
+////            if (!validateCardReferences(value)) {
+////                logger.warning("CARD требует доработки - не прошел валидацию");
+////                connection.rollback();
+////                return false;
+////            }
+//
+//
+////            // Проверка на null
+////            if (value == null || value.getCardStatusId() == null || value.getPaymentSystemId() == null || value.getAccountId() == null) {
+////                logger.warning("Card или его поля (card_status_id, payment_system_id, account_id) равны null. А так быть не должно");
+////                connection.rollback();
+////                return false;
+////            }
+////
+////            // Проверка существования кард-статуса
+////            if (cardStatusDAOImpl.findById(value.getCardStatusId().getId()).isEmpty()) {
+////                logger.warning("Кард-статус с id = " + value.getCardStatusId().getId() + " не найден.");
+////                connection.rollback();
+////                return false;
+////            }
+////
+////            // Проверка существования банка
+////            if (paymentSystemDAOImpl.findById(value.getPaymentSystemId().getId()).isEmpty()) {
+////                logger.warning("PaymentSystem с id = " + value.getPaymentSystemId().getId() + " не найден.");
+////                connection.rollback();
+////                return false;
+////            }
+//
+//            try (PreparedStatement ps = connection.prepareStatement(UPDATE_CARD)) {
+//                ps.setString(1, value.getCardNumber());
+//                ps.setDate(2, value.getExpirationDate());
+//                ps.setString(3, value.getHolderName());
+//                ps.setLong(4, value.getCardStatusId().getId());
+//                ps.setLong(5, value.getPaymentSystemId().getId());
+//                ps.setLong(6, value.getAccountId().getId());
+//                ps.setTimestamp(7, value.getReceivedFromIssuingBank());
+//                ps.setTimestamp(8, value.getSentToIssuingBank());
+//
+//
+//                int updated = ps.executeUpdate();
+//                if (updated == 1) {
+//                    connection.commit();
+//                    logger.info("Account с id = " + value.getId() + " обновлен.");
+//                    return true;
+//                } else {
+//                    connection.rollback();
+//                    logger.warning("Account с id = " + value.getId() + " не найден для обновления.");
+//                    return false;
+//                }
+//
+//            } catch (SQLException e) {
+//                connection.rollback();
+//                logger.severe("Ошибка при обновлении Account: " + e.getMessage());
+//                throw new DaoException(e);
+//            }
+//
+//        } catch (SQLException e) {
+//            logger.severe("Ошибка управления транзакцией: " + e.getMessage());
+//            throw new DaoException(e);
+//        } finally {
+//            try {
+//                connection.setAutoCommit(true);
+//            } catch (SQLException e) {
+//                logger.warning("Не удалось включить автокоммит: " + e.getMessage());
+//            }
+//        }
+//    }
 
     @Override
     public boolean delete(Long key) {
@@ -326,12 +431,47 @@ public class CardJDBCDaoImpl extends DAOAbstract implements DAOInterface<Long, C
 
     @Override
     public boolean deleteAll(String s) {
-        return deleteAllService("processingcenterschema.card");
+        return deleteAllService(s);
     }
 
     @Override
     public boolean dropTable(String s) {
-        return dropTableService("processingcenterschema.account");
+        return dropTableService(s);
+    }
+
+    @Override
+    public Optional<Card> findByValue(String cardNumber) {
+        String FIND_CARD_BY_CARD_NUMBER = "SELECT * FROM cards WHERE card_number = ?";
+        try (PreparedStatement ps = connection.prepareStatement(FIND_CARD_BY_CARD_NUMBER)) {
+            ps.setString(1, cardNumber);  // Устанавливаем cardNumber как параметр запроса
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                Card card = new Card();
+                card.setId(rs.getLong("id"));
+                card.setCardNumber(rs.getString("card_number"));
+                card.setExpirationDate(rs.getDate("expiration_date"));
+                card.setReceivedFromIssuingBank(rs.getTimestamp("received_from_issuing_bank"));
+                card.setSentToIssuingBank(rs.getTimestamp("sent_to_issuing_bank"));
+
+                long cardStatusId = rs.getLong("card_status_id");
+                long paymentSystemId = rs.getLong("payment_system_id");
+                long accountId = rs.getLong("account_id");
+
+                cardStatusDAOImpl.findById(cardStatusId).ifPresent(cardStatus -> card.setCardStatusId(cardStatus));
+                paymentSystemDAOImpl.findById(paymentSystemId).ifPresent(paymentSystem -> card.setPaymentSystemId(paymentSystem));
+                accountDAOImpl.findById(accountId).ifPresent(account -> card.setAccountId(account));
+
+                logger.info("Найдена Card с cardNumber = " + cardNumber);
+                return Optional.of(card);
+            } else {
+                logger.warning("Card с cardNumber = " + cardNumber + " не найдена.");
+                return Optional.empty();
+            }
+        } catch (SQLException e) {
+            logger.severe("Ошибка при поиске Card с cardNumber = " + cardNumber + ": " + e.getMessage());
+            throw new DaoException(e);
+        }
     }
 
 

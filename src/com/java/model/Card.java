@@ -43,9 +43,6 @@ public class Card{
         this.sentToIssuingBank = sentToIssuingBank;
     }
 
-
-
-
     public Long getId() {
         return id;
     }

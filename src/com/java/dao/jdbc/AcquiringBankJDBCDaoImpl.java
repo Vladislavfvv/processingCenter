@@ -4,7 +4,7 @@ import com.java.dao.DAOAbstract;
 import com.java.dao.DAOInterface;
 import com.java.exception.DaoException;
 import com.java.model.AcquiringBank;
-import com.java.util.ConnectionManager2;
+import com.java.util.ConnectionManager;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -84,7 +84,7 @@ public class AcquiringBankJDBCDaoImpl extends DAOAbstract implements DAOInterfac
     //Если подключен ломбок - использовать аннотацию сникесроуз
     @Override
     public Optional<AcquiringBank> findById(Long id) {
-        try (Connection connection = ConnectionManager2.open()) {
+        try (Connection connection = ConnectionManager.open()) {
             return findById(id, connection);
         } catch (SQLException e) {
             logger.severe(e.getMessage());
@@ -189,12 +189,17 @@ public class AcquiringBankJDBCDaoImpl extends DAOAbstract implements DAOInterfac
 
     @Override
     public boolean deleteAll(String s) {
-        return DAOAbstract.deleteAllService("processingcenterschema.acquiring_bank");
+        return deleteAllService(s);
     }
 
     @Override
     public boolean dropTable(String s) {
-        return DAOAbstract.dropTableService("processingcenterschema.acquiring_bank");
+        return dropTableService(s);
+    }
+
+    @Override
+    public Optional<AcquiringBank> findByValue(String cardNumber) {
+        return Optional.empty();
     }
 
 

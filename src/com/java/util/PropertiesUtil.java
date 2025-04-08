@@ -1,20 +1,19 @@
 package com.java.util;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Properties;
 
-public final class PropertiesUtil2 {
+public final class PropertiesUtil {
     private static final Properties PROPERTIES = new Properties();
 
     static {
-        System.out.println("Загрузка db.properties...");
-        InputStream inputStream = PropertiesUtil2.class.getClassLoader().getResourceAsStream("db.properties");
-        System.out.println("inputStream = " + inputStream);
+        System.out.println("Загрузка application.properties...");
+       // InputStream inputStream = PropertiesUtil2.class.getClassLoader().getResourceAsStream("db.properties");
+        //System.out.println("inputStream = " + inputStream);
         loadProperties();
     }
 
-    private PropertiesUtil2() {
+    private PropertiesUtil() {
     }
 
     public static String get(String key) {
@@ -22,7 +21,7 @@ public final class PropertiesUtil2 {
     }
 
     private static void loadProperties() {
-        try(var inputStream = PropertiesUtil2.class.getClassLoader().getResourceAsStream("application.properties"))
+        try(var inputStream = PropertiesUtil.class.getClassLoader().getResourceAsStream("application.properties"))
         {
             PROPERTIES.load(inputStream);
         }catch (IOException e){

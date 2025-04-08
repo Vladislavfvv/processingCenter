@@ -3,6 +3,8 @@ package com.java.service;
 import com.java.dao.DAOFactory;
 import com.java.dao.DAOInterface;
 import com.java.model.Account;
+import com.java.model.Currency;
+import com.java.model.IssuingBank;
 
 import java.sql.Connection;
 import java.util.Collection;
@@ -12,11 +14,15 @@ import java.util.Optional;
 public class AccountService  implements ServiceInterface<Account, Long>{
 
     private final DAOInterface<Long, Account> accountDao;
+    private final DAOInterface<Long, Currency> currencyDao;
+    private final DAOInterface<Long, IssuingBank> issuingBankDao;
     private final Connection connection;
 
     public AccountService(Connection connection) {
-        this.accountDao = DAOFactory.getAccountDAO(connection);
         this.connection = connection;
+        this.accountDao = DAOFactory.getAccountDAO(connection);
+        this.currencyDao = DAOFactory.getCurrencyDAO(connection);
+        this.issuingBankDao = DAOFactory.getIssuingBankDAO(connection);
     }
 
 
@@ -58,5 +64,21 @@ public class AccountService  implements ServiceInterface<Account, Long>{
     @Override
     public boolean dropTable(String s) {
         return accountDao.dropTable(s);
+    }
+
+    public Currency getCurrencyByLetterCode(String code) {
+        return currencyDao.findAll()
+                .stream()
+                .filter(c -> c.getCurrencyLetterCode().equalsIgnoreCase(code))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public IssuingBank getIssuingBankByName(String name) {
+        return issuingBankDao.findAll()
+                .stream()
+                .filter(b -> b.getAbbreviatedName().equalsIgnoreCase(name))
+                .findFirst()
+                .orElse(null);
     }
 }

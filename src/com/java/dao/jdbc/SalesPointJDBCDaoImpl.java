@@ -6,7 +6,7 @@ import com.java.dao.DAOInterface;
 import com.java.exception.DaoException;
 import com.java.model.AcquiringBank;
 import com.java.model.SalesPoint;
-import com.java.util.ConnectionManager2;
+import com.java.util.ConnectionManager;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -14,10 +14,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 
-import static com.java.dao.DAOAbstract.createTableService;
 
 
-public class SalesPointJDBCDaoImpl implements DAOInterface<Long, SalesPoint> {
+
+public class SalesPointJDBCDaoImpl extends DAOAbstract implements DAOInterface<Long, SalesPoint> {
     private static final Logger logger = Logger.getLogger(SalesPointJDBCDaoImpl.class.getName());
     private final Connection connection;
     private final DAOInterface<Long, AcquiringBank> acquiringBankJDBCDao;
@@ -29,21 +29,14 @@ public class SalesPointJDBCDaoImpl implements DAOInterface<Long, SalesPoint> {
 //    }
 
     public SalesPointJDBCDaoImpl(Connection connection ) {
+        super(connection);
         this.connection = connection;
        // DAOAbstract daoAbstract = new DAOAbstract(connection);
         this.acquiringBankJDBCDao = DAOFactory.getAcquiringBankDAO(connection); // Инициализируем DAO после получения connection
 
     }
 
-    @Override
-    public boolean deleteAll(String s) {
-        return DAOAbstract.deleteAllService("processingcenterschema.sales_point");
-    }
 
-    @Override
-    public boolean dropTable(String s) {
-        return DAOAbstract.dropTableService("processingcenterschema.sales_point");
-    }
 
 
     // private static final String FIND_BY_ID = "SELECT id, pos_name, pos_address, pos_inn, acquiring_bank_id, bic, abbreviatedName FROM salespoint";
@@ -250,7 +243,7 @@ public class SalesPointJDBCDaoImpl implements DAOInterface<Long, SalesPoint> {
 
     @Override
     public Optional<SalesPoint> findById(Long key) {
-        try (Connection connection = ConnectionManager2.open()) {
+        try (Connection connection = ConnectionManager.open()) {
             return findById(key, connection);
         } catch (SQLException e) {
             logger.severe(e.getMessage());
@@ -355,4 +348,21 @@ public class SalesPointJDBCDaoImpl implements DAOInterface<Long, SalesPoint> {
 //    public boolean deleteAll() {
 //        return false;
 //    }
+
+
+
+    @Override
+    public boolean deleteAll(String s) {
+        return deleteAllService(s);
+    }
+
+    @Override
+    public boolean dropTable(String s) {
+        return dropTableService(s);
+    }
+
+    @Override
+    public Optional<SalesPoint> findByValue(String cardNumber) {
+        return Optional.empty();
+    }
 }

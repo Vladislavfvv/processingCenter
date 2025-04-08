@@ -4,7 +4,7 @@ import com.java.dao.DAOAbstract;
 import com.java.dao.DAOInterface;
 import com.java.exception.DaoException;
 import com.java.model.MerchantCategoryCode;
-import com.java.util.ConnectionManager2;
+import com.java.util.ConnectionManager;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -90,7 +90,7 @@ public class MerchantCategoryCodeJDBCImpl extends DAOAbstract implements DAOInte
 
     @Override
     public Optional<MerchantCategoryCode> findById(Long id) {
-        try (Connection connection = ConnectionManager2.open()) {
+        try (Connection connection = ConnectionManager.open()) {
             return findById(id, connection);
         } catch (SQLException e) {
             logger.severe(e.getMessage());
@@ -154,12 +154,17 @@ public class MerchantCategoryCodeJDBCImpl extends DAOAbstract implements DAOInte
 
     @Override
     public boolean deleteAll(String s) {
-        return deleteAllService("processingcenterschema.merchant_category_code");
+        return deleteAllService(s);
     }
 
     @Override
     public boolean dropTable(String s) {
-        return dropTableService("processingcenterschema.merchant_category_code");
+        return dropTableService(s);
+    }
+
+    @Override
+    public Optional<MerchantCategoryCode> findByValue(String cardNumber) {
+        return Optional.empty();
     }
 
 

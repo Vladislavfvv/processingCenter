@@ -15,4 +15,5 @@ public interface DAOInterface<K, E> {
 
     boolean dropTable(String s);
 
+    Optional<E> findByValue(String cardNumber);
 }

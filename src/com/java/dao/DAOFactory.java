@@ -3,14 +3,14 @@ package com.java.dao;
 import com.java.dao.jdbc.*;
 import com.java.model.*;
 import com.java.model.Currency;
-import com.java.util.ConnectionManager2;
+import com.java.util.ConnectionManager;
 
 import java.sql.Connection;
 
 //DAOFactory всегда получает соединение извне и не хранит его внутри.
 
 public class DAOFactory {
-     private static final Connection connection = ConnectionManager2.open();
+     private static final Connection connection = ConnectionManager.open();
 
 
     public static DAOInterface<Long, Card> getCardDAO(Connection connection) {
@@ -68,6 +68,6 @@ public class DAOFactory {
     }
 
         public static void closeConnection() {
-        ConnectionManager2.close(connection);
+        ConnectionManager.close(connection);
     }
 }

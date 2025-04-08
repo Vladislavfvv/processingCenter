@@ -331,11 +331,16 @@ public class TransactionJDBCDaoImpl extends DAOAbstract implements DAOInterface<
 
     @Override
     public boolean deleteAll(String s) {
-        return deleteAllService("processingcenterschema.transaction");
+        return deleteAllService(s);
     }
 
     @Override
     public boolean dropTable(String s) {
-        return dropTableService("processingcenterschema.transaction");
+        return dropTableService(s);
+    }
+
+    @Override
+    public Optional<Transaction> findByValue(String cardNumber) {
+        return Optional.empty();
     }
 }

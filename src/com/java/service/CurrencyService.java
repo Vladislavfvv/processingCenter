@@ -13,8 +13,8 @@ import java.util.logging.Logger;
 
 public class CurrencyService implements ServiceInterface<Currency, Long> {
     Logger logger = Logger.getLogger(CurrencyService.class.getName());
-    private final DAOInterface<Long, Currency> currencyDAO;
     private final Connection connection;
+    private final DAOInterface<Long, Currency> currencyDAO;
 
     public CurrencyService(Connection connection) {
         this.currencyDAO = DAOFactory.getCurrencyDAO(connection);
@@ -53,12 +53,19 @@ public class CurrencyService implements ServiceInterface<Currency, Long> {
 
     @Override
     public boolean deleteAll(String s) {
-        return deleteAll(s);
+        return currencyDAO.deleteAll(s);
     }
 
     @Override
     public boolean dropTable(String s) {
-        return dropTable(s);
+        return currencyDAO.dropTable(s);
     }
+
+//    public Optional<Currency> findByCode(String code) {
+//        return currencyDAO.findAll().stream()
+//                .filter(c -> code.equalsIgnoreCase(c.getCode()))
+//                .findFirst();
+//    }
+
 
 }

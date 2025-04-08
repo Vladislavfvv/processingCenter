@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public final class ConnectionManager2 {
+public final class ConnectionManager {
     private static final String URL_KEY = "db.url";
     private static final String USER_KEY = "db.user";
     private static final String PASSWORD_KEY = "db.password";
@@ -17,7 +17,7 @@ public final class ConnectionManager2 {
 
     static {
         try {
-            MAX_POOL_SIZE = Integer.parseInt(PropertiesUtil2.get("pool.size"));
+            MAX_POOL_SIZE = Integer.parseInt(PropertiesUtil.get("pool.size"));
         } catch (NumberFormatException e) {
             throw new RuntimeException("Ошибка парсинга pool.size. Убедитесь, что значение является числом.", e);
         }
@@ -25,7 +25,7 @@ public final class ConnectionManager2 {
         initializePool();
     }
 
-    private ConnectionManager2() {
+    private ConnectionManager() {
     }
 
 //    public static Connection open() {
@@ -42,9 +42,9 @@ public final class ConnectionManager2 {
     private static Connection createConnection() {
         try {
             return DriverManager.getConnection(
-                    PropertiesUtil2.get(URL_KEY),
-                    PropertiesUtil2.get(USER_KEY),
-                    PropertiesUtil2.get(PASSWORD_KEY));
+                    PropertiesUtil.get(URL_KEY),
+                    PropertiesUtil.get(USER_KEY),
+                    PropertiesUtil.get(PASSWORD_KEY));
         } catch (SQLException e) {
             throw new RuntimeException("Ошибка при создании соединения", e);
         }
@@ -52,8 +52,10 @@ public final class ConnectionManager2 {
 
     // Инициализация пула соединений
     private static void initializePool() {
+      //  System.out.println("Инициализация пула потоков размером: " + MAX_POOL_SIZE);
         for (int i = 0; i < MAX_POOL_SIZE; i++) {
             connectionPool.add(createConnection());
+            //  System.out.println("Соединение " + (i + 1) + " создано и добавлено в пул.");
         }
     }
 

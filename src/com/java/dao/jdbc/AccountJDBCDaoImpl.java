@@ -85,45 +85,60 @@ public class AccountJDBCDaoImpl extends DAOAbstract implements DAOInterface<Long
     }
 
     @Override
-    public Account insert(Account value) {
+    public Account insert(Account account) {
         try {
             connection.setAutoCommit(false); // начинаем транзакцию
 
-            // Проверка на null
-            if (value == null || value.getCurrencyId() == null || value.getIssuingBankId() == null) {
-                logger.warning("Account или его поля (currency/issuingBank) равны null.");
-                connection.rollback();
-                return null;
-            }
+//            // Проверка на null
+//            if (value == null || value.getCurrencyId() == null || value.getIssuingBankId() == null) {
+//                logger.warning("Account или его поля (currency/issuingBank) равны null.");
+//                connection.rollback();
+//                return null;
+//            }
 
-            // Проверка на существование валюты
-            Optional<Currency> optionalCurrency = currencyJDBCDaoImpl.findById(value.getCurrencyId().getId());
-            if (optionalCurrency.isEmpty()) {
-                logger.warning("Валюта с id = " + value.getCurrencyId().getId() + " не найдена.");
-                connection.rollback();
-                return null;
-            }
+//            // Проверка на существование валюты
+//            Optional<Currency> optionalCurrency = currencyJDBCDaoImpl.findById(value.getCurrencyId().getId());
+//            if (optionalCurrency.isEmpty()) {
+//                logger.warning("Валюта с id = " + value.getCurrencyId().getId() + " не найдена.");
+//                connection.rollback();
+//                return null;
+//            }
+//
+//            // Проверка на существование банка
+//            Optional<IssuingBank> optionalIssuingBank = issuingBankJDBCDaoImpl.findById(value.getIssuingBankId().getId());
+//            if (optionalIssuingBank.isEmpty()) {
+//                logger.warning("IssuingBank с id = " + value.getIssuingBankId().getId() + " не найден.");
+//                connection.rollback();
+//                return null;
+//            }
 
-            // Проверка на существование банка
-            Optional<IssuingBank> optionalIssuingBank = issuingBankJDBCDaoImpl.findById(value.getIssuingBankId().getId());
-            if (optionalIssuingBank.isEmpty()) {
-                logger.warning("IssuingBank с id = " + value.getIssuingBankId().getId() + " не найден.");
-                connection.rollback();
-                return null;
+            String checkExistenceQuery = "SELECT COUNT(*) FROM account WHERE account_number = ? AND balance = ? AND currency_id = ? AND issuing_bank_id = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(checkExistenceQuery)) {
+                preparedStatement.setString(1, account.getAccountNumber());
+                preparedStatement.setBigDecimal(2, account.getBalance());
+                preparedStatement.setLong(3, account.getCurrencyId().getId());
+                preparedStatement.setLong(4, account.getIssuingBankId().getId());
+
+                ResultSet resultSet = preparedStatement.executeQuery();
+                if (resultSet.next() && resultSet.getInt(1) > 0) {
+                    logger.info("account с account: " + account.getAccountNumber() + " уже существует.");
+                    // Если акаунт уже существует, возвращаем её
+                    return account;
+                }
             }
 
             try (PreparedStatement ps = connection.prepareStatement(INSERT_ACCOUNT)) {
-                ps.setString(1, value.getAccountNumber());
-                ps.setBigDecimal(2, value.getBalance());
-                ps.setLong(3, value.getCurrencyId().getId());
-                ps.setLong(4, value.getIssuingBankId().getId());
+                ps.setString(1, account.getAccountNumber());
+                ps.setBigDecimal(2, account.getBalance());
+                ps.setLong(3, account.getCurrencyId().getId());
+                ps.setLong(4, account.getIssuingBankId().getId());
 
                 ResultSet rs = ps.executeQuery();
                 if (rs.next()) {
-                    value.setId(rs.getLong("id"));
+                    account.setId(rs.getLong("id"));
                     connection.commit();
-                    logger.info("Account успешно вставлен с id = " + value.getId());
-                    return value;
+                    logger.info("Account успешно вставлен с id = " + account.getId());
+                    return account;
                 } else {
                     connection.rollback();
                     logger.warning("Account не был вставлен (отсутствует сгенерированный id).");
@@ -153,25 +168,40 @@ public class AccountJDBCDaoImpl extends DAOAbstract implements DAOInterface<Long
         try {
             connection.setAutoCommit(false);
 
-            // Проверка на null
-            if (value == null || value.getCurrencyId() == null || value.getIssuingBankId() == null) {
-                logger.warning("Account или его поля (currency/issuingBank) равны null.");
-                connection.rollback();
-                return false;
-            }
+//            // Проверка на null
+//            if (value == null || value.getCurrencyId() == null || value.getIssuingBankId() == null) {
+//                logger.warning("Account или его поля (currency/issuingBank) равны null.");
+//                connection.rollback();
+//                return false;
+//            }
+//
+//            // Проверка существования валюты
+//            if (currencyJDBCDaoImpl.findById(value.getCurrencyId().getId()).isEmpty()) {
+//                logger.warning("Валюта с id = " + value.getCurrencyId().getId() + " не найдена.");
+//                connection.rollback();
+//                return false;
+//            }
+//
+//            // Проверка существования банка
+//            if (issuingBankJDBCDaoImpl.findById(value.getIssuingBankId().getId()).isEmpty()) {
+//                logger.warning("IssuingBank с id = " + value.getIssuingBankId().getId() + " не найден.");
+//                connection.rollback();
+//                return false;
+//            }
 
-            // Проверка существования валюты
-            if (currencyJDBCDaoImpl.findById(value.getCurrencyId().getId()).isEmpty()) {
-                logger.warning("Валюта с id = " + value.getCurrencyId().getId() + " не найдена.");
-                connection.rollback();
-                return false;
-            }
+            String checkExistenceQuery = "SELECT COUNT(*) FROM account WHERE account_number = ? AND balance = ? AND currency_id = ? AND issuing_bank_id = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(checkExistenceQuery)) {
+                preparedStatement.setString(1, value.getAccountNumber());
+                preparedStatement.setBigDecimal(2, value.getBalance());
+                preparedStatement.setLong(3, value.getCurrencyId().getId());
+                preparedStatement.setLong(4, value.getIssuingBankId().getId());
 
-            // Проверка существования банка
-            if (issuingBankJDBCDaoImpl.findById(value.getIssuingBankId().getId()).isEmpty()) {
-                logger.warning("IssuingBank с id = " + value.getIssuingBankId().getId() + " не найден.");
-                connection.rollback();
-                return false;
+                ResultSet resultSet = preparedStatement.executeQuery();
+                if (resultSet.next() && resultSet.getInt(1) > 0) {
+                    logger.info("account с account: " + value.getAccountNumber() + " уже существует.");
+                    // Если акаунт уже существует, возвращаем её
+                    return false;
+                }
             }
 
             try (PreparedStatement ps = connection.prepareStatement(UPDATE_ACCOUNT)) {
@@ -299,12 +329,17 @@ public class AccountJDBCDaoImpl extends DAOAbstract implements DAOInterface<Long
 
     @Override
     public boolean deleteAll(String s) {
-        return deleteAllService("processingcenterschema.account");
+        return deleteAllService(s);
     }
 
     @Override
     public boolean dropTable(String tableName) {
-        return dropTableService("processingcenterschema.account");
+        return dropTableService(tableName);
+    }
+
+    @Override
+    public Optional<Account> findByValue(String cardNumber) {
+        return Optional.empty();
     }
 
 }

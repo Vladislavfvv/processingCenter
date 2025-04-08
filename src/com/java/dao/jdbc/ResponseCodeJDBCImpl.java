@@ -151,11 +151,16 @@ public class ResponseCodeJDBCImpl extends DAOAbstract implements DAOInterface<Lo
 
     @Override
     public boolean deleteAll(String s) {
-        return deleteAllService("processingcenterschema.response_code");
+        return deleteAllService(s);
     }
 
     @Override
     public boolean dropTable(String s) {
-        return dropTableService("processingcenterschema.card_status");
+        return dropTableService(s);
+    }
+
+    @Override
+    public Optional<ResponseCode> findByValue(String cardNumber) {
+        return Optional.empty();
     }
 }

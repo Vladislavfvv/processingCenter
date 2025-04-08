@@ -7,7 +7,7 @@ import java.sql.*;
 
 import com.java.exception.DaoException;
 import com.java.model.Currency;
-import com.java.util.ConnectionManager2;
+import com.java.util.ConnectionManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +29,7 @@ public class CurrencyJDBCDaoImpl extends DAOAbstract implements DAOInterface<Lon
     private static final String UPDATE_CURRENCY = "UPDATE currency SET currency_digital_code = ?, currency_letter_code = ?, currency_name = ? WHERE id = ?";
     private static final String GET_CURRENCY_BY_ID = "SELECT id, currency_digital_code, currency_letter_code, currency_name FROM currency WHERE id = ?";
     private static final String DELETE_CURRENCY_BY_ID = "DELETE FROM currency WHERE id = ?";
-    private static final String INSERT_CURRENCY = "INSERT INTO currency VALUES (?, ?, ?)";
+    private static final String INSERT_CURRENCY = "INSERT INTO currency(currency_digital_code, currency_letter_code, currency_name) VALUES (?, ?, ?)";
 
     public CurrencyJDBCDaoImpl(Connection connection) {
         super(connection);
@@ -43,26 +43,85 @@ public class CurrencyJDBCDaoImpl extends DAOAbstract implements DAOInterface<Lon
         );
     }
 
+//    @Override
+//    public Currency insert(Currency currency) {
+//        try {
+//            if (!DAOAbstract.isTableExists(connection, "currency")) {
+//                logger.warning("Таблица currency не существует. Создаю...");
+//                createTableQuery(CREATE_TABLE_CURRENCY);
+//            }
+//
+//            // Проверяем, существует ли уже currency с таким же currency
+//            String checkExistenceQuery = "SELECT COUNT(*) FROM currency WHERE currency_digital_code = ? AND currency_letter_code = ? AND currency_name = ?";
+//            try (PreparedStatement preparedStatement = connection.prepareStatement(checkExistenceQuery)) {
+//                preparedStatement.setString(1, currency.getCurrencyDigitalCode());
+//                preparedStatement.setString(2, currency.getCurrencyLetterCode());
+//                preparedStatement.setString(3, currency.getCurrencyName());
+//                ResultSet resultSet = preparedStatement.executeQuery();
+//                System.out.println(preparedStatement);
+//                if (resultSet.next() && resultSet.getInt(1) > 0) {
+//                    logger.info("Статус с currency: " + currency.getCurrencyName() + " уже существует.");
+//                    // Если статус уже существует, возвращаем его
+//                    return currency;
+//                }
+//            }
+//
+//
+//            PreparedStatement preparedStatement = connection.prepareStatement(INSERT_CURRENCY, Statement.RETURN_GENERATED_KEYS);////второй параметр для получения идентификатора созданной сущности
+//            preparedStatement.setString(1, currency.getCurrencyDigitalCode());
+//            preparedStatement.setString(2, currency.getCurrencyLetterCode());
+//            preparedStatement.setString(3, currency.getCurrencyName());
+//            preparedStatement.executeUpdate();
+//
+//            ResultSet resultSet = preparedStatement.getGeneratedKeys();
+//            if (resultSet.next()) {
+//                currency.setCurrencyDigitalCode(resultSet.getString(1));
+//                currency.setCurrencyLetterCode(resultSet.getString(2));
+//                currency.setCurrencyName(resultSet.getString(3));
+//                currency.setId(resultSet.getLong(1));
+//            }
+//            logger.info("currency with CurrencyName: " + currency.getCurrencyName() + " was added.");
+//            return currency;
+//        } catch (SQLException e) {
+//            logger.severe(e.getMessage());
+//            throw new DaoException(e);
+//        }
+//    }
+
     @Override
     public Currency insert(Currency currency) {
         try {
-            if (!DAOAbstract.isTableExists(connection, "response_code")) {
-                logger.warning("Таблица response_code не существует. Создаю...");
+            if (!DAOAbstract.isTableExists(connection, "currency")) {
+                logger.warning("Таблица currency не существует. Создаю...");
                 createTableQuery(CREATE_TABLE_CURRENCY);
             }
-            PreparedStatement preparedStatement = connection.prepareStatement(INSERT_CURRENCY, Statement.RETURN_GENERATED_KEYS);////второй параметр для получения идентификатора созданной сущности
-            preparedStatement.setString(1, currency.getCurrencyDigitalCode());
-            preparedStatement.setString(2, currency.getCurrencyLetterCode());
-            preparedStatement.setString(3, currency.getCurrencyName());
-            preparedStatement.executeUpdate();
 
-            ResultSet resultSet = preparedStatement.getGeneratedKeys();
-            if (resultSet.next()) {
-                currency.setCurrencyDigitalCode(resultSet.getString(1));
-                currency.setCurrencyLetterCode(resultSet.getString(2));
-                currency.setCurrencyName(resultSet.getString(3));
+            String checkExistenceQuery = "SELECT COUNT(*) FROM currency WHERE currency_digital_code = ? AND currency_letter_code = ? AND currency_name = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(checkExistenceQuery)) {
+                preparedStatement.setString(1, currency.getCurrencyDigitalCode());
+                preparedStatement.setString(2, currency.getCurrencyLetterCode());
+                preparedStatement.setString(3, currency.getCurrencyName());
+                ResultSet resultSet = preparedStatement.executeQuery();
+                if (resultSet.next() && resultSet.getInt(1) > 0) {
+                    logger.info("Валюта " + currency.getCurrencyName() + " уже существует.");
+                    return currency;
+                }
             }
-            logger.info("currency with CurrencyName: " + currency.getCurrencyName() + " was added.");
+
+            try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_CURRENCY, Statement.RETURN_GENERATED_KEYS)) {
+                preparedStatement.setString(1, currency.getCurrencyDigitalCode());
+                preparedStatement.setString(2, currency.getCurrencyLetterCode());
+                preparedStatement.setString(3, currency.getCurrencyName());
+                preparedStatement.executeUpdate();
+
+                try (ResultSet resultSet = preparedStatement.getGeneratedKeys()) {
+                    if (resultSet.next()) {
+                        currency.setId(resultSet.getLong(1)); // Только ID
+                    }
+                }
+            }
+
+            logger.info("Валюта " + currency.getCurrencyName() + " добавлена.");
             return currency;
         } catch (SQLException e) {
             logger.severe(e.getMessage());
@@ -97,7 +156,7 @@ public class CurrencyJDBCDaoImpl extends DAOAbstract implements DAOInterface<Lon
 
     @Override
     public Optional<Currency> findById(Long id) {
-        try (Connection connection = ConnectionManager2.open()) {
+        try (Connection connection = ConnectionManager.open()) {
            return findById(id, connection);
         } catch (SQLException e) {
             logger.severe(e.getMessage());
@@ -152,6 +211,31 @@ public class CurrencyJDBCDaoImpl extends DAOAbstract implements DAOInterface<Lon
 //        }
 //    }
 
+
+
+    public Optional<Currency> getCurrencyByCode(String currencyCode) {
+        String query = "SELECT * FROM currency WHERE currency_digital_code = ?";  // Запрос для поиска валюты по коду
+        try (Connection connection = ConnectionManager.open();  // Открываем соединение
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+            preparedStatement.setString(1, currencyCode);  // Устанавливаем параметр с кодом валюты
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                // Если результат найден, создаем объект Currency
+                Currency currency = buildCurrency(resultSet);
+
+                logger.info("Валюта с кодом " + currencyCode + " была найдена.");
+                return Optional.of(currency);  // Возвращаем найденную валюту
+            } else {
+                return Optional.empty();  // Если валюта не найдена, возвращаем пустой Optional
+            }
+        } catch (SQLException e) {
+            logger.severe(e.getMessage());
+            throw new DaoException("Ошибка при поиске валюты по коду: " + currencyCode, e);
+        }
+    }
+
     @Override
     public boolean createTableQuery(String sql) {
         return createTableService(CREATE_TABLE_CURRENCY);
@@ -160,12 +244,18 @@ public class CurrencyJDBCDaoImpl extends DAOAbstract implements DAOInterface<Lon
 
     @Override
     public boolean deleteAll(String s) {
-        return deleteAllService("processingcenterschema.currency");
+        return deleteAllService(s);
     }
 
     @Override
     public boolean dropTable(String s) {
-        return dropTableService("processingcenterschema.currency");
+
+        return dropTableService(s);
+    }
+
+    @Override
+    public Optional<Currency> findByValue(String cardNumber) {
+        return Optional.empty();
     }
 
 

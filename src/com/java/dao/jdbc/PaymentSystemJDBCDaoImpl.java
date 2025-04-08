@@ -4,6 +4,8 @@ import com.java.dao.DAOAbstract;
 import com.java.dao.DAOInterface;
 import com.java.exception.DaoException;
 import com.java.model.PaymentSystem;
+import com.java.util.ConnectionManager;
+import org.postgresql.util.PSQLException;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -18,7 +20,7 @@ public class PaymentSystemJDBCDaoImpl extends DAOAbstract implements DAOInterfac
     private static final String CREATE_TABLE_PAYMENT_SYSTEM = "CREATE TABLE IF NOT EXISTS processingCenterSchema.payment_system\n" +
             "(\n" +
             "    id                  bigserial primary key,\n" +
-            "    payment_system_name varchar(50) UNIQUE not null\n" +
+            "    payment_system_name varchar(50) not null\n" +
             "    );";
     private static final String CREATE_CARD_STATUS = "INSERT INTO payment_system VALUES (?, ?)";
     private static final String DELETE_CARD_STATUS = "DELETE FROM payment_system WHERE id = ?";
@@ -26,7 +28,7 @@ public class PaymentSystemJDBCDaoImpl extends DAOAbstract implements DAOInterfac
     private static final String UPDATE_CARD_STATUS = "UPDATE payment_system SET payment_system_name = ? WHERE id = ?";
     private static final String GET_CARD_STATUS_BY_ID = "SELECT id, payment_system_name FROM payment_system WHERE id = ?";
     private static final String DELETE_CARD_STATUS_BY_ID = "DELETE FROM payment_system WHERE id = ?";
-    private static final String INSERT_SQL = "INSERT INTO payment_system VALUES (?, ?)";
+    private static final String INSERT_SQL = "INSERT INTO payment_system (payment_system_name) VALUES (?)";
 
     public PaymentSystemJDBCDaoImpl(Connection connection) {
         super(connection);
@@ -37,6 +39,42 @@ public class PaymentSystemJDBCDaoImpl extends DAOAbstract implements DAOInterfac
                 resultSet.getString("payment_system_name"));
     }
 
+//    @Override
+//    public PaymentSystem insert(PaymentSystem paymentSystem) {
+//        String query = "INSERT INTO payment_system (payment_system_name) VALUES (?)";
+//        try (Connection connection = ConnectionManager.open();
+//             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+//
+//            connection.setAutoCommit(false);  // Отключаем авто-коммит для управления транзакциями вручную
+//
+//            preparedStatement.setString(1, paymentSystem.getPaymentSystemName());
+//
+//            try {
+//                preparedStatement.executeUpdate();  // Выполнение вставки
+//
+//                connection.commit();  // Коммитируем изменения
+//                logger.info("Payment system '" + paymentSystem.getPaymentSystemName() + "' inserted successfully.");
+//            } catch (PSQLException e) {
+//                if (e.getMessage().contains("duplicate key value")) {
+//                    // Если ошибка дубликата, просто игнорируем её
+//                    logger.warning("Payment system '" + paymentSystem.getPaymentSystemName() + "' already exists.");
+//                } else {
+//                    // В остальных случаях пробрасываем исключение
+//                    connection.rollback();  // Откатываем транзакцию при ошибке
+//                    logger.severe("Error inserting payment system: " + e.getMessage());
+//                    throw new DaoException("Ошибка при вставке payment system: " + paymentSystem.getPaymentSystemName(), e);
+//                }
+//            }
+//        } catch (SQLException e) {
+//            logger.severe(e.getMessage());
+//            throw new DaoException("Ошибка при открытии соединения или выполнении запроса.", e);
+//        }
+//        return paymentSystem;
+//    }
+//
+//}
+
+
 
     @Override
     public PaymentSystem insert(PaymentSystem paymentSystem) {
@@ -45,15 +83,29 @@ public class PaymentSystemJDBCDaoImpl extends DAOAbstract implements DAOInterfac
                 logger.warning("Таблица payment_system не существует. Создаю...");
                 createTableQuery(CREATE_TABLE_PAYMENT_SYSTEM);
             }
+
+            // Проверяем, существует ли уже payment_system с таким же payment_system_name
+            String checkExistenceQuery = "SELECT COUNT(*) FROM payment_system WHERE payment_system_name = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(checkExistenceQuery)) {
+                preparedStatement.setString(1, paymentSystem.getPaymentSystemName());
+                ResultSet resultSet = preparedStatement.executeQuery();
+                if (resultSet.next() && resultSet.getInt(1) > 0) {
+                    logger.info("Статус с payment_system_name: " + paymentSystem.getPaymentSystemName() + " уже существует.");
+                    // Если статус уже существует, возвращаем его
+                    return paymentSystem;
+                }
+            }
+
+
             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SQL, Statement.RETURN_GENERATED_KEYS);////второй параметр для получения идентификатора созданной сущности
             preparedStatement.setString(1, paymentSystem.getPaymentSystemName());
             preparedStatement.executeUpdate();
 
             ResultSet resultSet = preparedStatement.getGeneratedKeys();
             if (resultSet.next()) {
-                paymentSystem.setPaymentSystemName(resultSet.getString(1));
+                paymentSystem.setId(resultSet.getLong(1));
             }
-            logger.info("paymentSystem with ID: " + paymentSystem.getId() + " was added.");
+            logger.info("paymentSystem c ID: " + paymentSystem.getId() + " добавлен.");
             return paymentSystem;
         } catch (SQLException e) {
             logger.severe(e.getMessage());
@@ -66,7 +118,7 @@ public class PaymentSystemJDBCDaoImpl extends DAOAbstract implements DAOInterfac
         try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_CARD_STATUS)) {
             preparedStatement.setString(1, paymentSystem.getPaymentSystemName());
             preparedStatement.setLong(2, paymentSystem.getId());
-            logger.info("paymentSystem with ID: " + paymentSystem.getId() + " was updated.");
+            logger.info("paymentSystem с ID: " + paymentSystem.getId() + " обновлен.");
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new DaoException("Ошибка при обновлении paymentSystem", e);
@@ -94,7 +146,7 @@ public class PaymentSystemJDBCDaoImpl extends DAOAbstract implements DAOInterfac
                 paymentSystem = new PaymentSystem(resultSet.getLong("id"),
                         resultSet.getString("payment_system_name"));
 
-                logger.info("paymentSystem with ID: " + paymentSystem.getId() + " was found.");
+                logger.info("paymentSystem с ID: " + paymentSystem.getId() + " найден.");
                 return Optional.ofNullable(paymentSystem);
             } else {
                 return Optional.empty();
@@ -141,11 +193,16 @@ public class PaymentSystemJDBCDaoImpl extends DAOAbstract implements DAOInterfac
 
     @Override
     public boolean deleteAll(String s) {
-        return deleteAllService("processingcenterschema.payment_system");
+        return deleteAllService(s);
     }
 
     @Override
     public boolean dropTable(String s) {
-        return dropTableService("processingcenterschema.payment_system");
+        return dropTableService(s);
+    }
+
+    @Override
+    public Optional<PaymentSystem> findByValue(String cardNumber) {
+        return Optional.empty();
     }
 }

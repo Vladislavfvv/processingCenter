@@ -1,17 +1,16 @@
 package com.java.dao;
 
 import com.java.exception.DaoException;
-import com.java.util.ConnectionManager2;
 
 import java.sql.*;
 import java.util.logging.Logger;
 
 public abstract class DAOAbstract {
     private static final Logger logger = Logger.getLogger(DAOAbstract.class.getName());
-    protected static Connection connection = null;
+    protected final Connection connection;
 
     public DAOAbstract(Connection connection) {
-        DAOAbstract.connection = ConnectionManager2.open();
+        this.connection = connection;
     }
 
 
@@ -35,7 +34,7 @@ public abstract class DAOAbstract {
     /**
      * Удаляет все записи из таблицы
      */
-    public static boolean deleteAllService(String tableName) {
+    public boolean deleteAllService(String tableName) {
         String sql = "DELETE FROM " + tableName + ";";
         try (Statement statement = connection.createStatement()) {
             statement.executeUpdate(sql);
@@ -49,10 +48,12 @@ public abstract class DAOAbstract {
     /**
      * Удаляет таблицу
      */
-    public static boolean dropTableService(String tableName) {
+    public boolean dropTableService(String tableName) {
         String sql = "DROP TABLE IF EXISTS " + tableName + " CASCADE;";
+        logger.info("Попытка удалить таблицу (если существует): " + tableName);
         try (Statement statement = connection.createStatement()) {
             statement.executeUpdate(sql);
+            logger.info("Команда DROP TABLE выполнена успешно для таблицы: " + tableName);
             return true;
         } catch (SQLException e) {
             logger.severe("Ошибка при удалении таблицы " + tableName + ": " + e.getMessage());
@@ -62,7 +63,7 @@ public abstract class DAOAbstract {
 
 
 
-    public static boolean createTableService(String sqlQuery) {
+    public boolean createTableService(String sqlQuery) {
         try {
             Statement statement = connection.createStatement();
             statement.executeUpdate(sqlQuery);
