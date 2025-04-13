@@ -1,5 +1,7 @@
 package util;
 
+import lombok.Getter;
+import lombok.experimental.UtilityClass;
 import model.*;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
@@ -7,8 +9,9 @@ import org.hibernate.cfg.Configuration;
 
 
 import java.util.Properties;
-
+@UtilityClass
 public class HibernateConfig {
+    @Getter
     private static final SessionFactory sessionFactory;
 
     static {
@@ -21,13 +24,14 @@ public class HibernateConfig {
             settings.put("hibernate.connection.url", "jdbc:postgresql://localhost:5432/processingcenter");
             settings.put("hibernate.connection.username", "lesson");
             settings.put("hibernate.connection.password", "lesson");
-            settings.put("hibernate.default_schema", "public");
+            settings.put("hibernate.default_schema", "processingcenterschema");
 
             // Другие настройки
             settings.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
+            //settings.put("hibernate.show_sql", "true");
             settings.put("hibernate.show_sql", "true");
             settings.put("hibernate.format_sql", "true");
-            settings.put("hibernate.hbm2ddl.auto", "update"); // или create / validate / none
+            settings.put("hibernate.hbm2ddl.auto", "update"); // или create / validate / none //update
 
             configuration.setProperties(settings);
 
@@ -57,7 +61,4 @@ public class HibernateConfig {
         }
     }
 
-    public static SessionFactory getSessionFactory() {
-        return sessionFactory;
-    }
 }

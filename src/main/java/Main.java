@@ -1,5 +1,6 @@
 
 import dao.hibernate.CardHibernateDaoImpl;
+import dao.hibernate.PaymentSystemHibernateDaoImpl;
 import model.*;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -13,6 +14,7 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 
@@ -151,9 +153,9 @@ public class Main {
         SessionFactory sessionFactory = HibernateConfig.getSessionFactory();
 
         // Открываем сессию
-        try (Session session = sessionFactory.openSession()) {
+                                                                //   try (Session session = sessionFactory.openSession()) {
             // Начинаем транзакцию
-            Transaction transaction = session.beginTransaction();
+                                                                //         Transaction transaction = session.beginTransaction();
 
             // Создаем новый объект Account
 //            Account account = Account.builder()
@@ -164,9 +166,13 @@ public class Main {
             // Сохраняем объект в базе данных
             //  session.save(account);
 
-            User user = User.builder().firstName("John").lastName("Doe").build();
+
+
+
+
+                                                                 //      User user = User.builder().firstName("John").lastName("Doe").build();
 //
-session.save(user);
+//session.save(user);
 
 //            Currency currency = currencyService.create(Currency.builder()
 //                    .currencyDigitalCode("BLR")
@@ -175,21 +181,42 @@ session.save(user);
 //session.save(currency);
 
             // Фиксируем транзакцию
-//            transaction.commit();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            // Закрываем SessionFactory
-            sessionFactory.close();
-
-        }
+                                                                                //            transaction.commit();
+                                                                                //        } catch (Exception e) {
+                                                                                //            e.printStackTrace();
+                                                                                //        } finally {
+                                                                                //            // Закрываем SessionFactory
+                                                                                //            sessionFactory.close();
+                                                                                //
+                                                                                //        }
 
 
         // Удаляем
         // cardDAO.delete(found);
 
 
+        // Получаем DAO
+//        PaymentSystemHibernateDaoImpl dao = PaymentSystemHibernateDaoImpl.getInstance();
+//
+//        // Пример вставки новой платёжной системы
+//        PaymentSystem newSystem = new PaymentSystem();
+//        newSystem.setPaymentSystemName("Test System");
+//        dao.insert(newSystem);
+//
+//        // Пример поиска по ID
+//        Optional<PaymentSystem> found = dao.findById(newSystem.getId());
+//        found.ifPresentOrElse(
+//                ps -> System.out.println("Найдена система: " + ps.getPaymentSystemName()),
+//                () -> System.out.println("Система не найдена")
+//        );
+//
+//        // Пример получения всех систем
+//        System.out.println("Список всех платёжных систем:");
+//        dao.findAll().forEach(ps -> System.out.println(ps.getPaymentSystemName()));
     }
 
 
 }
+
+
+

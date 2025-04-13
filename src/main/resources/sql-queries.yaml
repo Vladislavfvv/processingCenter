@@ -1,0 +1,3 @@
+queries:
+  getAllCards: "SELECT * FROM card"
+  getAccountById: "SELECT * FROM account WHERE id = :id"

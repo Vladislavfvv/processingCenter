@@ -61,9 +61,11 @@ public class AccountService  implements ServiceInterface<Account, Long>{
     }
 
     @Override
-    public boolean dropTable(String s) {
-        return accountDao.dropTable(s);
+    public boolean dropTable(String tableName) {
+        return accountDao.dropTable(tableName);
     }
+
+
 
     public Currency getCurrencyByLetterCode(String code) {
         return currencyDao.findAll()

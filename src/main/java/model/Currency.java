@@ -9,7 +9,6 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Slf4j
 @Getter
 @Setter
 @Entity
@@ -24,8 +23,6 @@ public class Currency {
     private String currencyLetterCode;
     @Column(name = "currency_name", length = 255, nullable = false)
     private String currencyName;
-
-
 }
 
 

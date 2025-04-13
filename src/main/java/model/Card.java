@@ -10,7 +10,6 @@ import java.sql.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Slf4j
 @Getter
 @Setter
 @Entity
