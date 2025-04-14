@@ -75,10 +75,7 @@ public class CardStatusHibernateDaoImpl  extends AbstractHibernateDao<Long, Card
 
     @Override
     public Optional<CardStatus> findByValue(Session session, String value) {
-        String hql = "FROM CardStatus WHERE statusName = :value";
-        Query<CardStatus> query = session.createQuery(hql, CardStatus.class);
-        query.setParameter("value", value);
-        return query.uniqueResultOptional();
+       return Optional.ofNullable(session.get(CardStatus.class, value));
     }
 //    private static final SessionFactory sessionFactory = HibernateConfig.getSessionFactory();
 //    @Getter

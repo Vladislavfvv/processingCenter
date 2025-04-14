@@ -1,0 +1,3 @@
+service\hibernate\CardHibernateServiceTest.class
+service\hibernate\AccountHibernateServiceTest.class
+service\hibernate\CardStatusHibernateServiceTest.class

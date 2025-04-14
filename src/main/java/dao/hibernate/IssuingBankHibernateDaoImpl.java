@@ -76,13 +76,9 @@ public class IssuingBankHibernateDaoImpl extends AbstractHibernateDao<Long, Issu
 
     @Override
     public Optional<IssuingBank> findByValue(Session session, String value) {
-        String hql = "FROM IssuingBank WHERE bankName = :value";
-        Query<IssuingBank> query = session.createQuery(hql, IssuingBank.class);
-        query.setParameter("value", value);
-        return query.uniqueResultOptional();
+
+        return Optional.ofNullable(session.get(IssuingBank.class, value));
     }
-
-
 
 
 //    private static final SessionFactory sessionFactory = HibernateConfig.getSessionFactory();

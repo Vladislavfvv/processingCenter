@@ -1,6 +1,7 @@
 package util;
 
 import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.UtilityClass;
 import model.*;
 import org.hibernate.SessionFactory;
@@ -9,10 +10,15 @@ import org.hibernate.cfg.Configuration;
 
 
 import java.util.Properties;
+
 @UtilityClass
+// Эта аннотация: Делает класс final
+//Делает приватный конструктор (чтобы никто не мог создать экземпляр этого класса)
+//Все методы автоматически становятся static (если ты их не указал как нестатические)
 public class HibernateConfig {
+    @Setter
     @Getter
-    private static final SessionFactory sessionFactory;
+    private static SessionFactory sessionFactory;
 
     static {
         try {

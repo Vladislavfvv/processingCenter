@@ -1,6 +1,5 @@
 package service.hibernate;
 
-import dao.DAOInterface;
 import dao.hibernate.AccountHibernateDaoImpl;
 import model.Account;
 import org.hibernate.Session;
@@ -10,7 +9,7 @@ import util.HibernateConfig;
 import java.util.List;
 import java.util.Optional;
 
-public class AccountHibernateService implements DAOInterface<Long, Account> {
+public class AccountHibernateService implements ServiceInterfaceHibernate<Long, Account> {
 
     private final AccountHibernateDaoImpl accountHibernateDao;
 
@@ -18,9 +17,8 @@ public class AccountHibernateService implements DAOInterface<Long, Account> {
         this.accountHibernateDao = accountHibernateDao;
     }
 
-
     @Override
-    public Account insert(Account value) {
+    public Account create(Account value) {
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
             Transaction tx = session.beginTransaction();
             Account saved = accountHibernateDao.insert(session, value);
@@ -64,22 +62,33 @@ public class AccountHibernateService implements DAOInterface<Long, Account> {
     }
 
     @Override
-    public boolean createTableQuery(String sql) {
-        return false;
+    public void createTable(String sql) {
+        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
+            Transaction tx = session.beginTransaction();
+            accountHibernateDao.createTableQuery(session, sql);
+            tx.commit();
+        }
+    }
+
+
+    @Override
+    public boolean deleteAll(String tableName) {
+        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
+            Transaction tx = session.beginTransaction();
+            boolean result = accountHibernateDao.deleteAll(session, tableName);
+            tx.commit();
+            return result;
+        }
     }
 
     @Override
-    public boolean deleteAll(String s) {
-        return false;
+    public boolean dropTable(String tableName) {
+        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
+            Transaction tx = session.beginTransaction();
+            boolean result = accountHibernateDao.dropTable(session, tableName);
+            tx.commit();
+            return result;
+        }
     }
 
-    @Override
-    public boolean dropTable(String s) {
-        return false;
-    }
-
-    @Override
-    public Optional<Account> findByValue(String value) {
-        return Optional.empty();
-    }
 }

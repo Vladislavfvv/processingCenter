@@ -75,11 +75,10 @@ public class PaymentSystemHibernateDaoImpl extends AbstractHibernateDao<Long, Pa
 
     @Override
     public Optional<PaymentSystem> findByValue(Session session, String value) {
-        String hql = "FROM PaymentSystem WHERE systemName = :value";
-        Query<PaymentSystem> query = session.createQuery(hql, PaymentSystem.class);
-        query.setParameter("value", value);
-        return query.uniqueResultOptional();
+       return Optional.ofNullable(session.get(PaymentSystem.class, value));
     }
+
+
     //private static final SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();//то если что только если используем hibernate.cfg.xml
     // т.к. Configuration().configure() ищет hibernate.cfg.xml
 

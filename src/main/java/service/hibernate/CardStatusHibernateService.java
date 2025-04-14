@@ -5,15 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import model.CardStatus;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import service.ServiceInterface;
 import util.HibernateConfig;
-
 import java.util.List;
 import java.util.Optional;
 
 
 @Slf4j
-public class CardStatusHibernateService implements ServiceInterface<CardStatus, Long> {
+public class CardStatusHibernateService implements ServiceInterfaceHibernate<Long, CardStatus> {
     private final CardStatusHibernateDaoImpl cardStatusHibernateDao;
 
 
@@ -59,6 +57,7 @@ public class CardStatusHibernateService implements ServiceInterface<CardStatus, 
         }
     }
 
+
     @Override
     public List<CardStatus> findAll() {
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
@@ -67,17 +66,32 @@ public class CardStatusHibernateService implements ServiceInterface<CardStatus, 
     }
 
     @Override
-    public void createTable(Session session, String sql) {
-        cardStatusHibernateDao.createTableQuery(session, sql);
+    public void createTable(String sql) {
+        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
+            Transaction tx = session.beginTransaction();
+            cardStatusHibernateDao.createTableQuery(session, sql);
+            tx.commit();
+        }
     }
 
     @Override
-    public boolean deleteAll(Session session, String sql) {
-        return cardStatusHibernateDao.deleteAll(session, sql);
+    public boolean deleteAll(String tableName) {
+        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
+            Transaction tx = session.beginTransaction();
+            boolean result = cardStatusHibernateDao.deleteAll(session, tableName);
+            tx.commit();
+            return result;
+        }
     }
 
     @Override
-    public boolean dropTable(Session session, String sql) {
-        return cardStatusHibernateDao.dropTable(session, sql);
+    public boolean dropTable(String tableName) {
+        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
+            Transaction tx = session.beginTransaction();
+            boolean result = cardStatusHibernateDao.dropTable(session, tableName);
+            tx.commit();
+            return result;
+        }
     }
+
 }

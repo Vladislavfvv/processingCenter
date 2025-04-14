@@ -2,12 +2,14 @@ package service.hibernate;
 
 import dao.hibernate.IssuingBankHibernateDaoImpl;
 import model.IssuingBank;
-import service.ServiceInterface;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import util.HibernateConfig;
 
 import java.util.List;
 import java.util.Optional;
 
-public class IssuingBankHibernateService implements ServiceInterface<IssuingBank, Long> {
+public class IssuingBankHibernateService implements ServiceInterfaceHibernate<Long, IssuingBank> {
 
     private final IssuingBankHibernateDaoImpl issuingBankHibernateDao;
 
@@ -17,41 +19,75 @@ public class IssuingBankHibernateService implements ServiceInterface<IssuingBank
 
     @Override
     public IssuingBank create(IssuingBank value) {
-        return issuingBankHibernateDao.insert(value);
+        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
+            Transaction tx = session.beginTransaction();
+            IssuingBank saved = issuingBankHibernateDao.insert(session, value);
+            tx.commit();
+            return saved;
+        }
     }
 
     @Override
     public boolean update(IssuingBank value) {
-        return issuingBankHibernateDao.update(value);
+        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
+            Transaction tx = session.beginTransaction();
+            boolean result = issuingBankHibernateDao.update(session, value);
+            tx.commit();
+            return result;
+        }
     }
 
     @Override
     public boolean delete(Long id) {
-        return issuingBankHibernateDao.delete(id);
+        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
+            Transaction tx = session.beginTransaction();
+            boolean result = issuingBankHibernateDao.delete(session, id);
+            tx.commit();
+            return result;
+        }
     }
 
     @Override
     public Optional<IssuingBank> findById(Long id) {
-        return issuingBankHibernateDao.findById(id);
+        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
+            return issuingBankHibernateDao.findById(session, id);
+        }
     }
 
     @Override
     public List<IssuingBank> findAll() {
-        return issuingBankHibernateDao.findAll();
+        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
+            return issuingBankHibernateDao.findAll(session);
+        }
     }
 
     @Override
     public void createTable(String sql) {
-        issuingBankHibernateDao.createTableQuery(sql);
+        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
+            Transaction tx = session.beginTransaction();
+            issuingBankHibernateDao.createTableQuery(session, sql);
+            tx.commit();
+        }
     }
 
     @Override
-    public boolean deleteAll(String s) {
-        return issuingBankHibernateDao.deleteAll(s);
+    public boolean deleteAll(String tableName) {
+        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
+            Transaction tx = session.beginTransaction();
+            boolean result = issuingBankHibernateDao.deleteAll(session, tableName);
+            tx.commit();
+            return result;
+        }
     }
 
     @Override
-    public boolean dropTable(String s) {
-        return issuingBankHibernateDao.dropTable(s);
+    public boolean dropTable(String tableName) {
+        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
+            Transaction tx = session.beginTransaction();
+            boolean result = issuingBankHibernateDao.dropTable(session, tableName);
+            tx.commit();
+            return result;
+        }
     }
+
 }
