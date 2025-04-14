@@ -22,8 +22,8 @@ public class Main {
     public static void main(String[] args) throws SQLException {
 
 
-   //     myHibernateInitial();
-myJDBCInitial();
+        //     myHibernateInitial();
+        myJDBCInitial();
 
         // Создание таблиц
 //        CreateSchemaService createSchemaService = new CreateSchemaService(connection);
@@ -278,63 +278,88 @@ myJDBCInitial();
         CardHibernateDaoImpl cardHibernateDao = new CardHibernateDaoImpl();
         CardHibernateService cardHibernateService = new CardHibernateService(cardHibernateDao);
 
+
+        //loadData
         TestDataHibernateLoader.loadData(cardStatusHibernateService, paymentSystemHibernateService, currencyHibernateService,
                 issuingBankHibernateService, accountHibernateService, cardHibernateService);
 
 
-//    // Создать и сохранить Currency
-//    Currency currency = Currency.builder()
-//            .currencyName("USD")
-//            .currencyDigitalCode("555")
-//            .currencyLetterCode("NEW")
-//            .build();
-//    currency = currencyHibernateService.create(currency);
-//
-//    // Создать и сохранить IssuingBank
-//    IssuingBank bank = IssuingBank.builder()
-//            .bic("12345678)")
-//            .bin("BINAR")
-//            .abbreviatedName("ABBREVIATEDBANK")
-//            .build();
-//    bank = issuingBankHibernateService.create(bank);
-//
-//    // Создать и сохранить Account
-//    Account account = Account.builder()
-//            .accountNumber("9876543210")
-//            .balance(new BigDecimal("5000.00"))
-//            .currencyId(currency)
-//            .issuingBankId(bank)
-//            .build();
-//    account = accountHibernateService.create(account);
-//
-//    // Создать и сохранить CardStatus
-//    CardStatus status = CardStatus.builder()
-//            .cardStatusName("I dont know")
-//            .build();
-//    status = cardStatusHibernateService.create(status);
-//
-//    // Создать и сохранить PaymentSystem
-//    PaymentSystem paymentSystem = PaymentSystem.builder()
-//            .paymentSystemName("VISAAAAAAA")
-//            .build();
-//    paymentSystem = paymentSystemHibernateService.create(paymentSystem);
-//
-//    // Создать и сохранить карту с вложенными объектами
-//    Card card = Card.builder()
-//            .cardNumber("1234-5678-9101-1121")
-//            .expirationDate(Date.valueOf("2025-12-31"))
-//            .holderName("Artur Conan Doel")
-//            .cardStatusId(status)
-//            .paymentSystemId(paymentSystem)
-//            .accountId(account)
-//            .receivedFromIssuingBank(new Timestamp(System.currentTimeMillis()))
-//            .sentToIssuingBank(new Timestamp(System.currentTimeMillis()))
-//            .build();
-//    card = cardHibernateService.create(card);
-//
-//    System.out.println("Добавлена карта с id: " + card.getId());
+        //Insert card
+        insertHibernateCard(currencyHibernateService, issuingBankHibernateService, accountHibernateService,
+                cardStatusHibernateService, paymentSystemHibernateService, cardHibernateService);
+
+
+        //delete by id
+        cardHibernateService.delete(1L);
+
+//clear tables
+        cardHibernate.deleteAll("card");
+        cardStatusHibernateService.delete();
+
+
+
+
 
     }
+
+    public static void insertHibernateCard(CurrencyHibernateService currencyHibernateService, IssuingBankHibernateService issuingBankHibernateService,
+                                           AccountHibernateService accountHibernateService, CardStatusHibernateService cardStatusHibernateService,
+                                           PaymentSystemHibernateService paymentSystemHibernateService, CardHibernateService cardHibernateService) {
+        // Создать и сохранить Currency
+        Currency currency = Currency.builder()
+                .currencyName("USD")
+                .currencyDigitalCode("555")
+                .currencyLetterCode("NEW")
+                .build();
+        currency = currencyHibernateService.create(currency);
+
+        // Создать и сохранить IssuingBank
+        IssuingBank bank = IssuingBank.builder()
+                .bic("12345678)")
+                .bin("BINAR")
+                .abbreviatedName("ABBREVIATEDBANK")
+                .build();
+        bank = issuingBankHibernateService.create(bank);
+
+        // Создать и сохранить Account
+        Account account = Account.builder()
+                .accountNumber("9876543210")
+                .balance(new BigDecimal("5000.00"))
+                .currencyId(currency)
+                .issuingBankId(bank)
+                .build();
+        account = accountHibernateService.create(account);
+
+        // Создать и сохранить CardStatus
+        CardStatus status = CardStatus.builder()
+                .cardStatusName("I dont know")
+                .build();
+        status = cardStatusHibernateService.create(status);
+
+        // Создать и сохранить PaymentSystem
+        PaymentSystem paymentSystem = PaymentSystem.builder()
+                .paymentSystemName("VISAAAAAAA")
+                .build();
+        paymentSystem = paymentSystemHibernateService.create(paymentSystem);
+
+        // Создать и сохранить карту с вложенными объектами
+        Card card = Card.builder()
+                .cardNumber("1234-5678-9101-1121")
+                .expirationDate(Date.valueOf("2025-12-31"))
+                .holderName("Artur Conan Doel")
+                .cardStatusId(status)
+                .paymentSystemId(paymentSystem)
+                .accountId(account)
+                .receivedFromIssuingBank(new Timestamp(System.currentTimeMillis()))
+                .sentToIssuingBank(new Timestamp(System.currentTimeMillis()))
+                .build();
+        card = cardHibernateService.create(card);
+
+        System.out.println("Добавлена карта с id: " + card.getId());
+    }
+
+
+
 
 
     public static void myJDBCInitial() throws SQLException {
@@ -366,12 +391,11 @@ myJDBCInitial();
         InsertIssuingBankService insertIssuingBankService = new InsertIssuingBankService(new IssuingBankService(connection));
         InsertCurrencyService insertCurrencyService = new InsertCurrencyService(new CurrencyService(connection));
         InsertAccountService insertAccountService = new InsertAccountService(accountService, currencyService, issuingBankService);
-         InsertCardService insertCardService = new InsertCardService(cardService, cardStatusService, paymentSystemService, accountService);
-
+        InsertCardService insertCardService = new InsertCardService(cardService, cardStatusService, paymentSystemService, accountService);
 
 
 //        // Вставка таблиц
-//          try {
+
         insertCardStatusService.insertCardStatuses();
         insertPaymentSystemService.insertPaymentSystems();
         insertIssuingBankService.insertIssuingBank();
@@ -379,32 +403,22 @@ myJDBCInitial();
         insertAccountService.insertAccounts();
         insertCardService.insertMultipleCards();
         //connection.commit();
-//        } catch (SQLException e) {
-//              try {
-//                  connection.rollback(); // отменить всё, если ошибка
-//              } catch (SQLException ex) {
-//                  throw new RuntimeException(ex);
-//              }
-//              throw e;
-//        } finally {
-//            connection.close();
-//        }
 
 
-        // Шаг 3: Создание и вставка карт
-       // InsertCardService insertCardService = new InsertCardService(cardService, cardStatusService, paymentSystemService, accountService);
-    //    insertCardService.insertMultipleCards();
-//
-//        //очистка таблиц
+        //Создание и вставка карт
+        // InsertCardService insertCardService = new InsertCardService(cardService, cardStatusService, paymentSystemService, accountService);
+        insertCardService.insertMultipleCards();
+
+//        очистка таблиц
 ////
-//        ClearJDBCTables clearJDBCTables = new ClearJDBCTables(connection, transactionService, cardService, accountService, terminalService, cardStatusService, paymentSystemService,
-//        currencyService, issuingBankService, salesPointService, acquiringBankService, responseCodeService, transactionTypeService, merchantCategoryCodeService);
-//        clearJDBCTables.dropJDBCTables();
+        ClearJDBCTables clearJDBCTables = new ClearJDBCTables(connection, transactionService, cardService, accountService, terminalService, cardStatusService, paymentSystemService,
+                currencyService, issuingBankService, salesPointService, acquiringBankService, responseCodeService, transactionTypeService, merchantCategoryCodeService);
+        clearJDBCTables.dropJDBCTables();
 //
 //
 //        //Удаление таблиц
-//        DropSchemaService dropSchemaService = new DropSchemaService(connection);
-//        dropSchemaService.dropJDBCTables();
+        DropSchemaService dropSchemaService = new DropSchemaService(connection);
+        dropSchemaService.dropJDBCTables();
 
 
 //        CardHibernateDaoImpl cardDAO = new CardHibernateDaoImpl();
