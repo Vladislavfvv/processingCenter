@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="service.hibernate.AccountHibernateServiceTest" time="3.537" tests="8" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="service.hibernate.IssuingBankHibernateServiceTest" time="0.153" tests="8" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="21"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -59,29 +59,12 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="65.0"/>
   </properties>
-  <testcase name="testFindAll" classname="service.hibernate.AccountHibernateServiceTest" time="3.447">
-    <system-out><![CDATA[18:44:43.251 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 5.6.10.Final
-18:44:43.353 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
-18:44:43.489 [main] WARN  o.hibernate.orm.connections.pooling - HHH10001002: Using Hibernate built-in connection pool (not for production use!)
-18:44:43.494 [main] INFO  o.hibernate.orm.connections.pooling - HHH10001005: using driver [org.postgresql.Driver] at URL [jdbc:postgresql://localhost:5432/processingcenter]
-18:44:43.495 [main] INFO  o.hibernate.orm.connections.pooling - HHH10001001: Connection properties: {password=****, user=lesson}
-18:44:43.495 [main] INFO  o.hibernate.orm.connections.pooling - HHH10001003: Autocommit mode: false
-18:44:43.500 [main] INFO  o.h.e.j.c.i.DriverManagerConnectionProviderImpl - HHH000115: Hibernate connection pool size: 20 (min=1)
-18:44:43.767 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.PostgreSQLDialect
-18:44:44.446 [main] INFO  org.hibernate.orm.connections.access - HHH10001501: Connection obtained from JdbcConnectionAccess [org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess@4efb13f1] for (non-JTA) DDL execution was not in auto-commit mode; the Connection 'local transaction' will be committed and the Connection will be set into auto-commit mode.
-18:44:44.624 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
-]]></system-out>
-    <system-err><![CDATA[WARNING: A Java agent has been loaded dynamically (C:\Users\Vlad\.m2\repository\net\bytebuddy\byte-buddy-agent\1.14.12\byte-buddy-agent-1.14.12.jar)
-WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
-WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
-WARNING: Dynamic loading of agents will be disallowed by default in a future release
-]]></system-err>
-  </testcase>
-  <testcase name="testCreateTable" classname="service.hibernate.AccountHibernateServiceTest" time="0.006"/>
-  <testcase name="testFindById" classname="service.hibernate.AccountHibernateServiceTest" time="0.011"/>
-  <testcase name="testDropTable" classname="service.hibernate.AccountHibernateServiceTest" time="0.005"/>
-  <testcase name="testDeleteAll" classname="service.hibernate.AccountHibernateServiceTest" time="0.004"/>
-  <testcase name="testCreate" classname="service.hibernate.AccountHibernateServiceTest" time="0.011"/>
-  <testcase name="testDelete" classname="service.hibernate.AccountHibernateServiceTest" time="0.008"/>
-  <testcase name="testUpdate" classname="service.hibernate.AccountHibernateServiceTest" time="0.006"/>
+  <testcase name="dropTable_ShouldReturnTrueWhenDropped" classname="service.hibernate.IssuingBankHibernateServiceTest" time="0.071"/>
+  <testcase name="createTable_ShouldExecuteCreateTableQuery" classname="service.hibernate.IssuingBankHibernateServiceTest" time="0.009"/>
+  <testcase name="findAll_ShouldReturnListOfIssuingBanks" classname="service.hibernate.IssuingBankHibernateServiceTest" time="0.008"/>
+  <testcase name="deleteAll_ShouldReturnTrueWhenDeleted" classname="service.hibernate.IssuingBankHibernateServiceTest" time="0.013"/>
+  <testcase name="delete_ShouldReturnTrueWhenDeleted" classname="service.hibernate.IssuingBankHibernateServiceTest" time="0.008"/>
+  <testcase name="findById_ShouldReturnOptionalWithIssuingBank" classname="service.hibernate.IssuingBankHibernateServiceTest" time="0.007"/>
+  <testcase name="create_ShouldReturnCreatedIssuingBank" classname="service.hibernate.IssuingBankHibernateServiceTest" time="0.005"/>
+  <testcase name="update_ShouldReturnTrueWhenUpdated" classname="service.hibernate.IssuingBankHibernateServiceTest" time="0.007"/>
 </testsuite>

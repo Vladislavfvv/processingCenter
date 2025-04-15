@@ -22,8 +22,8 @@ public class Main {
     public static void main(String[] args) throws SQLException {
 
 
-        //     myHibernateInitial();
-        myJDBCInitial();
+            myHibernateInitial();
+       // myJDBCInitial();
 
         // Создание таблиц
 //        CreateSchemaService createSchemaService = new CreateSchemaService(connection);
@@ -278,6 +278,9 @@ public class Main {
         CardHibernateDaoImpl cardHibernateDao = new CardHibernateDaoImpl();
         CardHibernateService cardHibernateService = new CardHibernateService(cardHibernateDao);
 
+//        createTables(currencyHibernateService, issuingBankHibernateService, accountHibernateService,
+//                cardStatusHibernateService, paymentSystemHibernateService, cardHibernateService);
+
 
         //loadData
         TestDataHibernateLoader.loadData(cardStatusHibernateService, paymentSystemHibernateService, currencyHibernateService,
@@ -285,27 +288,74 @@ public class Main {
 
 
         //Insert card
-        insertHibernateCard(currencyHibernateService, issuingBankHibernateService, accountHibernateService,
-                cardStatusHibernateService, paymentSystemHibernateService, cardHibernateService);
+//        insertHibernateCard(currencyHibernateService, issuingBankHibernateService, accountHibernateService,
+//                cardStatusHibernateService, paymentSystemHibernateService, cardHibernateService);
 
 
         //delete by id
-        cardHibernateService.delete(1L);
-
-//clear tables
-        cardHibernate.deleteAll("card");
-        cardStatusHibernateService.delete();
-
-
+//        cardHibernateService.delete(1L);
+//
+////clear tables
+//        cardHibernate.deleteAll("card");
+//        cardStatusHibernateService.delete();
 
 
+//        clearTables(currencyHibernateService, issuingBankHibernateService, accountHibernateService,
+//                cardStatusHibernateService, paymentSystemHibernateService, cardHibernateService);
+
+//dropTables(currencyHibernateService, issuingBankHibernateService, accountHibernateService, cardStatusHibernateService,
+//        paymentSystemHibernateService, cardHibernateService);
 
     }
+
+
+
+
+
+
+
+
+    public static void createTables(CurrencyHibernateService currencyHibernateService, IssuingBankHibernateService issuingBankHibernateService,
+                                           AccountHibernateService accountHibernateService, CardStatusHibernateService cardStatusHibernateService,
+                                           PaymentSystemHibernateService paymentSystemHibernateService, CardHibernateService cardHibernateService) {
+
+        currencyHibernateService.createTable("processingCenterSchema.currency");
+        issuingBankHibernateService.createTable("processingCenterSchema.issuing_bank");
+        accountHibernateService.createTable("processingCenterSchema.account");
+        cardStatusHibernateService.createTable("processingCenterSchema.card_status");
+        paymentSystemHibernateService.createTable("processingCenterSchema.payment_system");
+        cardHibernateService.createTable("processingCenterSchema.card");
+    }
+
+    public static void clearTables (CurrencyHibernateService currencyHibernateService, IssuingBankHibernateService issuingBankHibernateService,
+                                           AccountHibernateService accountHibernateService, CardStatusHibernateService cardStatusHibernateService,
+                                           PaymentSystemHibernateService paymentSystemHibernateService, CardHibernateService cardHibernateService) {
+
+        cardHibernateService.deleteAll("processingCenterSchema.card");
+        accountHibernateService.deleteAll("processingCenterSchema.account");
+        currencyHibernateService.deleteAll("processingCenterSchema.currency");
+        issuingBankHibernateService.deleteAll("processingCenterSchema.issuing_bank");
+        cardStatusHibernateService.deleteAll("processingCenterSchema.card_status");
+        paymentSystemHibernateService.deleteAll("processingCenterSchema.payment_system");
+    }
+
+    public static void dropTables (CurrencyHibernateService currencyHibernateService, IssuingBankHibernateService issuingBankHibernateService,
+                                    AccountHibernateService accountHibernateService, CardStatusHibernateService cardStatusHibernateService,
+                                    PaymentSystemHibernateService paymentSystemHibernateService, CardHibernateService cardHibernateService) {
+        cardHibernateService.dropTable("processingCenterSchema.card");
+        accountHibernateService.dropTable("processingCenterSchema.account");
+        currencyHibernateService.dropTable("processingCenterSchema.currency");
+        issuingBankHibernateService.dropTable("processingCenterSchema.issuing_bank");
+        cardStatusHibernateService.dropTable("processingCenterSchema.card_status");
+        paymentSystemHibernateService.dropTable("processingCenterSchema.payment_system");
+
+    }
+
 
     public static void insertHibernateCard(CurrencyHibernateService currencyHibernateService, IssuingBankHibernateService issuingBankHibernateService,
                                            AccountHibernateService accountHibernateService, CardStatusHibernateService cardStatusHibernateService,
                                            PaymentSystemHibernateService paymentSystemHibernateService, CardHibernateService cardHibernateService) {
-        // Создать и сохранить Currency
+
         Currency currency = Currency.builder()
                 .currencyName("USD")
                 .currencyDigitalCode("555")
@@ -313,7 +363,7 @@ public class Main {
                 .build();
         currency = currencyHibernateService.create(currency);
 
-        // Создать и сохранить IssuingBank
+
         IssuingBank bank = IssuingBank.builder()
                 .bic("12345678)")
                 .bin("BINAR")
@@ -321,7 +371,7 @@ public class Main {
                 .build();
         bank = issuingBankHibernateService.create(bank);
 
-        // Создать и сохранить Account
+
         Account account = Account.builder()
                 .accountNumber("9876543210")
                 .balance(new BigDecimal("5000.00"))
@@ -330,19 +380,19 @@ public class Main {
                 .build();
         account = accountHibernateService.create(account);
 
-        // Создать и сохранить CardStatus
+
         CardStatus status = CardStatus.builder()
                 .cardStatusName("I dont know")
                 .build();
         status = cardStatusHibernateService.create(status);
 
-        // Создать и сохранить PaymentSystem
+
         PaymentSystem paymentSystem = PaymentSystem.builder()
                 .paymentSystemName("VISAAAAAAA")
                 .build();
         paymentSystem = paymentSystemHibernateService.create(paymentSystem);
 
-        // Создать и сохранить карту с вложенными объектами
+
         Card card = Card.builder()
                 .cardNumber("1234-5678-9101-1121")
                 .expirationDate(Date.valueOf("2025-12-31"))

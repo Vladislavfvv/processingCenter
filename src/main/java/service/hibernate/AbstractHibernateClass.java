@@ -3,7 +3,7 @@ package service.hibernate;
 import java.util.List;
 import java.util.Optional;
 
-public class AbstractHibernateClass implements ServiceInterfaceHibernate <K, E>{
+public class AbstractHibernateClass<K, E> implements ServiceInterfaceHibernate <K, E>{
 
     @Override
     public E create(E value) {

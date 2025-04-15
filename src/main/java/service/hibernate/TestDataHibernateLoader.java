@@ -155,6 +155,28 @@ public class TestDataHibernateLoader {
                 .issuingBankId(issuingBankHibernateService.findById(1L).orElseThrow())
                 .build());
 
+
+        accountHibernateService.create(Account.builder()
+                .accountNumber("40817810100000000002")
+                .balance(new BigDecimal("48702.07"))
+                .currencyId(currencyHibernateService.findById(1L).orElseThrow())
+                .issuingBankId(issuingBankHibernateService.findById(1L).orElseThrow())
+                .build());
+
+        accountHibernateService.create(Account.builder()
+                .accountNumber("40817810400000000003")
+                .balance(new BigDecimal("715000.01"))
+                .currencyId(currencyHibernateService.findById(1L).orElseThrow())
+                .issuingBankId(issuingBankHibernateService.findById(1L).orElseThrow())
+                .build());
+
+        accountHibernateService.create(Account.builder()
+                .accountNumber("40817810400000000003")
+                .balance(new BigDecimal("10000.0"))
+                .currencyId(currencyHibernateService.findById(3L).orElseThrow())
+                .issuingBankId(issuingBankHibernateService.findById(1L).orElseThrow())
+                .build());
+
         // Card
         cardHibernateService.create(Card.builder()
                 .cardNumber("4123450000000019")
@@ -165,6 +187,40 @@ public class TestDataHibernateLoader {
                 .accountId(accountHibernateService.findById(1L).orElseThrow())
                 .receivedFromIssuingBank(Timestamp.valueOf("2022-10-21 15:26:06.175"))
                 .sentToIssuingBank(Timestamp.valueOf("2022-10-21 15:27:08.271"))
+                .build());
+
+
+        cardHibernateService.create(Card.builder()
+                .cardNumber("5123450000000024")
+                .expirationDate(Date.valueOf("2025-12-31"))
+                .holderName("SEMION E. PETROV")
+                .cardStatusId(cardStatusHibernateService.findById(3L).orElseThrow())
+                .paymentSystemId(paymentSystemHibernateService.findById(2L).orElseThrow())
+                .accountId(accountHibernateService.findById(2L).orElseThrow())
+                .receivedFromIssuingBank(Timestamp.valueOf("2022-04-05 10:23:05.372"))
+                .sentToIssuingBank(Timestamp.valueOf("2022-04-05 10:24:02.175"))
+                .build());
+
+        cardHibernateService.create(Card.builder()
+                .cardNumber("2143450000000046")
+                .expirationDate(Date.valueOf("2025-12-31"))
+                .holderName("Anton Lavrov")
+                .cardStatusId(cardStatusHibernateService.findById(3L).orElseThrow())
+                .paymentSystemId(paymentSystemHibernateService.findById(2L).orElseThrow())
+                .accountId(accountHibernateService.findById(2L).orElseThrow())
+                .receivedFromIssuingBank(Timestamp.valueOf("2022-04-05 10:23:05.372"))
+                .sentToIssuingBank(Timestamp.valueOf("2022-04-05 10:24:02.175"))
+                .build());
+
+        cardHibernateService.create(Card.builder()
+                .cardNumber("1143450000000022")
+                .expirationDate(Date.valueOf("2023-12-11"))
+                .holderName("Noname Nonemov")
+                .cardStatusId(cardStatusHibernateService.findById(1L).orElseThrow())
+                .paymentSystemId(paymentSystemHibernateService.findById(1L).orElseThrow())
+                .accountId(accountHibernateService.findById(2L).orElseThrow())
+                .receivedFromIssuingBank(Timestamp.valueOf("2022-04-05 10:23:05.372"))
+                .sentToIssuingBank(Timestamp.valueOf("2022-04-05 10:24:02.175"))
                 .build());
     }
 }

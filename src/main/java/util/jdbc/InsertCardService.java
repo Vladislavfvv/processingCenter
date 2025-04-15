@@ -116,7 +116,7 @@ public class InsertCardService {
                 new Card("5123450000000050", Date.valueOf("2025-12-31"), "NIKITA E. POTAPOV",
                         cardStatusService.findById(3L).orElseThrow(),
                         paymentSystemService.findById(2L).orElseThrow(),
-                        accountService.findById(3L).orElseThrow(),
+                        accountService.findById(1L).orElseThrow(),
                         Timestamp.valueOf("2023-05-08 10:23:05.372"),
                         Timestamp.valueOf("2023-05-08 10:24:02.175"))
         );

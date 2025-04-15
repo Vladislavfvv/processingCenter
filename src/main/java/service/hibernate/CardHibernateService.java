@@ -21,7 +21,8 @@ public class CardHibernateService implements ServiceInterfaceHibernate<Long, Car
     public Card create(Card value) {
         // Проверка номера карты перед сохранением
         if (!CardValidator.validateCardNumber(value.getCardNumber())) {
-            throw new IllegalArgumentException("Некорректный номер карты: не проходит проверку по алгоритму Луна.");
+            // throw new IllegalArgumentException("Некорректный номер карты: не проходит проверку по алгоритму Луна.");
+            return null;
         }
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
             Transaction tx = session.beginTransaction();
