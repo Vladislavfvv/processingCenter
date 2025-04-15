@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="service.hibernate.CardStatusHibernateServiceTest" time="0.055" tests="8" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="util.CardValidatorTest" time="0.009" tests="6" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="21"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -59,12 +59,10 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="65.0"/>
   </properties>
-  <testcase name="testFindAll" classname="service.hibernate.CardStatusHibernateServiceTest" time="0.034"/>
-  <testcase name="testCreateTable" classname="service.hibernate.CardStatusHibernateServiceTest" time="0.003"/>
-  <testcase name="testFindById" classname="service.hibernate.CardStatusHibernateServiceTest" time="0.003"/>
-  <testcase name="testDropTable" classname="service.hibernate.CardStatusHibernateServiceTest" time="0.003"/>
-  <testcase name="testDeleteAll" classname="service.hibernate.CardStatusHibernateServiceTest" time="0.002"/>
-  <testcase name="testCreate" classname="service.hibernate.CardStatusHibernateServiceTest" time="0.002"/>
-  <testcase name="testDelete" classname="service.hibernate.CardStatusHibernateServiceTest" time="0.002"/>
-  <testcase name="testUpdate" classname="service.hibernate.CardStatusHibernateServiceTest" time="0.003"/>
+  <testcase name="testInvalidCardNumberLength" classname="util.CardValidatorTest" time="0.001"/>
+  <testcase name="testCardNumberWithInvalidCheckDigit" classname="util.CardValidatorTest" time="0.001"/>
+  <testcase name="testCardNumberWithValidCheckDigit" classname="util.CardValidatorTest" time="0.001"/>
+  <testcase name="testInvalidCardNumberNotDigits" classname="util.CardValidatorTest" time="0.001"/>
+  <testcase name="testNullCardNumber" classname="util.CardValidatorTest" time="0.001"/>
+  <testcase name="testValidCardNumber" classname="util.CardValidatorTest" time="0.001"/>
 </testsuite>

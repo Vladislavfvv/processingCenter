@@ -22,8 +22,8 @@ public class Main {
     public static void main(String[] args) throws SQLException {
 
 
-        //     myHibernateInitial();
-        myJDBCInitial();
+             myHibernateInitial();
+        //myJDBCInitial();
 
         // Создание таблиц
 //        CreateSchemaService createSchemaService = new CreateSchemaService(connection);
@@ -290,11 +290,11 @@ public class Main {
 
 
         //delete by id
-        cardHibernateService.delete(1L);
+//        cardHibernateService.delete(1L);
 
 //clear tables
-        cardHibernate.deleteAll("card");
-        cardStatusHibernateService.delete();
+//        cardHibernate.deleteAll("card");
+//        cardStatusHibernateService.delete();
 
 
 

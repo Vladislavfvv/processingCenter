@@ -1,6 +1,7 @@
 package service.hibernate;
 
 import dao.hibernate.CardHibernateDaoImpl;
+import lombok.extern.slf4j.Slf4j;
 import model.Card;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -10,6 +11,7 @@ import util.HibernateConfig;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 public class CardHibernateService implements ServiceInterfaceHibernate<Long, Card>{
     private final CardHibernateDaoImpl cardHibernateDao;
 
@@ -21,7 +23,8 @@ public class CardHibernateService implements ServiceInterfaceHibernate<Long, Car
     public Card create(Card value) {
         // Проверка номера карты перед сохранением
         if (!CardValidator.validateCardNumber(value.getCardNumber())) {
-            throw new IllegalArgumentException("Некорректный номер карты: не проходит проверку по алгоритму Луна.");
+            //throw new IllegalArgumentException("Некорректный номер карты: не проходит проверку по алгоритму Луна.");
+        log.warn("Некорректный номер карты: не проходит проверку по алгоритму Луна.");
         }
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
             Transaction tx = session.beginTransaction();
@@ -35,7 +38,8 @@ public class CardHibernateService implements ServiceInterfaceHibernate<Long, Car
     public boolean update(Card value) {
         // Проверка номера карты перед сохранением
         if (!CardValidator.validateCardNumber(value.getCardNumber())) {
-            throw new IllegalArgumentException("Некорректный номер карты: не проходит проверку по алгоритму Луна.");
+            //throw new IllegalArgumentException("Некорректный номер карты: не проходит проверку по алгоритму Луна.");
+            log.warn("Некорректный номер карты: не проходит проверку по алгоритму Луна.");
         }
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
             Transaction tx = session.beginTransaction();

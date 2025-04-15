@@ -55,7 +55,7 @@ public class HibernateConfig {
             configuration.addAnnotatedClass(Terminal.class);
             configuration.addAnnotatedClass(Transaction.class);
             configuration.addAnnotatedClass(TransactionType.class);
-            configuration.addAnnotatedClass(User.class);
+
 
             StandardServiceRegistryBuilder builder =
                     new StandardServiceRegistryBuilder().applySettings(configuration.getProperties());
