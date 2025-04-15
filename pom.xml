@@ -8,6 +8,14 @@
     <artifactId>HibernateDemo</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <!-- Добавляем кодировку проекта -->
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+    </properties>
+
     <dependencies>
         <!-- Hibernate Core -->
         <dependency>
