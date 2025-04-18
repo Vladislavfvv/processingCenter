@@ -2,6 +2,7 @@ package model;
 
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -12,6 +13,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @Entity
+@Where(clause = "deleted=false")
 @Table(name = "account") // Название таблицы в базе данных
 public class Account{
 
@@ -30,8 +32,6 @@ public class Account{
     private Currency currencyId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "issuing_bank_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn( name = "issuing_bank_id", referencedColumnName = "id", nullable = false)
     private IssuingBank issuingBankId;
-
-
 }

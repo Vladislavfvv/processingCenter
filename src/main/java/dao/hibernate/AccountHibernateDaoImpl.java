@@ -30,9 +30,9 @@ public class AccountHibernateDaoImpl extends AbstractHibernateDao<Long, Account>
     }
 
     @Override
-    public boolean update(Session session, Account entity) {
-        session.update(entity);
-        return true;
+    public boolean update(Session session, Account entity) {//--------возврат сущности!!!
+        session.update(entity);// - здесь создается DTO
+        return true;// возврат DTO
     }
 
     @Override
