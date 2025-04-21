@@ -24,6 +24,7 @@ dao\jdbc\SalesPointJDBCDaoImpl.class
 model\TransactionType.class
 model\Account$AccountBuilder.class
 service\CardService.class
+dao\spring\CurrencySpringDaoImpl.class
 model\Currency$CurrencyBuilder.class
 model\Terminal$TerminalBuilder.class
 util\YamlSqlLoader.class
@@ -47,8 +48,10 @@ service\TransactionTypeService.class
 util\HibernateConfig.class
 service\hibernate\IssuingBankHibernateService.class
 model\Terminal.class
+dao\DaoInterfaceSpring.class
 service\PaymentSystemService.class
 dao\jdbc\TerminalJDBCDaoImpl.class
+util\jdbc\AppConfig.class
 util\jdbc\InsertCardStatusService.class
 util\jdbc\InsertIssuingBankService.class
 dao\hibernate\CardHibernateDaoImpl.class
@@ -67,6 +70,7 @@ dao\DAOAbstract.class
 service\hibernate\AccountHibernateService.class
 dao\hibernate\AccountHibernateDaoImpl.class
 dao\jdbc\CurrencyJDBCDaoImpl.class
+service\spring\CurrencySpringService.class
 dao\jdbc\TransactionTypeJDBCDaoImpl.class
 model\CardStatus$CardStatusBuilder.class
 model\ResponseCode.class
@@ -75,10 +79,12 @@ model\IssuingBank.class
 dao\DAOInterface.class
 dao\jdbc\AcquiringBankJDBCDaoImpl.class
 model\Transaction$TransactionBuilder.class
+service\hibernate\AbstractHibernateClass.class
 dao\hibernate\AbstractHibernateDao.class
 service\AccountService.class
 model\TransactionType$TransactionTypeBuilder.class
 model\MerchantCategoryCode$MerchantCategoryCodeBuilder.class
+dto\CurrencyDto.class
 service\hibernate\CardHibernateService.class
 dao\DAOFactory.class
 dao\jdbc\IssuingBankJDBCDaoImpl.class

@@ -271,8 +271,8 @@ public static void mySpringFirst(){
     CurrencySpringService currencyService = context.getBean(CurrencySpringService.class);
 
     // Пример использования
-    Optional<Currency> addedCurrency = currencyService.addCurrency("Ruble", "643", "RUB");
-    Optional<Currency> addedCurrency2 = currencyService.addCurrency("Bitcoin", "999", "BIT");
+    Optional<Currency> addedCurrency = currencyService.addCurrency("RUB", "643","Russian Ruble");
+    Optional<Currency> addedCurrency2 = currencyService.addCurrency("BIT", "999","Bitcoin");
     if (addedCurrency.isPresent()) {
         System.out.println("Добавлена валюта: " + addedCurrency.get());
     }
@@ -287,10 +287,10 @@ public static void mySpringFirst(){
     else {
         System.out.println("Валюта уже существует.");
     }
-
+    System.out.println("List jf currencies");
     List<Currency> listCurrencies = currencyService.getAllCurrencies();
-
     listCurrencies.forEach(System.out::println);
+
     context.close();
 }
 

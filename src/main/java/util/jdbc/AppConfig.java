@@ -53,7 +53,7 @@ public class AppConfig {
             String schemaName = env.getProperty("spring.jpa.properties.hibernate.default_schema");
             String sql = "CREATE SCHEMA IF NOT EXISTS " + schemaName;
             statement.execute(sql);
-            System.out.println("✔️ Схема '" + schemaName + "' создана или уже существует.");
+      //      System.out.println(" Схема '" + schemaName + "' создана или уже существует.");
         } catch (SQLException e) {
             throw new RuntimeException("Ошибка при создании схемы: " + e.getMessage(), e);
         }

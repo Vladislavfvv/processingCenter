@@ -5,3 +5,4 @@ util\CardValidatorTest.class
 service\hibernate\PaymentSystemHibernateServiceTest.class
 service\hibernate\AccountHibernateServiceTest.class
 service\hibernate\CardHibernateServiceTest.class
+service\spring\CurrencySpringServiceTest.class

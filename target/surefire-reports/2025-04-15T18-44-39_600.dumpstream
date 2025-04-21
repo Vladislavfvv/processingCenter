@@ -1,5 +1,0 @@
-# Created at 2025-04-15T18:44:40.055
-Boot Manifest-JAR contains absolute paths in classpath 'E:\EDME\Trainee\9-JDBC-Hibernate\Project\filimontsev_vv_dec2_processingcenter\processingcenter\target\test-classes'
-Hint: <argLine>-Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
-'other' has different root
-

@@ -2,6 +2,7 @@ E:\EDME\Trainee\9-JDBC-Hibernate\Project\filimontsev_vv_dec2_processingcenter\pr
 E:\EDME\Trainee\9-JDBC-Hibernate\Project\filimontsev_vv_dec2_processingcenter\processingcenter\src\main\java\dao\DAOFactory.java
 E:\EDME\Trainee\9-JDBC-Hibernate\Project\filimontsev_vv_dec2_processingcenter\processingcenter\src\main\java\dao\DAOHibernateInterface.java
 E:\EDME\Trainee\9-JDBC-Hibernate\Project\filimontsev_vv_dec2_processingcenter\processingcenter\src\main\java\dao\DAOInterface.java
+E:\EDME\Trainee\9-JDBC-Hibernate\Project\filimontsev_vv_dec2_processingcenter\processingcenter\src\main\java\dao\DaoInterfaceSpring.java
 E:\EDME\Trainee\9-JDBC-Hibernate\Project\filimontsev_vv_dec2_processingcenter\processingcenter\src\main\java\dao\hibernate\AbstractHibernateDao.java
 E:\EDME\Trainee\9-JDBC-Hibernate\Project\filimontsev_vv_dec2_processingcenter\processingcenter\src\main\java\dao\hibernate\AccountHibernateDaoImpl.java
 E:\EDME\Trainee\9-JDBC-Hibernate\Project\filimontsev_vv_dec2_processingcenter\processingcenter\src\main\java\dao\hibernate\CardHibernateDaoImpl.java
@@ -22,6 +23,8 @@ E:\EDME\Trainee\9-JDBC-Hibernate\Project\filimontsev_vv_dec2_processingcenter\pr
 E:\EDME\Trainee\9-JDBC-Hibernate\Project\filimontsev_vv_dec2_processingcenter\processingcenter\src\main\java\dao\jdbc\TerminalJDBCDaoImpl.java
 E:\EDME\Trainee\9-JDBC-Hibernate\Project\filimontsev_vv_dec2_processingcenter\processingcenter\src\main\java\dao\jdbc\TransactionJDBCDaoImpl.java
 E:\EDME\Trainee\9-JDBC-Hibernate\Project\filimontsev_vv_dec2_processingcenter\processingcenter\src\main\java\dao\jdbc\TransactionTypeJDBCDaoImpl.java
+E:\EDME\Trainee\9-JDBC-Hibernate\Project\filimontsev_vv_dec2_processingcenter\processingcenter\src\main\java\dao\spring\CurrencySpringDaoImpl.java
+E:\EDME\Trainee\9-JDBC-Hibernate\Project\filimontsev_vv_dec2_processingcenter\processingcenter\src\main\java\dto\CurrencyDto.java
 E:\EDME\Trainee\9-JDBC-Hibernate\Project\filimontsev_vv_dec2_processingcenter\processingcenter\src\main\java\exception\DaoException.java
 E:\EDME\Trainee\9-JDBC-Hibernate\Project\filimontsev_vv_dec2_processingcenter\processingcenter\src\main\java\Main.java
 E:\EDME\Trainee\9-JDBC-Hibernate\Project\filimontsev_vv_dec2_processingcenter\processingcenter\src\main\java\model\Account.java
@@ -58,12 +61,14 @@ E:\EDME\Trainee\9-JDBC-Hibernate\Project\filimontsev_vv_dec2_processingcenter\pr
 E:\EDME\Trainee\9-JDBC-Hibernate\Project\filimontsev_vv_dec2_processingcenter\processingcenter\src\main\java\service\ResponseCodeService.java
 E:\EDME\Trainee\9-JDBC-Hibernate\Project\filimontsev_vv_dec2_processingcenter\processingcenter\src\main\java\service\SalesPointService.java
 E:\EDME\Trainee\9-JDBC-Hibernate\Project\filimontsev_vv_dec2_processingcenter\processingcenter\src\main\java\service\ServiceInterface.java
+E:\EDME\Trainee\9-JDBC-Hibernate\Project\filimontsev_vv_dec2_processingcenter\processingcenter\src\main\java\service\spring\CurrencySpringService.java
 E:\EDME\Trainee\9-JDBC-Hibernate\Project\filimontsev_vv_dec2_processingcenter\processingcenter\src\main\java\service\TerminalService.java
 E:\EDME\Trainee\9-JDBC-Hibernate\Project\filimontsev_vv_dec2_processingcenter\processingcenter\src\main\java\service\TransactionService.java
 E:\EDME\Trainee\9-JDBC-Hibernate\Project\filimontsev_vv_dec2_processingcenter\processingcenter\src\main\java\service\TransactionTypeService.java
 E:\EDME\Trainee\9-JDBC-Hibernate\Project\filimontsev_vv_dec2_processingcenter\processingcenter\src\main\java\util\CardValidator.java
 E:\EDME\Trainee\9-JDBC-Hibernate\Project\filimontsev_vv_dec2_processingcenter\processingcenter\src\main\java\util\ConnectionManager.java
 E:\EDME\Trainee\9-JDBC-Hibernate\Project\filimontsev_vv_dec2_processingcenter\processingcenter\src\main\java\util\HibernateConfig.java
+E:\EDME\Trainee\9-JDBC-Hibernate\Project\filimontsev_vv_dec2_processingcenter\processingcenter\src\main\java\util\jdbc\AppConfig.java
 E:\EDME\Trainee\9-JDBC-Hibernate\Project\filimontsev_vv_dec2_processingcenter\processingcenter\src\main\java\util\jdbc\ClearJDBCTables.java
 E:\EDME\Trainee\9-JDBC-Hibernate\Project\filimontsev_vv_dec2_processingcenter\processingcenter\src\main\java\util\jdbc\CreateSchemaService.java
 E:\EDME\Trainee\9-JDBC-Hibernate\Project\filimontsev_vv_dec2_processingcenter\processingcenter\src\main\java\util\jdbc\DropSchemaService.java

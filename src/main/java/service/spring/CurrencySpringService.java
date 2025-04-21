@@ -19,14 +19,14 @@ public class CurrencySpringService {
     }
 
     @Transactional
-    public Optional<Currency> addCurrency(String name, String digitalCode, String letterCode) {
-        if (currencyDao.findByValue(name).isPresent()) {
+    public Optional<Currency> addCurrency(String digitalCode, String letterCode, String currencyName) {
+        if (currencyDao.findByValue(currencyName).isPresent()) {
             return Optional.empty();
         }
         Currency currency = new Currency();
-        currency.setCurrencyName(name);
         currency.setCurrencyDigitalCode(digitalCode);
         currency.setCurrencyLetterCode(letterCode);
+        currency.setCurrencyName(currencyName);
         Currency saved = currencyDao.insert(currency);
         return Optional.of(saved);
     }
