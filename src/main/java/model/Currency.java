@@ -2,8 +2,8 @@ package model;
 
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
-
-import javax.persistence.*;
+import jakarta.persistence.*;
+//import javax.persistence.*;
 
 
 @NoArgsConstructor
@@ -12,7 +12,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Entity
-@Table(name = "currency")
+@Table(name = "currency", schema = "processingcenterschema" )
 public class Currency {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,6 +23,16 @@ public class Currency {
     private String currencyLetterCode;
     @Column(name = "currency_name", length = 255, nullable = false)
     private String currencyName;
+
+    @Override
+    public String toString() {
+        return "Currency{" +
+                "id=" + id +
+                ", currencyLetterCode='" + currencyLetterCode + '\'' +
+                ", currencyDigitalCode='" + currencyDigitalCode + '\'' +
+                ", currencyName='" + currencyName + '\'' +
+                '}';
+    }
 }
 
 

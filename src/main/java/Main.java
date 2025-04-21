@@ -4,8 +4,10 @@ import model.*;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import service.*;
 import service.hibernate.*;
+import service.spring.CurrencySpringService;
 import util.*;
 import util.jdbc.*;
 
@@ -14,6 +16,7 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -22,7 +25,7 @@ public class Main {
     public static void main(String[] args) throws SQLException {
 
 
-            myHibernateInitial();
+        // myHibernateInitial();
        // myJDBCInitial();
 
         // Создание таблиц
@@ -255,7 +258,41 @@ public class Main {
 //        card = cardHibernateService.create(card);
 //
 //        System.out.println("Добавлена карта с id: " + card.getId());
+
+        mySpringFirst();
+
     }
+
+public static void mySpringFirst(){
+    // Создаем Spring-контекст на основе Java-конфигурации
+    AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
+
+    // Получаем CurrencySpringService из контекста
+    CurrencySpringService currencyService = context.getBean(CurrencySpringService.class);
+
+    // Пример использования
+    Optional<Currency> addedCurrency = currencyService.addCurrency("Ruble", "643", "RUB");
+    Optional<Currency> addedCurrency2 = currencyService.addCurrency("Bitcoin", "999", "BIT");
+    if (addedCurrency.isPresent()) {
+        System.out.println("Добавлена валюта: " + addedCurrency.get());
+    }
+    else {
+        System.out.println("Валюта уже существует.");
+    }
+
+    if (addedCurrency2.isPresent()) {
+        System.out.println("Добавлена валюта: " + addedCurrency2.get());
+    }
+
+    else {
+        System.out.println("Валюта уже существует.");
+    }
+
+    List<Currency> listCurrencies = currencyService.getAllCurrencies();
+
+    listCurrencies.forEach(System.out::println);
+    context.close();
+}
 
 
     public static void myHibernateInitial() {

@@ -40,7 +40,7 @@ public class AbstractHibernateDao <K, V> implements DAOHibernateInterface<K, V> 
     @Override
     public boolean createTableQuery(Session session, String sql) {
         try {
-            session.createSQLQuery(sql).executeUpdate();
+            session.createNativeQuery(sql).executeUpdate();
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -64,7 +64,7 @@ public class AbstractHibernateDao <K, V> implements DAOHibernateInterface<K, V> 
     public boolean dropTable(Session session, String tableName) {
         try {
             String sql = "DROP TABLE IF EXISTS " + tableName;
-            session.createSQLQuery(sql).executeUpdate();
+            session.createNativeQuery(sql).executeUpdate();
             return true;
         } catch (Exception e) {
             e.printStackTrace();

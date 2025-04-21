@@ -23,7 +23,7 @@ public class CardService implements ServiceInterface<Card, Long> {
     }
 
     public Optional<Card> findByCardNumber(String cardNumber) {
-        return cardDAO.findByValue(cardNumber); // Предположим, что у вас есть метод в DAO для поиска по номеру карты
+        return cardDAO.findByValue(cardNumber); // метод в DAO для поиска по номеру карты
     }
 
 //    public boolean update(Card card) {

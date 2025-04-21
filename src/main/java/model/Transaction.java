@@ -2,8 +2,8 @@ package model;
 
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
-
-import javax.persistence.*;
+import jakarta.persistence.*;
+//import javax.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.sql.Date;
