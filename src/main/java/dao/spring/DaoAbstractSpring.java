@@ -7,10 +7,9 @@ public abstract class DaoAbstractSpring {
     @PersistenceContext
     protected EntityManager em;
 
-    public DaoAbstractSpring(EntityManager em) {
+    public void setEntityManager(EntityManager em) {
         this.em = em;
     }
-
 
     public boolean dropTable(String tableName) {
         String sql = "DROP TABLE IF EXISTS " + tableName + " CASCADE;";

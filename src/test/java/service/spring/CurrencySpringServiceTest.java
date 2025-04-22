@@ -124,6 +124,7 @@ class CurrencySpringServiceTest {
         // задаём поведение update
         Mockito.when(currencyDao.update(currency)).thenReturn(currency);
 
+        currency.setCurrencyName("Ruble");//смена названия перед обновлением
         // вызываем метод сервиса
         Optional<Currency> result = currencyService.updateCurrency(currency);
 

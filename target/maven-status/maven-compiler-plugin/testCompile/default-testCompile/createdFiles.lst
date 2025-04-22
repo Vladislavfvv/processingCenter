@@ -3,6 +3,7 @@ service\hibernate\CardStatusHibernateServiceTest.class
 service\hibernate\CurrencyHibernateServiceTest.class
 util\CardValidatorTest.class
 service\hibernate\PaymentSystemHibernateServiceTest.class
+dao\spring\CurrencySpringDaoImplTest.class
 service\hibernate\AccountHibernateServiceTest.class
 service\hibernate\CardHibernateServiceTest.class
 service\spring\CurrencySpringServiceTest.class

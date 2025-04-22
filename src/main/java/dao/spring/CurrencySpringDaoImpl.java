@@ -18,9 +18,13 @@ import java.util.Optional;
 @Slf4j
 @Transactional
 @Repository
-public class CurrencySpringDaoImpl implements DaoInterfaceSpring<Long, Currency> {
+public class CurrencySpringDaoImpl  implements DaoInterfaceSpring<Long, Currency> {
     @PersistenceContext
     private EntityManager em;
+
+    void setEntityManager(EntityManager em) {
+        this.em = em;
+    }
 
 
     public Currency insert(Currency currency) {
@@ -96,6 +100,11 @@ public class CurrencySpringDaoImpl implements DaoInterfaceSpring<Long, Currency>
 
         return result.stream().findFirst();
     }
+    public Optional<Currency> findById(Long id) {
+        return Optional.ofNullable(em.find(Currency.class, id));
+    }
+
+
 
     // public Optional<Currency> findByValue(String name) {
     //        return currencies.stream()
@@ -103,11 +112,6 @@ public class CurrencySpringDaoImpl implements DaoInterfaceSpring<Long, Currency>
     //                .findFirst();
     //    }
 
-    public Optional<Currency> findById(Long id) {
-        return Optional.ofNullable(em.find(Currency.class, id));
-    }
-
-
-    }
+}
 
 

@@ -24,6 +24,7 @@ E:\EDME\Trainee\9-JDBC-Hibernate\Project\filimontsev_vv_dec2_processingcenter\pr
 E:\EDME\Trainee\9-JDBC-Hibernate\Project\filimontsev_vv_dec2_processingcenter\processingcenter\src\main\java\dao\jdbc\TransactionJDBCDaoImpl.java
 E:\EDME\Trainee\9-JDBC-Hibernate\Project\filimontsev_vv_dec2_processingcenter\processingcenter\src\main\java\dao\jdbc\TransactionTypeJDBCDaoImpl.java
 E:\EDME\Trainee\9-JDBC-Hibernate\Project\filimontsev_vv_dec2_processingcenter\processingcenter\src\main\java\dao\spring\CurrencySpringDaoImpl.java
+E:\EDME\Trainee\9-JDBC-Hibernate\Project\filimontsev_vv_dec2_processingcenter\processingcenter\src\main\java\dao\spring\DaoAbstractSpring.java
 E:\EDME\Trainee\9-JDBC-Hibernate\Project\filimontsev_vv_dec2_processingcenter\processingcenter\src\main\java\dto\CurrencyDto.java
 E:\EDME\Trainee\9-JDBC-Hibernate\Project\filimontsev_vv_dec2_processingcenter\processingcenter\src\main\java\exception\DaoException.java
 E:\EDME\Trainee\9-JDBC-Hibernate\Project\filimontsev_vv_dec2_processingcenter\processingcenter\src\main\java\Main.java

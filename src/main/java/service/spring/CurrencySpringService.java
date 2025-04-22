@@ -28,7 +28,7 @@ public class CurrencySpringService {
         currency.setCurrencyLetterCode(letterCode);
         currency.setCurrencyName(currencyName);
         Currency saved = currencyDao.insert(currency);
-        return Optional.of(saved);
+        return Optional.ofNullable(saved);
     }
 
     public Optional<Currency> getCurrencyById(Long id) {

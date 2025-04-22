@@ -70,6 +70,7 @@ dao\DAOAbstract.class
 service\hibernate\AccountHibernateService.class
 dao\hibernate\AccountHibernateDaoImpl.class
 dao\jdbc\CurrencyJDBCDaoImpl.class
+dao\spring\DaoAbstractSpring.class
 service\spring\CurrencySpringService.class
 dao\jdbc\TransactionTypeJDBCDaoImpl.class
 model\CardStatus$CardStatusBuilder.class
