@@ -1,14 +1,12 @@
 package service.spring;
 
 import dao.DaoInterfaceSpring;
-import dto.CurrencyDto;
 import model.Currency;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 
 
 import java.util.List;
@@ -16,7 +14,6 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 class CurrencySpringServiceTest {
     @Mock
@@ -58,7 +55,7 @@ class CurrencySpringServiceTest {
         Mockito.when(currencyDao.insert(Mockito.any())).thenReturn(currency);
 
         // вызываем метод сервиса
-        Optional<Currency> result = currencyService.addCurrency(name, digitalCode, letterCode);
+        Optional<Currency> result = currencyService.save(name, digitalCode, letterCode);
 
         // проверяем, что результат не пустой
         assertTrue(result.isPresent());
@@ -67,7 +64,7 @@ class CurrencySpringServiceTest {
     }
 
     @Test
-    public void testAddCurrency_whenCurrencyExists_shouldReturnEmpty() {
+    public void testSaveExists_shouldReturnEmpty() {
         // подготавливаем данные
         String name = "Russian Ruble";
 
@@ -75,14 +72,14 @@ class CurrencySpringServiceTest {
         Mockito.when(currencyDao.findByValue(name)).thenReturn(Optional.of(new Currency()));
 
         // вызываем метод
-        Optional<Currency> result = currencyService.addCurrency(name, "643", "RUB");
+        Optional<Currency> result = currencyService.save(name, "643", "RUB");
 
         // ожидаем, что результат будет пустым
         assertTrue(result.isEmpty());
     }
 
     @Test
-    public void testGetCurrencyById_shouldReturnCurrency() {
+    public void testFind() {
         // подготавливаем тестовые данные
         Long id = 1L;
         Currency currency = new Currency();
@@ -92,7 +89,7 @@ class CurrencySpringServiceTest {
         Mockito.when(currencyDao.findById(id)).thenReturn(Optional.of(currency));
 
         // вызываем метод сервиса
-        Optional<Currency> result = currencyService.getCurrencyById(id);
+        Optional<Currency> result = currencyService.findById(id);
 
         // проверяем, что результат найден
         assertTrue(result.isPresent());
@@ -101,12 +98,12 @@ class CurrencySpringServiceTest {
     }
 
     @Test
-    public void testDeleteCurrency_shouldReturnTrue() {
+    public void testDelete_shouldReturnTrue() {
         // задаём поведение мока: удаление успешно
         Mockito.when(currencyDao.delete(1L)).thenReturn(true);
 
         // вызываем метод сервиса
-        boolean result = currencyService.deleteCurrency(1L);
+        boolean result = currencyService.delete(1L);
 
         // ожидаем true
         assertTrue(result);
@@ -126,7 +123,7 @@ class CurrencySpringServiceTest {
 
         currency.setCurrencyName("Ruble");//смена названия перед обновлением
         // вызываем метод сервиса
-        Optional<Currency> result = currencyService.updateCurrency(currency);
+        Optional<Currency> result = currencyService.update(currency);
 
         // проверяем, что обновление прошло успешно
         assertTrue(result.isPresent());
@@ -134,7 +131,7 @@ class CurrencySpringServiceTest {
     }
 
     @Test
-    public void testUpdateCurrency_whenNotExists_shouldReturnEmpty() {
+    public void testUpdate_whenNotExists_shouldReturnEmpty() {
         // подготавливаем данные
         Currency currency = new Currency();
         currency.setId(1L);
@@ -143,14 +140,14 @@ class CurrencySpringServiceTest {
         Mockito.when(currencyDao.findById(1L)).thenReturn(Optional.empty());
 
         // вызываем метод
-        Optional<Currency> result = currencyService.updateCurrency(currency);
+        Optional<Currency> result = currencyService.update(currency);
 
         // ожидаем пустой результат
         assertTrue(result.isEmpty());
     }
 
     @Test
-    public void testGetAllCurrencies_shouldReturnList() {
+    public void testFindAll_shouldReturnList() {
         // подготавливаем тестовый список валют
         Currency currency1 = new Currency();
         Currency currency2 = new Currency();
@@ -160,7 +157,7 @@ class CurrencySpringServiceTest {
         Mockito.when(currencyDao.findAll()).thenReturn(currencies);
 
         // вызываем метод
-        List<Currency> result = currencyService.getAllCurrencies();
+        List<Currency> result = currencyService.findAll();
 
         // проверяем размер списка
         assertEquals(2, result.size());

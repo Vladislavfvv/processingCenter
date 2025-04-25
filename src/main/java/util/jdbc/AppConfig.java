@@ -1,8 +1,8 @@
 package util.jdbc;
 
 import dao.DaoInterfaceSpring;
-import dao.spring.CurrencySpringDaoImpl;
-import model.Currency;
+import dao.spring.*;
+import model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -86,6 +86,31 @@ public class AppConfig {
     @Bean
     public DaoInterfaceSpring<Long, Currency> currencyDao() {
         return new CurrencySpringDaoImpl(); // Конкретная реализация
+    }
+
+    @Bean
+    public DaoInterfaceSpring<Long, CardStatus> cardStatusDao() {
+        return new CardStatusSpringDaoImpl(); // Конкретная реализация
+    }
+
+    @Bean
+    public DaoInterfaceSpring<Long, PaymentSystem> paymentSystemDao() {
+        return new PaymentSystemSpringDaoImpl(); // Конкретная реализация
+    }
+
+    @Bean
+    public DaoInterfaceSpring<Long, IssuingBank> issuingBankDao() {
+        return new IssuingBankSpringDaoImpl(); // Конкретная реализация
+    }
+
+    @Bean
+    public DaoInterfaceSpring<Long, Account> accountDao() {
+        return new AccountSpringDaoImpl(); // Конкретная реализация
+    }
+
+    @Bean
+    public DaoInterfaceSpring<Long, Card> cardDao() {
+        return new CardSpringDaoImpl(); // Конкретная реализация
     }
 
     // Бин для транзакционного менеджера

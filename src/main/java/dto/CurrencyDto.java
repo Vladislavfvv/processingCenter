@@ -2,6 +2,7 @@ package dto;
 
 import lombok.*;
 
+@Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

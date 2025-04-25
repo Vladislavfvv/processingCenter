@@ -7,11 +7,8 @@ import model.Currency;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-//import javax.persistence.EntityManager;
-//import javax.persistence.PersistenceContext;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.*;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,6 +26,8 @@ public class CurrencySpringDaoImpl  implements DaoInterfaceSpring<Long, Currency
 
     public Currency insert(Currency currency) {
        em.persist(currency);
+       em.flush();
+       log.info("Inserted currency: " + currency);
        return currency;
     }
 
@@ -42,13 +41,17 @@ public class CurrencySpringDaoImpl  implements DaoInterfaceSpring<Long, Currency
         Currency currency = em.find(Currency.class, id);
         if (currency != null) {
             em.remove(currency);
+            log.info("Deleted Currency: " + currency);
             return true;
         }
+        log.info("Not deleted Currency: " + id);
         return false;
     }
 
     public List<Currency> findAll() {
-        return em.createQuery("FROM Currency", Currency.class).getResultList();
+
+        //return em.createQuery("FROM Currency", Currency.class).getResultList();
+        return em.createQuery("SELECT c FROM Currency c", Currency.class).getResultList();
     }
 
     @Override
@@ -62,9 +65,10 @@ public class CurrencySpringDaoImpl  implements DaoInterfaceSpring<Long, Currency
                 "    );";
         try {
             em.createNativeQuery(sqlCreate).executeUpdate();
+            log.info("Table {} created", CurrencySpringDaoImpl.class.getName());
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+           log.info("Table {} not created", CurrencySpringDaoImpl.class.getName());
             return false;
         }
     }
@@ -73,9 +77,10 @@ public class CurrencySpringDaoImpl  implements DaoInterfaceSpring<Long, Currency
     public boolean deleteAll() {
         try {
             em.createQuery("DELETE FROM Currency").executeUpdate();
+            log.info("Table {} cleared", Currency.class.getSimpleName());
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+           log.info("Table {} not cleared", Currency.class.getSimpleName());
             return false;
         }
     }
@@ -83,10 +88,12 @@ public class CurrencySpringDaoImpl  implements DaoInterfaceSpring<Long, Currency
     @Override
     public boolean dropTable() {
         try {
-            em.createNativeQuery("DROP TABLE IF EXISTS Currency").executeUpdate();
+           // em.createNativeQuery("DROP TABLE IF EXISTS Currency").executeUpdate();
+            em.createNativeQuery("DROP TABLE IF EXISTS processingcenterschema.currency CASCADE ").executeUpdate();
+           log.info("Table {} dropped", CurrencySpringDaoImpl.class.getName());
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+           log.info("Table {} not dropped", CurrencySpringDaoImpl.class.getName());
             return false;
         }
     }

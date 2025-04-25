@@ -14,7 +14,8 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @Entity
-@Where(clause = "deleted=false")
+//@Where(clause = "deleted=false")//обеспечивает soft delete для одной строки из базы
+//для его использования необходимо добавить поле-флаг - смотри снизу закоммменчено и этот флаг менять в зависимости от статуса удалено или нет
 @Table(name = "account") // Название таблицы в базе данных
 public class Account{
 
@@ -25,7 +26,7 @@ public class Account{
     @Column(name = "account_number", length = 255, nullable = false)
     private String accountNumber;
 
-    @Column(name = "balance", nullable = false)
+    @Column(name = "balance", nullable = false, precision = 19, scale = 2)
     private BigDecimal balance;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -35,4 +36,9 @@ public class Account{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn( name = "issuing_bank_id", referencedColumnName = "id", nullable = false)
     private IssuingBank issuingBankId;
+
+
+    // @Column(name = "deleted", nullable = false) - для мягкого удаления
+    //    private boolean deleted = false; - для мягкого удаления и потом сеттерами указывать account.setDeleted(true); - удалено
+    // эта запись сохранится в таблице, но потом при выводе ее не покажет
 }

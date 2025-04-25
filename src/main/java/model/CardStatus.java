@@ -1,9 +1,9 @@
 package model;
 
 import lombok.*;
-import lombok.extern.slf4j.Slf4j;
+
 import jakarta.persistence.*;
-//import javax.persistence.*;
+
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -11,11 +11,15 @@ import jakarta.persistence.*;
 @Getter
 @Setter
 @Entity
-@Table(name = "card_status")
+@Table(name = "card_status", schema = "processingcenterschema")
 public class CardStatus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "card_status_name", length = 255, nullable = false)
+    @Column(name = "card_status_name", nullable = false)
     private String cardStatusName;
+
+    public CardStatus(String cardStatusName) {
+        this.cardStatusName = cardStatusName;
+    }
 }
