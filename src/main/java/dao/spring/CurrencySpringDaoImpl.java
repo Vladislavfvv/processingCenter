@@ -2,6 +2,7 @@ package dao.spring;
 
 
 import dao.DaoInterfaceSpring;
+import jakarta.persistence.Query;
 import lombok.extern.slf4j.Slf4j;
 import model.Currency;
 import org.springframework.stereotype.Repository;
@@ -73,14 +74,27 @@ public class CurrencySpringDaoImpl  implements DaoInterfaceSpring<Long, Currency
         }
     }
 
+//    @Override
+//    public boolean deleteAll() {
+//        try {
+//            em.createQuery("DELETE FROM Currency").executeUpdate();
+//            log.info("Table {} cleared", Currency.class.getSimpleName());
+//            return true;
+//        } catch (Exception e) {
+//           log.info("Table {} not cleared", Currency.class.getSimpleName());
+//            return false;
+//        }
+//    }
+
     @Override
     public boolean deleteAll() {
         try {
-            em.createQuery("DELETE FROM Currency").executeUpdate();
+            Query query = em.createNativeQuery("DELETE FROM processingcenterschema.currency");
             log.info("Table {} cleared", Currency.class.getSimpleName());
-            return true;
+            int result = query.executeUpdate();
+            return result > 0;  // return true if records were deleted, otherwise false
         } catch (Exception e) {
-           log.info("Table {} not cleared", Currency.class.getSimpleName());
+            log.info("Table {} not cleared", Currency.class.getSimpleName());
             return false;
         }
     }
@@ -89,9 +103,10 @@ public class CurrencySpringDaoImpl  implements DaoInterfaceSpring<Long, Currency
     public boolean dropTable() {
         try {
            // em.createNativeQuery("DROP TABLE IF EXISTS Currency").executeUpdate();
-            em.createNativeQuery("DROP TABLE IF EXISTS processingcenterschema.currency CASCADE ").executeUpdate();
+            Query query =  em.createNativeQuery("DROP TABLE IF EXISTS processingcenterschema.currency CASCADE ");
            log.info("Table {} dropped", CurrencySpringDaoImpl.class.getName());
-            return true;
+            int result = query.executeUpdate();
+            return result > 0;  // return true if records were deleted, otherwise false
         } catch (Exception e) {
            log.info("Table {} not dropped", CurrencySpringDaoImpl.class.getName());
             return false;

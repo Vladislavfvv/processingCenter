@@ -19,6 +19,10 @@ public class AccountSpringDaoImpl implements DaoInterfaceSpring<Long, Account> {
     @PersistenceContext
     private EntityManager em;
 
+    void setEntityManager(EntityManager em) {
+        this.em = em;
+    }
+
     @Override
     public Account insert(Account value) {
         em.persist(value);

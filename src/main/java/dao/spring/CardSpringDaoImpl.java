@@ -19,6 +19,10 @@ public class CardSpringDaoImpl implements DaoInterfaceSpring<Long, Card> {
     @PersistenceContext
     private EntityManager em;
 
+    void setEntityManager(EntityManager em) {
+        this.em = em;
+    }
+
     @Override
     public Card insert(Card value) {
         em.persist(value);
@@ -75,7 +79,7 @@ public class CardSpringDaoImpl implements DaoInterfaceSpring<Long, Card> {
                     );
                 """;
         try {
-            em.createQuery(sql).executeUpdate();
+            em.createNativeQuery(sql).executeUpdate();
             log.info("Create table processingcenterschema.card");
             return true;
         } catch (Exception e) {

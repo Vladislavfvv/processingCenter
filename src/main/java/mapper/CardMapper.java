@@ -9,7 +9,7 @@ import model.PaymentSystem;
 public class CardMapper {
     public static Card toEntity(CardDto dto, CardStatus cardStatus, PaymentSystem paymentSystem, Account account) {
         Card card = new Card();
-
+        card.setId(dto.getId());
         card.setCardNumber(String.valueOf(dto.getCardNumber()));
         card.setExpirationDate(dto.getExpirationDate());
         card.setHolderName(dto.getHolderName());
@@ -21,9 +21,10 @@ public class CardMapper {
 
         return card;
     }
+
     public static CardDto toDto(Card card) {
         CardDto dto = new CardDto();
-
+        dto.setId(card.getId());
         dto.setCardNumber(card.getCardNumber());
         dto.setExpirationDate(card.getExpirationDate());
         dto.setHolderName(card.getHolderName());

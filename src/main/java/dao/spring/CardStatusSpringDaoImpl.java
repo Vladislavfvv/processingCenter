@@ -4,6 +4,7 @@ package dao.spring;
 import dao.DaoInterfaceSpring;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import lombok.extern.slf4j.Slf4j;
 import model.CardStatus;
 import org.springframework.stereotype.Repository;
@@ -20,9 +21,9 @@ public class CardStatusSpringDaoImpl implements DaoInterfaceSpring<Long, CardSta
     private EntityManager em;
 
 
-//    void setEntityManager(EntityManager em) {
-//        this.em = em;
-//    }
+    void setEntityManager(EntityManager em) {
+        this.em = em;
+    }
 
     @Override
     public CardStatus insert(CardStatus value) {
@@ -82,10 +83,18 @@ public class CardStatusSpringDaoImpl implements DaoInterfaceSpring<Long, CardSta
 
     @Override
     public boolean deleteAll() {
+//        try {
+//            em.createQuery("DELETE FROM CardStatus").executeUpdate();
+//            log.info("Info from table {} cleared", CardStatusSpringDaoImpl.class.getSimpleName());
+//            return true;
+//        } catch (Exception e) {
+//            log.info("Info from table {} not cleared", CardStatusSpringDaoImpl.class.getSimpleName());
+//            return false;
+//        }
         try {
-            em.createQuery("DELETE FROM CardStatus").executeUpdate();
-            log.info("Info from table {} cleared", CardStatusSpringDaoImpl.class.getSimpleName());
-            return true;
+            Query query = em.createNativeQuery("DELETE FROM processingcenterschema.card_status");
+            int result = query.executeUpdate();
+            return result > 0;  // return true if records were deleted, otherwise false
         } catch (Exception e) {
             log.info("Info from table {} not cleared", CardStatusSpringDaoImpl.class.getSimpleName());
             return false;

@@ -18,12 +18,29 @@ public class AccountMapper {
     }
 
     public static AccountDto toDto(Account account) {
+        if (account == null) return null;
+
         AccountDto accountDto = new AccountDto();
         accountDto.setId(account.getId());
         accountDto.setAccountNumber(account.getAccountNumber());
         accountDto.setBalance(account.getBalance());
-        accountDto.setCurrencyId(account.getCurrencyId().getId());
-        accountDto.setIssuingBankId(account.getIssuingBankId().getId());
+
+        Currency currency = account.getCurrencyId();
+        if (currency != null) {
+            accountDto.setCurrencyId(currency.getId());
+        }else {
+            accountDto.setCurrencyId(null); // или выбрось исключение с понятным текстом
+        }
+
+       // accountDto.setCurrencyId(account.getCurrencyId().getId());
+        IssuingBank issuingBank = account.getIssuingBankId();
+        if (issuingBank != null) {
+            accountDto.setIssuingBankId(issuingBank.getId());
+        }
+        else {
+            accountDto.setIssuingBankId(null);
+        }
+      //  accountDto.setIssuingBankId(account.getIssuingBankId().getId());
 
         return accountDto;
 

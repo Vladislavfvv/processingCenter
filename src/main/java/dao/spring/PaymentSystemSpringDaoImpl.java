@@ -17,10 +17,12 @@ import java.util.Optional;
 public class PaymentSystemSpringDaoImpl implements DaoInterfaceSpring<Long, PaymentSystem> {
 
 
-
     @PersistenceContext
     private EntityManager em;
 
+    public void setEntityManager(EntityManager em) {
+        this.em = em;
+    }
 
     @Override
     public PaymentSystem insert(PaymentSystem value) {
@@ -49,6 +51,7 @@ public class PaymentSystemSpringDaoImpl implements DaoInterfaceSpring<Long, Paym
 
     @Override
     public Optional<PaymentSystem> findById(Long id) {
+
         return Optional.ofNullable(em.find(PaymentSystem.class, id));
     }
 
@@ -67,13 +70,11 @@ public class PaymentSystemSpringDaoImpl implements DaoInterfaceSpring<Long, Paym
                        );
                 """;
         try {
-            em.getTransaction().begin();
             em.createNativeQuery(sql).executeUpdate();
             log.info("Table created");
-            em.getTransaction().commit();
             return true;
         } catch (Exception e) {
-            em.getTransaction().rollback();
+           log.info("Table not created");
             return false;
         }
     }

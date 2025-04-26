@@ -20,6 +20,11 @@ public class IssuingBankSpringDaoImpl implements DaoInterfaceSpring<Long, Issuin
     @PersistenceContext
     private EntityManager em;
 
+    void setEntityManager(EntityManager em) {
+        this.em = em;
+    }
+
+
     @Override
     public IssuingBank insert(IssuingBank value) {
         em.persist(value);
