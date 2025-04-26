@@ -58,44 +58,4 @@ public class SalesPointService implements ServiceInterface<SalesPoint, Long> {
     public boolean dropTable(String s) {
         return salesPointDAO.dropTable(s);
     }
-
-//    @Override
-//    public void createTable() {
-//
-//    }
-//
-//    @Override
-//    public boolean deleteAll(String s) {
-//        return false;
-//    }
-//
-//    @Override
-//    public boolean dropTable(String s) {
-//        return false;
-//    }
-//
-//    @Override
-//    public boolean clearSalesPoints() {
-//        return false;
-//    }
-
-//    // Метод для очистки всех записей из таблицы sales_point
-//    public boolean deleteAll() {
-//        try {
-//            return salesPointDAO.deleteAll("processingcenterschema.sales_point");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return false;
-//        }
-//    }
-//
-//    // Метод для удаления таблицы sales_point
-//    public boolean removeSalesPointsTable() {
-//        try {
-//            return salesPointDAO.dropTable("processingcenterschema.sales_point");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return false;
-//        }
-//    }
 }

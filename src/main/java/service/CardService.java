@@ -26,15 +26,6 @@ public class CardService implements ServiceInterface<Card, Long> {
         return cardDAO.findByValue(cardNumber); // метод в DAO для поиска по номеру карты
     }
 
-//    public boolean update(Card card) {
-//        if (cardExists(card)) {
-//            System.out.println("Карта уже есть в БД.");
-//            return false;  // Карточка уже существует, не добавляем
-//        } else {
-//            return cardDAO.update(card);  // Если нет, добавляем карточку в базу
-//        }
-//    }
-
 
     public boolean update(Card card) {
         // Проверяем, существует ли карта с таким номером
@@ -83,26 +74,6 @@ public class CardService implements ServiceInterface<Card, Long> {
     public boolean dropTable(String s) {
         return cardDAO.dropTable(s);
     }
-
-//    // Метод для обновления номера карты и даты выдачи
-//    public boolean updateCardNumberAndExpirationDate(Long cardId, String newCardNumber, Date newExpirationDate) {
-//        // Ищем карту по ID
-//        Optional<Card> cardOptional = cardDAO.findById(cardId);
-//        if (cardOptional.isPresent()) {
-//            Card card = cardOptional.get();
-//
-//            // Обновляем только номер карты и дату
-//            card.setCardNumber(newCardNumber);
-//            card.setExpirationDate(newExpirationDate);
-//
-//            // Вызываем метод обновления с измененными полями
-//            return cardDAO.update(card);
-//        } else {
-//            //System.out.println("Карточка с таким ID не найдена.");
-//            return false;
-//        }
-//    }
-
 
     public boolean cardExists(Card card) {
         List<Card> allCards = cardDAO.findAll();

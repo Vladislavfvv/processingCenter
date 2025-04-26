@@ -55,23 +55,4 @@ public class ResponseCodeService implements ServiceInterface<ResponseCode, Long>
         return responseCodeDAO.dropTable(s);
     }
 
-//    // Метод для очистки всех записей из таблицы
-//    public boolean clearCardStatus() {
-//        try {
-//            return responseCodeDAO.deleteAll("response_code");
-//        } catch (Exception e) {
-//            logger.info(e.getMessage());
-//            return false;
-//        }
-//    }
-//
-//    // Метод для удаления таблицы
-//    public boolean removeCardStatus(ResponseCode responseCode) {
-//        try {
-//            return responseCodeDAO.dropTable("response_code");
-//        } catch (Exception e) {
-//            logger.info(e.getMessage());
-//            return false;
-//        }
-//    }
 }

@@ -114,66 +114,7 @@ class CardDtoSpringServiceTest {
         assertFalse(result.isPresent());
     }
 
-//    @Test
-//    void findById_ShouldReturnCardDto_WhenCardExists() {
-//        // Arrange
-//        Long cardId = 1L;
-//        Card card = new Card();
-//        card.setId(cardId);
-//        when(cardDao.findById(cardId)).thenReturn(Optional.of(card));
-//
-//        // Act
-//        Optional<CardDto> result = cardDtoSpringService.findById(cardId);
-//
-//        // Assert
-//        assertTrue(result.isPresent());
-//        assertEquals(cardId, result.get().getId());
-//    }
 
-//    @Test
-//    void findById_ShouldReturnCardDto_WhenCardExists() {
-//        // Arrange
-//        Card mockCard = new Card();
-//        mockCard.setId(1L);
-//        mockCard.setCardNumber("4111111111111111");
-//        mockCard.setExpirationDate(LocalDate.now().plusYears(3));
-//        mockCard.setCvv("123");
-//
-//        // Создаем связанные сущности и устанавливаем их
-//        CardStatus mockStatus = new CardStatus();
-//        mockStatus.setId(1L);
-//        mockStatus.setName("Active");
-//
-//        PaymentSystem mockPaymentSystem = new PaymentSystem();
-//        mockPaymentSystem.setId(1L);
-//        mockPaymentSystem.setName("Visa");
-//
-//        Account mockAccount = new Account();
-//        mockAccount.setId(1L);
-//        mockAccount.setAccountNumber("ACC123456");
-//
-//        mockCard.setCardStatusId(mockStatus);
-//        mockCard.setPaymentSystemId(mockPaymentSystem);
-//        mockCard.setAccountId(mockAccount);
-//
-//        // Настроить поведение репозитория
-//        when(cardRepository.findById(1L)).thenReturn(Optional.of(mockCard));
-//
-//        // Act
-//        Optional<CardDto> result = cardDtoSpringService.findById(1L);
-//
-//        // Assert
-//        assertTrue(result.isPresent());
-//        CardDto cardDto = result.get();
-//        assertEquals(1L, cardDto.getId());
-//        assertEquals("4111111111111111", cardDto.getCardNumber());
-//        assertEquals(mockStatus.getId(), cardDto.getCardStatusId());
-//        assertEquals(mockPaymentSystem.getId(), cardDto.getPaymentSystemId());
-//        assertEquals(mockAccount.getId(), cardDto.getAccountId());
-//
-//        // Также можно проверить, что findById вызывался
-//        verify(cardRepository, times(1)).findById(1L);
-//    }
 @Test
 public void findById_ShouldReturnCardDto_WhenCardExists() {
     // Arrange

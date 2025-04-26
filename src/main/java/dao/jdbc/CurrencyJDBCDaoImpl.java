@@ -43,54 +43,6 @@ public class CurrencyJDBCDaoImpl extends DAOAbstract implements DAOInterface<Lon
         );
     }
 
-
-
-
-//    @Override
-//    public Currency insert(Currency currency) {
-//        try {
-//            if (!DAOAbstract.isTableExists(connection, "currency")) {
-//                logger.warning("Таблица currency не существует. Создаю...");
-//                createTableQuery(CREATE_TABLE_CURRENCY);
-//            }
-//
-//            // Проверяем, существует ли уже currency с таким же currency
-//            String checkExistenceQuery = "SELECT COUNT(*) FROM currency WHERE currency_digital_code = ? AND currency_letter_code = ? AND currency_name = ?";
-//            try (PreparedStatement preparedStatement = connection.prepareStatement(checkExistenceQuery)) {
-//                preparedStatement.setString(1, currency.getCurrencyDigitalCode());
-//                preparedStatement.setString(2, currency.getCurrencyLetterCode());
-//                preparedStatement.setString(3, currency.getCurrencyName());
-//                ResultSet resultSet = preparedStatement.executeQuery();
-//                System.out.println(preparedStatement);
-//                if (resultSet.next() && resultSet.getInt(1) > 0) {
-//                    logger.info("Статус с currency: " + currency.getCurrencyName() + " уже существует.");
-//                    // Если статус уже существует, возвращаем его
-//                    return currency;
-//                }
-//            }
-//
-//
-//            PreparedStatement preparedStatement = connection.prepareStatement(INSERT_CURRENCY, Statement.RETURN_GENERATED_KEYS);////второй параметр для получения идентификатора созданной сущности
-//            preparedStatement.setString(1, currency.getCurrencyDigitalCode());
-//            preparedStatement.setString(2, currency.getCurrencyLetterCode());
-//            preparedStatement.setString(3, currency.getCurrencyName());
-//            preparedStatement.executeUpdate();
-//
-//            ResultSet resultSet = preparedStatement.getGeneratedKeys();
-//            if (resultSet.next()) {
-//                currency.setCurrencyDigitalCode(resultSet.getString(1));
-//                currency.setCurrencyLetterCode(resultSet.getString(2));
-//                currency.setCurrencyName(resultSet.getString(3));
-//                currency.setId(resultSet.getLong(1));
-//            }
-//            logger.info("currency with CurrencyName: " + currency.getCurrencyName() + " was added.");
-//            return currency;
-//        } catch (SQLException e) {
-//            logger.severe(e.getMessage());
-//            throw new DaoException(e);
-//        }
-//    }
-
     @Override
     public Currency insert(Currency currency) {
         try {
@@ -201,19 +153,6 @@ public class CurrencyJDBCDaoImpl extends DAOAbstract implements DAOInterface<Lon
             throw new DaoException(e);
         }
     }
-
-//    @Override
-//    public void createTable() {
-//        try {
-//            Statement statement = connection.createStatement();
-//            statement.executeUpdate(CREATE_TABLE_SQL);
-//            logger.info("Table created");
-//        } catch (SQLException e) {
-//            logger.severe(e.getMessage());
-//            throw new DaoException(e);
-//        }
-//    }
-
 
 
     public Optional<Currency> getCurrencyByCode(String currencyCode) {

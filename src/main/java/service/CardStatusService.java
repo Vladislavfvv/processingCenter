@@ -60,39 +60,4 @@ public class CardStatusService implements ServiceInterface<CardStatus, Long> {
         return cardStatusDAO.dropTable(s);
     }
 
-//    // Метод для очистки всех записей из таблицы
-//    public boolean clearCardStatus() {
-//        try {
-//            return cardStatusDAO.deleteAll("card_status");
-//        } catch (Exception e) {
-//            logger.info(e.getMessage());
-//            return false;
-//        }
-//    }
-//
-//    // Метод для удаления таблицы
-//    public boolean removeCardStatus(CardStatus cardStatus) {
-//        try {
-//            return cardStatusDAO.dropTable("card_status");
-//        } catch (Exception e) {
-//            logger.info(e.getMessage());
-//            return false;
-//        }
-//    }
-//public boolean existsInDatabase(String value) {
-//    // Логика для проверки существования записи в базе данных
-//    String query = "SELECT COUNT(*) FROM table WHERE column = ?";
-//    // Выполнить запрос с параметром value и вернуть результат
-//    return count > 0;
-//}
-//
-//    public void insertCardStatus(String cardStatus) {
-//        if (!existsInDatabase(cardStatus)) {
-//            // Вставка нового статуса
-//            System.out.println("Статус добавлен: " + cardStatus);
-//        } else {
-//            System.out.println("Статус уже существует: " + cardStatus);
-//        }
-//    }
-
 }

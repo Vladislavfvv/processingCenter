@@ -60,11 +60,4 @@ public class CurrencyService implements ServiceInterface<Currency, Long> {
         return currencyDAO.dropTable(s);
     }
 
-//    public Optional<Currency> findByCode(String code) {
-//        return currencyDAO.findAll().stream()
-//                .filter(c -> code.equalsIgnoreCase(c.getCode()))
-//                .findFirst();
-//    }
-
-
 }

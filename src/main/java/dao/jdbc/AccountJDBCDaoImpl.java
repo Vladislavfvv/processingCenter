@@ -89,29 +89,6 @@ public class AccountJDBCDaoImpl extends DAOAbstract implements DAOInterface<Long
         try {
             connection.setAutoCommit(false); // начинаем транзакцию
 
-//            // Проверка на null
-//            if (value == null || value.getCurrencyId() == null || value.getIssuingBankId() == null) {
-//                logger.warning("Account или его поля (currency/issuingBank) равны null.");
-//                connection.rollback();
-//                return null;
-//            }
-
-//            // Проверка на существование валюты
-//            Optional<Currency> optionalCurrency = currencyJDBCDaoImpl.findById(value.getCurrencyId().getId());
-//            if (optionalCurrency.isEmpty()) {
-//                logger.warning("Валюта с id = " + value.getCurrencyId().getId() + " не найдена.");
-//                connection.rollback();
-//                return null;
-//            }
-//
-//            // Проверка на существование банка
-//            Optional<IssuingBank> optionalIssuingBank = issuingBankJDBCDaoImpl.findById(value.getIssuingBankId().getId());
-//            if (optionalIssuingBank.isEmpty()) {
-//                logger.warning("IssuingBank с id = " + value.getIssuingBankId().getId() + " не найден.");
-//                connection.rollback();
-//                return null;
-//            }
-
             String checkExistenceQuery = "SELECT COUNT(*) FROM account WHERE account_number = ? AND balance = ? AND currency_id = ? AND issuing_bank_id = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(checkExistenceQuery)) {
                 preparedStatement.setString(1, account.getAccountNumber());
@@ -167,27 +144,6 @@ public class AccountJDBCDaoImpl extends DAOAbstract implements DAOInterface<Long
     public boolean update(Account value) {
         try {
             connection.setAutoCommit(false);
-
-//            // Проверка на null
-//            if (value == null || value.getCurrencyId() == null || value.getIssuingBankId() == null) {
-//                logger.warning("Account или его поля (currency/issuingBank) равны null.");
-//                connection.rollback();
-//                return false;
-//            }
-//
-//            // Проверка существования валюты
-//            if (currencyJDBCDaoImpl.findById(value.getCurrencyId().getId()).isEmpty()) {
-//                logger.warning("Валюта с id = " + value.getCurrencyId().getId() + " не найдена.");
-//                connection.rollback();
-//                return false;
-//            }
-//
-//            // Проверка существования банка
-//            if (issuingBankJDBCDaoImpl.findById(value.getIssuingBankId().getId()).isEmpty()) {
-//                logger.warning("IssuingBank с id = " + value.getIssuingBankId().getId() + " не найден.");
-//                connection.rollback();
-//                return false;
-//            }
 
             String checkExistenceQuery = "SELECT COUNT(*) FROM account WHERE account_number = ? AND balance = ? AND currency_id = ? AND issuing_bank_id = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(checkExistenceQuery)) {

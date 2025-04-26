@@ -125,15 +125,6 @@ public class CurrencySpringDaoImpl  implements DaoInterfaceSpring<Long, Currency
     public Optional<Currency> findById(Long id) {
         return Optional.ofNullable(em.find(Currency.class, id));
     }
-
-
-
-    // public Optional<Currency> findByValue(String name) {
-    //        return currencies.stream()
-    //                .filter(c -> c.getCurrencyName().equals(name))
-    //                .findFirst();
-    //    }
-
 }
 
 

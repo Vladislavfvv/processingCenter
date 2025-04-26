@@ -57,9 +57,4 @@ public class IssuingBankService implements ServiceInterface<IssuingBank, Long> {
         return issuingBankDAO.dropTable(s);
     }
 
-//    public Optional<IssuingBank> findByName(String name) {
-//        return issuingBankDAO.findAll().stream()
-//                .filter(b -> name.equalsIgnoreCase(b.getName()))
-//                .findFirst();
-//    }
 }

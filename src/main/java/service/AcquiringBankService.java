@@ -62,25 +62,4 @@ public class AcquiringBankService implements ServiceInterface<AcquiringBank, Lon
         return acquiringBankDAO.dropTable(s);
     }
 
-
-//    // Метод для очистки всех записей из таблицы acquiring_bank
-//    public boolean clearAcquiringBank() {
-//        try {
-//            return acquiringBankDAO.deleteAll("processingcenterschema.acquiring_bank");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return false;
-//        }
-//    }
-//
-//    // Метод для удаления таблицы acquiring_bank
-//    public boolean removeAcquiringBankTable() {
-//        try {
-//            return acquiringBankDAO.dropTable("processingcenterschema.acquiring_bank");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return false;
-//        }
-//    }
-
 }

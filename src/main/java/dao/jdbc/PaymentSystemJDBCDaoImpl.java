@@ -37,42 +37,6 @@ public class PaymentSystemJDBCDaoImpl extends DAOAbstract implements DAOInterfac
                 resultSet.getString("payment_system_name"));
     }
 
-//    @Override
-//    public PaymentSystem insert(PaymentSystem paymentSystem) {
-//        String query = "INSERT INTO payment_system (payment_system_name) VALUES (?)";
-//        try (Connection connection = ConnectionManager.open();
-//             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-//
-//            connection.setAutoCommit(false);  // Отключаем авто-коммит для управления транзакциями вручную
-//
-//            preparedStatement.setString(1, paymentSystem.getPaymentSystemName());
-//
-//            try {
-//                preparedStatement.executeUpdate();  // Выполнение вставки
-//
-//                connection.commit();  // Коммитируем изменения
-//                logger.info("Payment system '" + paymentSystem.getPaymentSystemName() + "' inserted successfully.");
-//            } catch (PSQLException e) {
-//                if (e.getMessage().contains("duplicate key value")) {
-//                    // Если ошибка дубликата, просто игнорируем её
-//                    logger.warning("Payment system '" + paymentSystem.getPaymentSystemName() + "' already exists.");
-//                } else {
-//                    // В остальных случаях пробрасываем исключение
-//                    connection.rollback();  // Откатываем транзакцию при ошибке
-//                    logger.severe("Error inserting payment system: " + e.getMessage());
-//                    throw new DaoException("Ошибка при вставке payment system: " + paymentSystem.getPaymentSystemName(), e);
-//                }
-//            }
-//        } catch (SQLException e) {
-//            logger.severe(e.getMessage());
-//            throw new DaoException("Ошибка при открытии соединения или выполнении запроса.", e);
-//        }
-//        return paymentSystem;
-//    }
-//
-//}
-
-
 
     @Override
     public PaymentSystem insert(PaymentSystem paymentSystem) {
@@ -171,17 +135,7 @@ public class PaymentSystemJDBCDaoImpl extends DAOAbstract implements DAOInterfac
         }
     }
 
-//    @Override
-//    public void createTable() {
-//        try {
-//            Statement statement = connection.createStatement();
-//            statement.executeUpdate(CREATE_TABLE_SQL);
-//            logger.info("Table created");
-//        } catch (SQLException e) {
-//            logger.severe(e.getMessage());
-//            throw new DaoException(e);
-//        }
-//    }
+
 
     @Override
     public boolean createTableQuery(String sql) {

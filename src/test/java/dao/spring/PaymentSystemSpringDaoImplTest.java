@@ -66,17 +66,7 @@ class PaymentSystemSpringDaoImplTest {
         assertTrue(result.isPresent());
         assertEquals(ps, result.get());
     }
-//
-//    @Test
-//    void testFindAll() {
-//        Query query = mock(Query.class);
-//        when(em.createQuery("select p from PaymentSystem p", PaymentSystem.class)).thenReturn(query);
-//        when(query.getResultList()).thenReturn(Collections.emptyList());
-//
-//        var result = dao.findAll();
-//        assertNotNull(result);
-//        assertTrue(result.isEmpty());
-//    }
+
 
     @Test
     void testCreateTableSuccess() {

@@ -26,10 +26,6 @@ public class CardStatusJDBCDaoImpl extends DAOAbstract implements DAOInterface<L
     private static final String GET_CARD_STATUS_BY_ID = "SELECT id, card_status_name FROM card_status WHERE id = ?";
     private static final String DELETE_CARD_STATUS_BY_ID = "DELETE FROM card_status WHERE id = ?";
     private static final String INSERT_SQL = "INSERT INTO card_status (card_status_name) VALUES (?)";
-//    private static final String INSERT_SQL = "INSERT INTO processingCenterSchema.card_status (card_status_name)\n" +
-//            "    VALUES (?)\n" +
-//            "    ON CONFLICT (card_status_name)\n" +
-//            "    DO UPDATE SET card_status_name = EXCLUDED.card_status_name;";
 
     private CardStatus buildCardStatus(ResultSet resultSet) throws SQLException {
         return new CardStatus(resultSet.getLong("id"),
@@ -157,22 +153,5 @@ public class CardStatusJDBCDaoImpl extends DAOAbstract implements DAOInterface<L
     public Optional<CardStatus> findByValue(String cardNumber) {
         return Optional.empty();
     }
-
-//    private boolean isTableExists(Connection connection, String tableName) {
-//        String sql = "SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'processingcenterschema' AND table_name = ?)";
-//        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-//            preparedStatement.setString(1, tableName);
-//            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-//                if (resultSet.next()) {
-//                    return resultSet.getBoolean(1);
-//                }
-//            }
-//        } catch (SQLException e) {
-//            logger.severe("Ошибка при проверке таблицы: " + e.getMessage());
-//            throw new DaoException(e);
-//        }
-//        return false;
-//    }
-
 
 }

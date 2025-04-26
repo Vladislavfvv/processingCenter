@@ -60,23 +60,4 @@ public class PaymentSystemService implements ServiceInterface<PaymentSystem, Lon
         return paymentSystemDAO.dropTable(s);
     }
 
-//    // Метод для очистки всех записей из таблицы
-//    public boolean clearCardStatus() {
-//        try {
-//            return paymentSystemDAO.deleteAll("payment_system");
-//        } catch (Exception e) {
-//            logger.info(e.getMessage());
-//            return false;
-//        }
-//    }
-//
-//    // Метод для удаления таблицы
-//    public boolean removeCardStatus(CardStatus cardStatus) {
-//        try {
-//            return paymentSystemDAO.dropTable("payment_system");
-//        } catch (Exception e) {
-//            logger.info(e.getMessage());
-//            return false;
-//        }
-//    }
 }

@@ -83,14 +83,6 @@ public class CardStatusSpringDaoImpl implements DaoInterfaceSpring<Long, CardSta
 
     @Override
     public boolean deleteAll() {
-//        try {
-//            em.createQuery("DELETE FROM CardStatus").executeUpdate();
-//            log.info("Info from table {} cleared", CardStatusSpringDaoImpl.class.getSimpleName());
-//            return true;
-//        } catch (Exception e) {
-//            log.info("Info from table {} not cleared", CardStatusSpringDaoImpl.class.getSimpleName());
-//            return false;
-//        }
         try {
             Query query = em.createNativeQuery("DELETE FROM processingcenterschema.card_status");
             int result = query.executeUpdate();

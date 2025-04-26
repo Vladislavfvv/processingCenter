@@ -25,45 +25,6 @@ public class PaymentSystemDtoSpringService {
     }
 
 
-    //    @Transactional
-//    public Optional<PaymentSystemDto> save(PaymentSystemDto paymentSystemDto) {
-//        Optional<PaymentSystem> exiting = paymentSystemDao.findById(paymentSystemDto.getId());
-//        if (exiting.isPresent()) {
-//            log.info("Payment system already exists");
-//            return Optional.of(PaymentSystemMapper.toDto(exiting.get()));
-//        } else {
-//            log.info("Creating payment system");
-//            PaymentSystem paymentSystem = PaymentSystemMapper.toEntity(paymentSystemDto);
-//            PaymentSystem saved = paymentSystemDao.insert(paymentSystem);
-//            return Optional.of(PaymentSystemMapper.toDto(saved));
-//        }
-//
-//    }
-//    @Transactional
-//    public Optional<PaymentSystemDto> save(PaymentSystemDto paymentSystemDto) {
-//        //  Проверка по id, если он задан, т.е. существует
-//        if (paymentSystemDto.getId() != null) {
-//            Optional<PaymentSystem> existingById = paymentSystemDao.findById(paymentSystemDto.getId());
-//            if (existingById.isPresent()) {
-//                log.info("Payment system with ID {} already exists", paymentSystemDto.getId());
-//                return Optional.ofNullable(PaymentSystemMapper.toDto(existingById.get()));
-//            }
-//        }
-//
-//        //  Проверка по имени на уникальность
-//        Optional<PaymentSystem> existingByName = paymentSystemDao.findByValue(paymentSystemDto.getPaymentSystemName());
-//        if (existingByName.isPresent()) {
-//            log.info("Payment system with name '{}' already exists", paymentSystemDto.getPaymentSystemName());
-//            return Optional.ofNullable(PaymentSystemMapper.toDto(existingByName.get()));
-//        }
-//
-//        //  Создание новой платёжной системы
-//        log.info("Creating new payment system with name '{}'", paymentSystemDto.getPaymentSystemName());
-//        PaymentSystem paymentSystem = PaymentSystemMapper.toEntity(paymentSystemDto);
-//        PaymentSystem saved = paymentSystemDao.insert(paymentSystem);
-//        return Optional.ofNullable(PaymentSystemMapper.toDto(saved));
-//    }
-
     @Transactional
     public Optional<PaymentSystemDto> save(PaymentSystemDto dto) {
         // Проверяем, есть ли такая сущность в БД

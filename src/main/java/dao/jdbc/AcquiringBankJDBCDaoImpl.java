@@ -33,13 +33,6 @@ public class AcquiringBankJDBCDaoImpl extends DAOAbstract implements DAOInterfac
     }
 
     private static final String CREATE_TABLE_ACQUIRING_BANK = "CREATE TABLE IF NOT EXISTS processingCenterSchema.acquiring_bank (id serial primary key, bic varchar(9) not null, abbreviated_name varchar(255) not null);";
-    //private static final String CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS processingCenterSchema.acquiring_bank2 (id serial primary key, bic varchar(9) not null, abbreviated_name varchar(255) not null);";
-
-//    String CREATE_TABLE_SQL3 = """
-//             CREATE TABLE IF NOT EXISTS acquiring_bank3 (id SERIAL PRIMARY KEY,\s
-//             bic VARCHAR(9) NOT NULL,\s
-//             abbreviated_name VARCHAR(255) NOT NULL);\s
-//            \s""";
 
     private static final String DROP_TABLE_SQL = "DROP TABLE IF EXISTS acquiring_bank";
     private static final String TRUNCATE_SQL = "TRUNCATE TABLE acquiring_bank";
@@ -48,9 +41,6 @@ public class AcquiringBankJDBCDaoImpl extends DAOAbstract implements DAOInterfac
     private static final String INSERT_SQL = "INSERT INTO acquiring_bank(bic, abbreviated_name) values(?,?)";
     private static final String FIND_ALL_SQL = "SELECT id, bic, abbreviated_name FROM acquiring_bank;";
     private static final String FIND_BY_ID_SQL = "SELECT id, bic, abbreviated_name FROM acquiring_bank WHERE id = ?";
-    //получение по идентификатору
-//    private static final String FIND_BY_ID_SQL = "SELECT id, bic, abbreviated_name " +
-//            "FROM processingCenterSchema.acquiring_bank WHERE id = ?";
     private static final String UPDATE_SQL = "UPDATE acquiring_bank SET bic = ?, abbreviated_name = ? WHERE id = ?";
 
 
@@ -169,18 +159,6 @@ public class AcquiringBankJDBCDaoImpl extends DAOAbstract implements DAOInterfac
         }
     }
 
-//    @Override
-//    public void createTable() {
-//        try {
-//            Statement statement = connection.createStatement();
-//            statement.executeUpdate(CREATE_TABLE_SQL);
-//            logger.info("Table created");
-//        } catch (SQLException e) {
-//            logger.severe(e.getMessage());
-//            throw new DaoException(e);
-//        }
-//    }
-
     @Override
     public boolean createTableQuery(String sql) {
         return createTableService(CREATE_TABLE_ACQUIRING_BANK);
@@ -201,49 +179,6 @@ public class AcquiringBankJDBCDaoImpl extends DAOAbstract implements DAOInterfac
     public Optional<AcquiringBank> findByValue(String cardNumber) {
         return Optional.empty();
     }
-
-
-//    private boolean isTableExists(Connection connection, String tableName) {
-//        String sql = "SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'processingcenterschema' AND table_name = ?)";
-//        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-//            preparedStatement.setString(1, tableName);
-//            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-//                if (resultSet.next()) {
-//                    return resultSet.getBoolean(1);
-//                }
-//            }
-//        } catch (SQLException e) {
-//            logger.severe("Ошибка при проверке таблицы: " + e.getMessage());
-//            throw new DaoException(e);
-//        }
-//        return false;
-//    }
-
-//    @Override
-//    public boolean dropTable() {
-//        try (Connection connection = ConnectionManager2.open()) {
-//            Statement statement = connection.createStatement();
-//            statement.executeUpdate(DROP_TABLE_SQL);
-//            logger.info("Table dropped");
-//        } catch (SQLException e) {
-//            logger.severe(e.getMessage());
-//            throw new DaoException(e);
-//        }
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean deleteAll() {
-//        try (Connection connection = ConnectionManager2.open()) {
-//            Statement statement = connection.createStatement();
-//            statement.executeUpdate(DELETE_ALL_SQL);
-//            logger.info("All records were deleted from the AcquiringBank table");
-//        } catch (SQLException e) {
-//            logger.severe(e.getMessage());
-//            throw new DaoException(e);
-//        }
-//        return true;
-//    }
 
 
 }

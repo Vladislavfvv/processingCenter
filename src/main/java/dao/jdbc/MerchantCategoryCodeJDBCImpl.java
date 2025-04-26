@@ -134,17 +134,7 @@ public class MerchantCategoryCodeJDBCImpl extends DAOAbstract implements DAOInte
         }
     }
 
-//    @Override
-//    public void createTable() {
-//        try {
-//            Statement statement = connection.createStatement();
-//            statement.executeUpdate(CREATE_TABLE_SQL);
-//            logger.info("Table created");
-//        } catch (SQLException e) {
-//            logger.severe(e.getMessage());
-//            throw new DaoException(e);
-//        }
-//    }
+
 
     @Override
     public boolean createTableQuery(String sql) {

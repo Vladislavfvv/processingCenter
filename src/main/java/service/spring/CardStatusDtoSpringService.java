@@ -24,21 +24,6 @@ public class CardStatusDtoSpringService {
         this.cardStatusDao = cardStatusDao;
     }
 
-//    @Transactional
-//    public Optional<CardStatusDto> save(CardStatusDto dto) {
-//        if (cardStatusDao.findByValue(dto.getCardStatusName()).isPresent()) {
-//            return Optional.empty();
-//        }
-//        CardStatus entity = CardStatusMapper.toEntity(dto);
-//        CardStatus savedEntity = cardStatusDao.insert(entity);
-//        return Optional.ofNullable(CardStatusMapper.toDto(savedEntity));
-//    }
-//
-//    public Optional<CardStatusDto> getById(Long id) {
-//        return cardStatusDao.findById(id)
-//                .map(CardStatusMapper::toDto);
-//    }
-
 
     @Transactional
     public Optional<CardStatusDto> save(CardStatusDto dto) {
@@ -69,48 +54,6 @@ public class CardStatusDtoSpringService {
                 .collect(Collectors.toList());
     }
 
-
-
-
-//    @Transactional
-//    public Optional<CardStatusDto> save(CardStatusDto dto) {
-//        Optional<CardStatus> existing = cardStatusDao.findByValue(dto.getCardStatusName());
-//        if (existing.isPresent()) {
-//            log.info("CardStatus '{}' уже существует", dto.getCardStatusName());
-//            return Optional.of(CardStatusMapper.toDto(existing.get()));
-//        }
-//
-//        CardStatus entity = CardStatusMapper.toEntity(dto);
-//        CardStatus saved = cardStatusDao.insert(entity);
-//        return Optional.of(CardStatusMapper.toDto(saved));
-//    }
-//
-//    public List<CardStatusDto> getAll() {
-//        List<CardStatusDto> cardStatusDtoList = new ArrayList<>();
-//        try {
-//        return cardStatusDao.findAll()
-//                .stream()
-//                .map(CardStatusMapper::toDto)
-//                .collect(Collectors.toList());
-//        } catch (PersistenceException e) {
-//            // Можно ловить org.hibernate.exception.SQLGrammarException
-//            //throw new TableNotFoundException("Таблица card_status не найдена", e);
-//            log.error(e.getMessage());
-//            return cardStatusDtoList;
-//        }
-//
-//    }
-
-//    @Transactional
-//    public Optional<CardStatusDto> update(CardStatusDto dto) {
-//        //Optional<CardStatus> existingEntity = cardStatusDao.findById(dto.getId());
-//        Optional<CardStatus> existingEntity = cardStatusDao.findByValue(dto.getCardStatusName());
-//        if (existingEntity.isEmpty()) {
-//            return Optional.empty();
-//        }
-//        CardStatus updatedEntity = cardStatusDao.update(CardStatusMapper.toEntity(dto));
-//        return Optional.ofNullable(CardStatusMapper.toDto(updatedEntity));
-//    }
 
     @Transactional
     public Optional<CardStatusDto> update(CardStatusDto dto) {

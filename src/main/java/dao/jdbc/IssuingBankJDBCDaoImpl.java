@@ -71,12 +71,7 @@ public class IssuingBankJDBCDaoImpl extends DAOAbstract implements DAOInterface<
             preparedStatement.setString(3, issuingBank.getAbbreviatedName());
             preparedStatement.executeUpdate();
 
-//            ResultSet resultSet = preparedStatement.getGeneratedKeys();
-//            if (resultSet.next()) {
-//                value.setBic(resultSet.getString(1));
-//                value.setBin(resultSet.getString(2));
-//                value.setAbbreviatedName(resultSet.getString(3));
-//            }
+
             ResultSet resultSet = preparedStatement.getGeneratedKeys();
             if (resultSet.next()) {
                 issuingBank.setId(resultSet.getLong(1)); // Получаем сгенерированный id
@@ -161,17 +156,6 @@ public class IssuingBankJDBCDaoImpl extends DAOAbstract implements DAOInterface<
         }
     }
 
-//    @Override
-//    public void createTable() {
-//        try {
-//            Statement statement = connection.createStatement();
-//            statement.executeUpdate(CREATE_TABLE_ISSUING_BANK);
-//            logger.info("Table created");
-//        } catch (SQLException e) {
-//            logger.severe(e.getMessage());
-//            throw new DaoException(e);
-//        }
-//    }
 
     @Override
     public boolean createTableQuery(String sql) {

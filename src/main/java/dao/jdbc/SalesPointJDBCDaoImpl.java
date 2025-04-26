@@ -22,11 +22,7 @@ public class SalesPointJDBCDaoImpl extends DAOAbstract implements DAOInterface<L
     private final Connection connection;
     private final DAOInterface<Long, AcquiringBank> acquiringBankJDBCDao;
 
-//    public SalesPointJDBCImpl(Connection connection) {
-//        this.connection = connection;
-//        this.acquiringBankJDBCDao = new AcquiringBankJDBCDaoImpl(connection); // Инициализируем DAO после получения connection
-//
-//    }
+
 
     public SalesPointJDBCDaoImpl(Connection connection ) {
         super(connection);
@@ -35,13 +31,6 @@ public class SalesPointJDBCDaoImpl extends DAOAbstract implements DAOInterface<L
         this.acquiringBankJDBCDao = DAOFactory.getAcquiringBankDAO(connection); // Инициализируем DAO после получения connection
 
     }
-
-
-
-
-    // private static final String FIND_BY_ID = "SELECT id, pos_name, pos_address, pos_inn, acquiring_bank_id, bic, abbreviatedName FROM salespoint";
-
-   // private static final String JoinTables = "SELECT sp.id, sp.pos_name, sp.pos_address, sp.pos_inn, ab.id AS acquiring_bank_id, ab.bic, ab.abbreviatedName FROM SalesPoint sp JOIN AcquiringBank ab ON sp.acquiring_bank_id = ab.id;";
 
     private static final String CREATE_TABLE_SALES_POINT = "CREATE TABLE IF NOT EXISTS processingCenterSchema.sales_point ("
             + "id SERIAL PRIMARY KEY, "
@@ -95,18 +84,7 @@ public class SalesPointJDBCDaoImpl extends DAOAbstract implements DAOInterface<L
     }
 
 
-//    @Override
-//    public void createTable() {
-//        try {
-//            Statement statement = connection.createStatement();
-//
-//            statement.executeUpdate(CREATE_TABLE_SALES_POINT);
-//            logger.info("Table created");
-//        } catch (SQLException e) {
-//            logger.severe(e.getMessage());
-//            throw new DaoException(e);
-//        }
-//    }
+
 
 
     @Override
@@ -182,19 +160,6 @@ public class SalesPointJDBCDaoImpl extends DAOAbstract implements DAOInterface<L
         }
     }
 
-//    @Override
-//    public boolean delete(Long key) {
-//        try (Connection connection = ConnectionManager2.open();
-//             PreparedStatement preparedStatement = connection.prepareStatement(DELETE_SQL)) {
-//            preparedStatement.setLong(1, key);
-//            logger.info("SalesPoint c  id = " + key + " удалено");
-//            return preparedStatement.executeUpdate() > 0;//если получилось удалить, тогда возвращаем true, иначе - false
-//        } catch (SQLException e) {
-//            logger.severe(e.getMessage());
-//            throw new DaoException(e);
-//        }
-//
-//    }
 
 
     @Override
@@ -224,22 +189,7 @@ public class SalesPointJDBCDaoImpl extends DAOAbstract implements DAOInterface<L
     }
 
 
-//    @Override
-//    public Optional<SalesPoint> findById(Long key) {
-//        try (PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID)) {
-//            preparedStatement.setLong(1, key);
-//            ResultSet resultSet = preparedStatement.executeQuery();
-//            SalesPoint salesPoint = null;
-//            if (resultSet.next()) {
-//                salesPoint = buildSalesPoint(resultSet);
-//            }
-//            logger.info("Найдено c  id = " + key);
-//            return Optional.ofNullable(salesPoint);
-//        } catch (SQLException e) {
-//            logger.severe(e.getMessage());
-//            throw new DaoException(e);
-//        }
-//    }
+
 
     @Override
     public Optional<SalesPoint> findById(Long key) {
@@ -269,36 +219,6 @@ public class SalesPointJDBCDaoImpl extends DAOAbstract implements DAOInterface<L
     }
 
 
-//    private boolean isTableExists(Connection connection, String tableName) {
-//        String sql = "SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'processingcenterschema' AND table_name = ?)";
-//        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-//            preparedStatement.setString(1, tableName);
-//            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-//                if (resultSet.next()) {
-//                    return resultSet.getBoolean(1);
-//                }
-//            }
-//        } catch (SQLException e) {
-//            logger.severe("Ошибка при проверке таблицы: " + e.getMessage());
-//            throw new DaoException(e);
-//        }
-//        return false;
-//    }
-
-
-//    public Optional<SalesPoint> findById(Long key, Connection connection) {
-//        try (PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID)) {
-//            preparedStatement.setLong(1, key);
-//            ResultSet resultSet = preparedStatement.executeQuery();
-//            if (resultSet.next()) {
-//                return Optional.of(buildSalesPoint(resultSet));
-//            }
-//
-//        } catch (SQLException e) {
-//            throw new DaoException(e);
-//        }
-//        return Optional.empty();
-//    }
 
     @Override
     public List<SalesPoint> findAll() {
@@ -309,19 +229,7 @@ public class SalesPointJDBCDaoImpl extends DAOAbstract implements DAOInterface<L
 
             while (resultSet.next()) {
                 SalesPoint salesPoint = buildSalesPoint(resultSet);
-//                AcquiringBank acquiringBank = new AcquiringBank(
-//                        resultSet.getLong("bank_id"),
-//                        resultSet.getString("bic"),
-//                        resultSet.getString("abbreviated_name")
-//                );
-//
-//                SalesPoint salesPoint = new SalesPoint(
-//                        resultSet.getLong("id"),
-//                        resultSet.getString("pos_name"),
-//                        resultSet.getString("pos_address"),
-//                        resultSet.getString("pos_inn"),
-//                        acquiringBank
-//                );
+
                 salesPoints.add(salesPoint);
             }
         } catch (SQLException e) {
@@ -329,25 +237,6 @@ public class SalesPointJDBCDaoImpl extends DAOAbstract implements DAOInterface<L
         }
         return salesPoints;
     }
-
-
-//    @Override
-//    public boolean dropTable() {
-//        try (Connection connection = ConnectionManager2.open()) {
-//            Statement statement = connection.createStatement();
-//            statement.executeUpdate(DROP_TABLE_SQL);
-//            logger.info("Table dropped");
-//        } catch (SQLException e) {
-//            logger.severe(e.getMessage());
-//            throw new DaoException(e);
-//        }
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean deleteAll() {
-//        return false;
-//    }
 
 
 
