@@ -22,7 +22,7 @@ public class CardStatusController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CardStatusDto>> getAll() {
+    public ResponseEntity<List<CardStatus>> getAll() {
         return ResponseEntity.ok(cardStatusService.findAll());
     }
 
@@ -35,17 +35,17 @@ public class CardStatusController {
     }
 
     @PostMapping
-    public ResponseEntity<CardStatusDto> createCardStatus(@RequestBody CardStatusDto cardStatusDto) {
+    public ResponseEntity<CardStatus> createCardStatus(@RequestBody CardStatusDto cardStatusDto) {
         return cardStatusService.save(cardStatusDto)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.badRequest().build());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CardStatusDto> updateCardStatus(@PathVariable("id") Long id, @RequestBody CardStatusDto cardStatusDto) {
-        cardStatusDto.setId(id);
+    public ResponseEntity<CardStatus> updateCardStatus(@PathVariable("id") Long id, @RequestBody CardStatusDto cardStatusDto) {
+      //  cardStatusDto.setId(id);
         log.info("cardStatus: {} updated", cardStatusDto);
-        return cardStatusService.update(cardStatusDto)
+        return cardStatusService.update(id, cardStatusDto)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }

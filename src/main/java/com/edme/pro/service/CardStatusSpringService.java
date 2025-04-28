@@ -63,7 +63,7 @@ public class CardStatusSpringService {
 //    }
 
     public Optional<CardStatusDto> update(CardStatusDto cardStatusDto) {
-        Optional<CardStatus> existingCardStatus = cardStatusDao.findById(cardStatusDto.getId());
+        Optional<CardStatus> existingCardStatus = cardStatusDao.findByValue(cardStatusDto.getCardStatusName());
         if (existingCardStatus.isEmpty()) {
             log.info("Card status does not exists: " + cardStatusDto.getCardStatusName());
             return Optional.empty();

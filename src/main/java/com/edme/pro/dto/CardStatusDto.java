@@ -9,6 +9,6 @@ import lombok.*;
 @Getter
 @Setter
 public class CardStatusDto {
-    private Long id;
+    //private Long id;
     private String cardStatusName;
 }

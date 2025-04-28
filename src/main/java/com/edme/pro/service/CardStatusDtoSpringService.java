@@ -17,75 +17,84 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class CardStatusDtoSpringService {
-    private final DaoInterfaceSpring<Long, CardStatus> cardStatusDao;
+    //private final DaoInterfaceSpring<Long, CardStatus> cardStatusDao;
+    private final DaoInterfaceSpring<Long, CardStatus> cardStatus;
 
-    public CardStatusDtoSpringService(DaoInterfaceSpring<Long, CardStatus> cardStatusDao) {
-        this.cardStatusDao = cardStatusDao;
+    //public CardStatusDtoSpringService(DaoInterfaceSpring<Long, CardStatus> cardStatusDao) {
+    public CardStatusDtoSpringService(DaoInterfaceSpring<Long, CardStatus> cardStatus) {
+        this.cardStatus = cardStatus;
     }
 
 
     @Transactional
-    public Optional<CardStatusDto> save(CardStatusDto dto) {
+    public Optional<CardStatus> save(CardStatusDto cardStatusDto) {
         // Проверяем, есть ли уже сущность с таким именем
-        Optional<CardStatus> existing = cardStatusDao.findByValue(dto.getCardStatusName());
+        Optional<CardStatus> existing = cardStatus.findByValue(cardStatusDto.getCardStatusName());
         if (existing.isPresent()) {
-            log.info("CardStatus '{}' уже существует", dto.getCardStatusName());
-            return Optional.of(CardStatusMapper.toDto(existing.get()));
+            log.info("CardStatus '{}' уже существует", cardStatusDto.getCardStatusName());
+            return existing;
         }
 
-        CardStatus entity = CardStatusMapper.toEntity(dto);
+        CardStatus entity = CardStatusMapper.toEntity(cardStatusDto);
         // Обнуляем ID, чтобы Hibernate не думал, что это уже существующая сущность
-       // dto.setId(null);
+        // dto.setId(null);
 
         // Маппим в entity и сохраняем
-        CardStatus saved = cardStatusDao.insert(entity);
-        log.info("Saved card status '{}'", dto.getCardStatusName());
-        return Optional.of(CardStatusMapper.toDto(saved));
+        CardStatus saved = cardStatus.insert(entity);
+        log.info("Saved card status '{}'", cardStatusDto.getCardStatusName());
+        return Optional.of(saved);
     }
 
 
-    public Optional<CardStatusDto> findById(Long id) {
-        return cardStatusDao.findById(id).map(CardStatusMapper::toDto);
+    public Optional<CardStatus> findById(Long id) {
+        //return cardStatusDao.findById(id).map(CardStatusMapper::toDto);
+        return cardStatus.findById(id);
     }
+    public List<CardStatus> findAll() {
+       return cardStatus.findAll();
+    }
+
 //    public List<CardStatusDto> findAll() {
-//       return cardStatusDao.findAll();
+//        return cardStatus.findAll().stream()
+//                .map(CardStatusMapper::toDto)
+//                .collect(Collectors.toList());
 //    }
-
-    public List<CardStatusDto> findAll() {
-        return cardStatusDao.findAll().stream()
-                .map(CardStatusMapper::toDto)
-                .collect(Collectors.toList());
-    }
 
 
     @Transactional
-    public Optional<CardStatusDto> update(CardStatusDto dto) {
-        if (dto.getId() == null) {//если id не задан
-            log.info("CardStatus must have an ID");
+    public Optional<CardStatus> update(Long id, CardStatusDto cardStatusDto) {
+//        if (dto.getId() == null) {//если id не задан
+//            log.info("CardStatus must have an ID");
+//            //throw new IllegalArgumentException("ID должен быть задан для обновления");
+//            return Optional.empty();
+//        }
+
+        if (id == null) {//если id не задан
+            log.info("Comparable CardStatus must have an ID");
             //throw new IllegalArgumentException("ID должен быть задан для обновления");
             return Optional.empty();
         }
 
-        Optional<CardStatus> existingEntityOpt = cardStatusDao.findById(dto.getId());
-        if (existingEntityOpt.isEmpty()) {//если id не нашел
-            log.info("CardStatus with ID = {} not found", dto.getId());
+        Optional<CardStatus> existingEntityInDB = cardStatus.findById(id);
+        if (existingEntityInDB.isEmpty()) {//если id не нашел
+            log.info("CardStatus with Value = {} not found", cardStatusDto.getCardStatusName());
             return Optional.empty();
         }
 
-        CardStatus existingEntity = existingEntityOpt.get();
-        existingEntity.setCardStatusName(dto.getCardStatusName());
+        CardStatus existingEntity = existingEntityInDB.get();
+        existingEntity.setCardStatusName(cardStatusDto.getCardStatusName());
 
-        return Optional.of(CardStatusMapper.toDto(existingEntity));
+        return Optional.of(existingEntity);
     }
 
     @Transactional
     public boolean delete(Long id) {
-        return cardStatusDao.delete(id);
+        return cardStatus.delete(id);
     }
 
     @Transactional
     public boolean deleteAll() {
-        return cardStatusDao.deleteAll();
+        return cardStatus.deleteAll();
     }
 
 //    public Optional<CardStatusDto> getByName(String name) {
@@ -94,12 +103,12 @@ public class CardStatusDtoSpringService {
 //    }
 
     public Optional<CardStatusDto> getByValue(String name) {
-        return cardStatusDao.findByValue(name)
+        return cardStatus.findByValue(name)
                 .map(CardStatusMapper::toDto);
     }
 
     @Transactional
     public boolean dropTable() {
-        return cardStatusDao.dropTable();
+        return cardStatus.dropTable();
     }
 }
