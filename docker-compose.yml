@@ -13,3 +13,19 @@ services:
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
       - ./initdb:/docker-entrypoint-initdb.d
+
+    # Добавляем Swagger UI
+  swagger-ui:
+      image: swaggerapi/swagger-ui
+      container_name: swagger-ui
+      ports:
+        - "8080:8080"
+      environment:
+        # Указываем URL вашего OpenAPI-документа (JSON/YAML)
+        # Если API запущено локально (не в Docker) — используйте host.docker.internal
+        SWAGGER_JSON: http://host.docker.internal:8080/v3/api-docs
+        # это путь к апи сервиса
+        # ИЛИ если API в этом же compose-файле — укажите имя сервиса:
+        # SWAGGER_JSON: http://ваш_сервис_апи:порт/v3/api-docs
+      depends_on:
+        - postgres  # Зависит от Postgres (если API зависит от БД)

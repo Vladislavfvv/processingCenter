@@ -1,0 +1,7 @@
+docker run -d \
+--name swagger-ui \
+-p 8081:8080 \
+-e SWAGGER_JSON=/docs/swagger.json \
+-e RELOAD_INTERVAL=5 \  # Обновлять каждые 5 секунд
+-v $(pwd)/swagger.json:/docs/swagger.json \
+swaggerapi/swagger-ui
