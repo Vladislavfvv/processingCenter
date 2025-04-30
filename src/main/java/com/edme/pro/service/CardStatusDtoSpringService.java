@@ -1,46 +1,46 @@
 package com.edme.pro.service;
 
 import com.edme.pro.dao.DaoInterfaceSpring;
-import com.edme.pro.dto.CardDto;
 import com.edme.pro.dto.CardStatusDto;
-import com.edme.pro.mapper.CardMapper;
 import lombok.extern.slf4j.Slf4j;
 import com.edme.pro.mapper.CardStatusMapper;
 import com.edme.pro.model.CardStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class CardStatusDtoSpringService {
     //private final DaoInterfaceSpring<Long, CardStatus> cardStatusDao;
-    private final DaoInterfaceSpring<Long, CardStatus> cardStatus;
+    private final DaoInterfaceSpring<Long, CardStatus> cardStatusDao;
 
+    @Autowired
     //public CardStatusDtoSpringService(DaoInterfaceSpring<Long, CardStatus> cardStatusDao) {
-    public CardStatusDtoSpringService(DaoInterfaceSpring<Long, CardStatus> cardStatus) {
-        this.cardStatus = cardStatus;
+    public CardStatusDtoSpringService(DaoInterfaceSpring<Long, CardStatus> cardStatusDao) {
+        this.cardStatusDao = cardStatusDao;
     }
 
 
     @Transactional
     public Optional<CardStatus> save(CardStatusDto cardStatusDto) {
         // Проверяем, есть ли уже сущность с таким именем
-        Optional<CardStatus> existing = cardStatus.findByValue(cardStatusDto.getCardStatusName());
+        Optional<CardStatus> existing = cardStatusDao.findByValue(cardStatusDto.getCardStatusName());
         if (existing.isPresent()) {
             log.info("CardStatus '{}' уже существует", cardStatusDto.getCardStatusName());
             return existing;
         }
 
-        CardStatus entity = CardStatusMapper.toEntity(cardStatusDto);
         // Обнуляем ID, чтобы Hibernate не думал, что это уже существующая сущность
-        // dto.setId(null);
+        cardStatusDto.setId(null);
+        CardStatus entity = CardStatusMapper.toEntity(cardStatusDto);
+
 
         // Маппим в entity и сохраняем
-        CardStatus saved = cardStatus.insert(entity);
+        CardStatus saved = cardStatusDao.insert(entity);
         log.info("Saved card status '{}'", cardStatusDto.getCardStatusName());
         return Optional.of(saved);
     }
@@ -48,10 +48,10 @@ public class CardStatusDtoSpringService {
 
     public Optional<CardStatus> findById(Long id) {
         //return cardStatusDao.findById(id).map(CardStatusMapper::toDto);
-        return cardStatus.findById(id);
+        return cardStatusDao.findById(id);
     }
     public List<CardStatus> findAll() {
-       return cardStatus.findAll();
+       return cardStatusDao.findAll();
     }
 
 //    public List<CardStatusDto> findAll() {
@@ -75,7 +75,7 @@ public class CardStatusDtoSpringService {
             return Optional.empty();
         }
 
-        Optional<CardStatus> existingEntityInDB = cardStatus.findById(id);
+        Optional<CardStatus> existingEntityInDB = cardStatusDao.findById(id);
         if (existingEntityInDB.isEmpty()) {//если id не нашел
             log.info("CardStatus with Value = {} not found", cardStatusDto.getCardStatusName());
             return Optional.empty();
@@ -89,12 +89,12 @@ public class CardStatusDtoSpringService {
 
     @Transactional
     public boolean delete(Long id) {
-        return cardStatus.delete(id);
+        return cardStatusDao.delete(id);
     }
 
     @Transactional
     public boolean deleteAll() {
-        return cardStatus.deleteAll();
+        return cardStatusDao.deleteAll();
     }
 
 //    public Optional<CardStatusDto> getByName(String name) {
@@ -103,12 +103,12 @@ public class CardStatusDtoSpringService {
 //    }
 
     public Optional<CardStatusDto> getByValue(String name) {
-        return cardStatus.findByValue(name)
+        return cardStatusDao.findByValue(name)
                 .map(CardStatusMapper::toDto);
     }
 
     @Transactional
     public boolean dropTable() {
-        return cardStatus.dropTable();
+        return cardStatusDao.dropTable();
     }
 }

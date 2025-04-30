@@ -1,6 +1,7 @@
 package com.edme.pro.dao;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import lombok.extern.slf4j.Slf4j;
 import com.edme.pro.model.Account;
@@ -37,13 +38,14 @@ public class AccountSpringDaoImpl implements DaoInterfaceSpring<Long, Account> {
 
     @Override
     public boolean delete(Long id) {
+        log.info("Trying to delete account with id={}", id);
         Account account = em.find(Account.class, id);
         if (account != null) {
             em.remove(account);
-            log.info("Deleted account " + id);
+            log.info("Deleted account with id={}", id);
             return true;
         } else {
-            log.info("Account with id = {} not deleted ", id);
+            log.warn("Account with id={} not found in database", id);
             return false;
         }
 
@@ -51,12 +53,30 @@ public class AccountSpringDaoImpl implements DaoInterfaceSpring<Long, Account> {
 
     @Override
     public Optional<Account> findById(Long id) {
-        return Optional.ofNullable(em.find(Account.class, id));
+        //return Optional.ofNullable(em.find(Account.class, id));3
+        try {
+        Account account = em.createQuery("""
+            SELECT a FROM Account a
+            LEFT JOIN FETCH a.currencyId
+            LEFT JOIN FETCH a.issuingBankId where a.id = :id
+            """, Account.class)
+                .setParameter("id", id)
+                .getSingleResult();
+        return Optional.of(account);
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
     }
 
     @Override
     public List<Account> findAll() {
-        return em.createQuery("FROM Account", Account.class).getResultList();
+        //return em.createQuery("FROM Account", Account.class).getResultList();
+        return em.createQuery("""
+            SELECT a FROM Account a
+            LEFT JOIN FETCH a.currencyId
+            LEFT JOIN FETCH a.issuingBankId
+            """, Account.class)
+                .getResultList();//LEFT JOIN FETCH = подгрузит даже если связанные поля null
     }
 
     @Override

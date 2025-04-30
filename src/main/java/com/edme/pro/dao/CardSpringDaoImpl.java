@@ -54,9 +54,15 @@ public class CardSpringDaoImpl implements DaoInterfaceSpring<Long, Card> {
     }
 
     @Override
+  //  public List<Card> findAll() { return em.createQuery("select c from Card c", Card.class).getResultList();   }
     public List<Card> findAll() {
-        return em.createQuery("select c from Card c", Card.class).getResultList();
-    }
+        return em.createQuery("""
+                select c from Card c
+                LEFT JOIN FETCH c.cardStatusId
+                LEFT JOIN FETCH c.paymentSystemId
+                LEFT JOIN FETCH c.accountId
+                """, Card.class)
+                .getResultList();   }
 
     @Override
     public boolean createTable() {

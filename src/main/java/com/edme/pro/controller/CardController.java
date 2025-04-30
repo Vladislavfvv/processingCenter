@@ -1,12 +1,18 @@
 package com.edme.pro.controller;
 
 import com.edme.pro.dto.CardDto;
+import com.edme.pro.mapper.CardMapper;
+import com.edme.pro.model.Card;
 import com.edme.pro.service.CardDtoSpringService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 //@CrossOrigin(origins = "http://localhost:3000") - настройка на определенный порт
@@ -29,8 +35,18 @@ public class CardController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CardDto>> getAllCards() {
+    public ResponseEntity<List<CardDto>> getAll() {
         return ResponseEntity.ok(cardService.findAll());//вернёт HTTP 200 OK + данные
+    }
+
+    @GetMapping("/cards")
+    public ResponseEntity<List<CardDto>> getAllCardsList() {
+        List<CardDto> cards = cardService.findAll();
+       // List<Card> cards = cardService.findAll();
+        List<CardDto> cardDtos = cards.stream()
+             //   .map(CardMapper::toDto)
+                .toList();
+        return ResponseEntity.ok(cardDtos);
     }
 
     //    @GetMapping("/{id}")
@@ -47,11 +63,21 @@ public class CardController {
                 .orElse(ResponseEntity.notFound().build());//Если не найдена: вернёт HTTP 404 Not Found
     }
 
+//    @PostMapping//обработка POST запроса /api/cards
+//    public ResponseEntity<CardDto> createCard(@RequestBody CardDto cardDto) {//@RequestBody — говорит: "получи тело запроса в виде объекта CardDto"
+//        return cardService.save(cardDto)
+//                .map(ResponseEntity::ok)//Если успешно: вернёт HTTP 200 OK и сохранённую карточку.
+//                .orElse(ResponseEntity.badRequest().build()); //Если ошибка: вернёт HTTP 400 Bad Request.
+//    }
+
     @PostMapping//обработка POST запроса /api/cards
-    public ResponseEntity<CardDto> createCard(@RequestBody CardDto cardDto) {//@RequestBody — говорит: "получи тело запроса в виде объекта CardDto"
-        return cardService.save(cardDto)
-                .map(ResponseEntity::ok)//Если успешно: вернёт HTTP 200 OK и сохранённую карточку.
-                .orElse(ResponseEntity.badRequest().build()); //Если ошибка: вернёт HTTP 400 Bad Request.
+    public ResponseEntity<?> createCard(@RequestBody @Valid CardDto cardDto) {//@RequestBody — говорит: "получи тело запроса в виде объекта CardDto"
+        Optional<Card> optionalCard = cardService.save2(cardDto);
+        if (optionalCard.isPresent()) {
+            return ResponseEntity.ok(optionalCard.get());
+        } else {
+            return ResponseEntity.badRequest().body("Card с таким названием уже существует");
+        }
     }
 
 //    @PutMapping("/{id}")
@@ -63,16 +89,16 @@ public class CardController {
 //    }
 
     @PutMapping("/{id}") //@PutMapping("/{id}") — обработка PUT запроса /api/cards/4
-    public ResponseEntity<CardDto> updateCard(@PathVariable("id") Long id, @RequestBody CardDto cardDto) {
+    public ResponseEntity<Card> updateCard(@PathVariable("id") Long id, @RequestBody  CardDto cardDto) {
         //@PathVariable("id") — ID из URL
         //@RequestBody — новые данные карточки
         // Устанавливаем id из URL в объект CardDto: перезаписываем id из пути, чтобы избежать ошибок!
-        cardDto.setId(id);
-        System.out.println(id);
-        System.out.println(cardDto.getId());
-        System.out.println(cardDto.getCardNumber());
+        // cardDto.setId(id);
+//        System.out.println(id);
+//        System.out.println(cardDto.getId());
+//        System.out.println(cardDto.getCardNumber());
         // Вызываем сервис для обновления
-        return cardService.update(cardDto)
+        return cardService.update(id, cardDto)
                 .map(ResponseEntity::ok)//Если обновление удалось: вернёт HTTP 200 OK
                 .orElse(ResponseEntity.notFound().build()); //Если нет такой карточки: вернёт HTTP 404 Not Found
     }

@@ -95,6 +95,7 @@ public class CardDtoSpringService {
             return Optional.empty();
         }
 
+        cardDto.setId(null);
         //иначе создаем новую
         //и прежде проверка есть ли для нее вложенные обьекты
         CardStatus cardStatus = cardStatusDao.findById(cardDto.getCardStatusId()).orElse(null);
@@ -115,27 +116,73 @@ public class CardDtoSpringService {
         return Optional.of(CardMapper.toDto(cardSaved));
     }
 
-    public Optional<CardDto> findById(Long id) {
+    @Transactional
+    public Optional<Card> save2(CardDto cardDto) {
+//        if (cardDto.getId() != null) {
+//            Optional<Card> card = cardDao.findById(cardDto.getId());
+//            if (card.isPresent()) {
+//                log.info("Card already exists: {}", cardDto.getId());
+//                return Optional.empty();
+//            }
+//        }
 
+        //проверка есть ли такой еще
+        Optional<Card> existCard = cardDao.findByValue(cardDto.getCardNumber());
+        if (existCard.isPresent()) {
+            log.info("Card already exists: {}", cardDto.getCardNumber());
+            return Optional.empty();
+        }
+
+        //валидация номера карты напоследок
+        if (!CardValidator.validateCardNumber(cardDto.getCardNumber())){
+            log.warn("Invalid card number, card didnt save");
+            return Optional.empty();
+        }
+        cardDto.setId(null);
+        //иначе создаем новую
+        //и прежде проверка есть ли для нее вложенные обьекты
+        CardStatus cardStatus = cardStatusDao.findById(cardDto.getCardStatusId()).orElse(null);
+        PaymentSystem paymentSystem = paymentSystemDao.findById(cardDto.getPaymentSystemId()).orElse(null);
+        Account account = accountDao.findById(cardDto.getAccountId()).orElse(null);
+
+        if (cardStatus == null || paymentSystem == null || account == null) {
+            log.warn("One of related entities not found");
+            return Optional.empty();
+        }
+        cardDto.setId(null);//обнуляем перед сохранением
+        Card card = CardMapper.toEntity(cardDto, cardStatus, paymentSystem, account);
+
+//
+
+        Card cardSaved = cardDao.insert(card);
+        log.info("Saved card: {}", cardDto);
+        return Optional.of(cardSaved);
+    }
+
+    public Optional<CardDto> findById(Long id) {
         return cardDao.findById(id).map(CardMapper::toDto);
     }
 
     public List<CardDto> findAll() {
-        return cardDao.findAll().stream().map(CardMapper::toDto).collect(Collectors.toList());
+        return cardDao.findAll()
+                .stream()
+                .map(CardMapper::toDto)
+                .collect(Collectors.toList());
+        // return cardDao.findAll();
     }
 
     public Optional<CardDto> findByValue(String value) {
         return cardDao.findByValue(value).map(CardMapper::toDto);
     }
 
-    public Optional<CardDto> update(CardDto cardDto) {
-        if (cardDto.getId() == null) {
-            log.info("Card does not exist: {}", cardDto.getId());
+    public Optional<Card> update(Long id, CardDto cardDto) {
+        if (id == null) {
+            log.info("Comparable Card must have an ID");
             return Optional.empty();
         }
-        Optional<Card> existingCard = cardDao.findById(cardDto.getId());
+        Optional<Card> existingCard = cardDao.findById(id);
         if (existingCard.isEmpty()) {
-           log.info("Card does not exist: {}", cardDto.getId());
+           log.info("Card does not exist: {}", id);
            return Optional.empty();
         }
 
@@ -175,7 +222,7 @@ public class CardDtoSpringService {
         Card updatedCard = cardDao.update(card);
 
         log.info("Updated card: {}", updatedCard);
-        return Optional.of(CardMapper.toDto(updatedCard));
+        return Optional.of(updatedCard);
     }
 
     @Transactional

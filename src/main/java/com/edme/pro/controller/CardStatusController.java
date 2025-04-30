@@ -4,15 +4,18 @@ import com.edme.pro.dto.CardStatusDto;
 import com.edme.pro.model.CardStatus;
 import com.edme.pro.service.CardStatusDtoSpringService;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
+
 @Slf4j
 @RestController
-@RequestMapping("/api/cardStatus")
+@RequestMapping("/api/cardStatuses")
 public class CardStatusController {
     private final CardStatusDtoSpringService cardStatusService;
 
@@ -34,15 +37,24 @@ public class CardStatusController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping
-    public ResponseEntity<CardStatus> createCardStatus(@RequestBody CardStatusDto cardStatusDto) {
-        return cardStatusService.save(cardStatusDto)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.badRequest().build());
-    }
+//    @PostMapping
+//    public ResponseEntity<CardStatus> createCardStatus(@RequestBody CardStatusDto cardStatusDto) {
+//        return cardStatusService.save(cardStatusDto)
+//                .map(ResponseEntity::ok)
+//                .orElse(ResponseEntity.badRequest().build());
+//    }
+@PostMapping
+public ResponseEntity<?> createCardStatus(@RequestBody @Valid CardStatusDto cardStatusDto) {
+        Optional<CardStatus> cardStatus = cardStatusService.save(cardStatusDto);
+        if (cardStatus.isPresent()) {
+            return ResponseEntity.ok(cardStatus.get());
+        } else {
+            return ResponseEntity.badRequest().body("Банк с таким названием уже существует");
+        }
+}
 
     @PutMapping("/{id}")
-    public ResponseEntity<CardStatus> updateCardStatus(@PathVariable("id") Long id, @RequestBody CardStatusDto cardStatusDto) {
+    public ResponseEntity<CardStatus> updateCardStatus(@PathVariable("id") Long id, @RequestBody @Valid CardStatusDto cardStatusDto) {
       //  cardStatusDto.setId(id);
         log.info("cardStatus: {} updated", cardStatusDto);
         return cardStatusService.update(id, cardStatusDto)

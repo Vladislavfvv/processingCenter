@@ -8,7 +8,7 @@ import com.edme.pro.model.IssuingBank;
 public class AccountMapper {
     public static Account toEntity(AccountDto dto, Currency currency, IssuingBank issuingBank) {
         Account account = new Account();
-        account.setId(dto.getId());
+        //account.setId(dto.getId());
         account.setAccountNumber(dto.getAccountNumber());
         account.setBalance(dto.getBalance());
         account.setCurrencyId(currency);
@@ -21,7 +21,7 @@ public class AccountMapper {
         if (account == null) return null;
 
         AccountDto accountDto = new AccountDto();
-        accountDto.setId(account.getId());
+      //  accountDto.setId(account.getId());
         accountDto.setAccountNumber(account.getAccountNumber());
         accountDto.setBalance(account.getBalance());
 

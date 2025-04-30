@@ -1,6 +1,8 @@
 package com.edme.pro.dao;
 
 
+import com.edme.pro.dto.CurrencyDto;
+import com.edme.pro.model.CardStatus;
 import jakarta.persistence.Query;
 import lombok.extern.slf4j.Slf4j;
 import com.edme.pro.model.Currency;
@@ -10,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -110,6 +113,16 @@ public class CurrencySpringDaoImpl  implements DaoInterfaceSpring<Long, Currency
            log.info("Table {} not dropped", CurrencySpringDaoImpl.class.getName());
             return false;
         }
+    }
+
+    //метод сравнения объектов
+    protected List<Currency> findMatching(Currency currency) {
+        return em.createQuery(
+                        "SELECT c FROM Currency c WHERE c.currencyName = :currencyName AND c.currencyDigitalCode = :currencyDigitalCode AND c.currencyLetterCode = :currencyLetterCode", Currency.class)
+                .setParameter("currencyName", currency.getCurrencyName())
+                .setParameter("currencyDigitalCode", currency.getCurrencyDigitalCode())
+                .setParameter("currencyLetterCode", currency.getCurrencyLetterCode())
+                .getResultList();
     }
 
     @Override

@@ -23,70 +23,65 @@ public class IssuingBankDtoSpringService {
     }
 
     @Transactional
-    public Optional<IssuingBankDto> save(IssuingBankDto issuingBankDto) {
+    public Optional<IssuingBank> save(IssuingBankDto issuingBankDto) {
         // 1. Проверка по id, если он задан
-        if (issuingBankDto.getId() != null) {
-            Optional<IssuingBank> exitingIssuingBank = issuingBankDao.findById(issuingBankDto.getId());
-            if (exitingIssuingBank.isPresent()) {
-                log.info("Issuing Bank already exists with id {}", issuingBankDto.getId());
-                return Optional.ofNullable(IssuingBankMapper.toDto(exitingIssuingBank.get()));
-            }
-        }
+//        if (issuingBankDto.getId() != null) {
+//            Optional<IssuingBank> exitingIssuingBank = issuingBankDao.findById(issuingBankDto.getId());
+//            if (exitingIssuingBank.isPresent()) {
+//                log.info("Issuing Bank already exists with id {}", issuingBankDto.getId());
+//                return Optional.ofNullable(IssuingBankMapper.toDto(exitingIssuingBank.get()));
+//            }
+//        }
         // 2. Проверка по имени (уникальное имя
         Optional<IssuingBank> exitingIssuingBank = issuingBankDao.findByValue(issuingBankDto.getAbbreviatedName());
         if (exitingIssuingBank.isPresent()) {
             log.info("Issuing Bank already exists with name {}", issuingBankDto.getAbbreviatedName());
-            return Optional.ofNullable(IssuingBankMapper.toDto(exitingIssuingBank.get()));
+            return exitingIssuingBank;
         }
+        // Обнуляем ID, чтобы Hibernate не думал, что это уже существующий объект
+        issuingBankDto.setId(null);
 
         IssuingBank issuingBank = IssuingBankMapper.toEntity(issuingBankDto);
+
         IssuingBank saved = issuingBankDao.insert(issuingBank);
         log.info("Issuing Bank {} created", saved.getId());
-        return Optional.ofNullable(IssuingBankMapper.toDto(saved));
+        return Optional.of(saved);
     }
 
 
-    public Optional<IssuingBankDto> findById(Long id) {
-        return issuingBankDao.findById(id).map(IssuingBankMapper::toDto);
+    public Optional<IssuingBank> findById(Long id) {
+        return issuingBankDao.findById(id);
     }
 
-    public List<IssuingBankDto> findAll() {
-        try {
-            log.info("Issuing Bank findAll");
-            return issuingBankDao.findAll()
-                    .stream()
-                    .map(IssuingBankMapper::toDto)
-                    .collect(Collectors.toList());
-        }catch (Exception e) {
-            log.error("Issuing Bank findAll error", e);
-            return new ArrayList<>();
-        }
+    public List<IssuingBank> findAll() {
+       return issuingBankDao.findAll();
     }
 
-    public Optional<IssuingBankDto> findByValue(String value) {
-        return issuingBankDao.findByValue(value).map(IssuingBankMapper::toDto);
+    public Optional<IssuingBank> findByValue(String value) {
+        return issuingBankDao.findByValue(value);
     }
 
     @Transactional
-    public Optional<IssuingBankDto> update(IssuingBankDto issuingBankDto) {
+    public Optional<IssuingBank> update(Long id, IssuingBankDto issuingBankDto) {
         //если id не задан
-        if (issuingBankDto.getId() == null) {
-            log.info("Issuing Bank id is null");
+        if (id == null) {
+            log.info("Comparable IssuingBank must have an ID");
             return Optional.empty();
         }
-        Optional<IssuingBank> existingIssuingBank = issuingBankDao.findById(issuingBankDto.getId());
+        Optional<IssuingBank> existingIssuingBank = issuingBankDao.findById(id);
         //если нет такой сущности
         if (existingIssuingBank.isEmpty()) {
-            log.info("Issuing Bank does not exist with id {}", issuingBankDto.getId());
+            log.info("Issuing Bank does not exist with id {}", id);
             return Optional.empty();
         }
+
         IssuingBank issuingBankEntity = existingIssuingBank.get();
         issuingBankEntity.setAbbreviatedName(issuingBankDto.getAbbreviatedName());
         issuingBankEntity.setBin(issuingBankDto.getBin());
         issuingBankEntity.setBic(issuingBankDto.getBic());
         issuingBankDao.update(issuingBankEntity);
-        log.info("Issuing Bank {} updated", issuingBankDto.getId());
-        return Optional.ofNullable(IssuingBankMapper.toDto(issuingBankEntity));
+        log.info("Issuing Bank {} updated", id);
+        return Optional.of(issuingBankEntity);
     }
 
     @Transactional

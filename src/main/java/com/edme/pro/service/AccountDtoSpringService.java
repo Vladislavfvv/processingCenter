@@ -30,23 +30,24 @@ public class AccountDtoSpringService {
     }
 
     @Transactional
-    public Optional<AccountDto> save(AccountDto accountDto) {
-        if (accountDto.getId() != null) {
-            Optional<Account> existsAccount = accountDao.findById(accountDto.getId());
-            if (existsAccount.isPresent()) {
-                log.info("Account with ID {} already exists", accountDto.getId());
-                return Optional.of(AccountMapper.toDto(existsAccount.get()));
-            }
-        }
+    public Optional<Account> save(AccountDto accountDto) {
+//        if (accountDto.getId() != null) {
+//            Optional<Account> existsAccount = accountDao.findById(accountDto.getId());
+//            if (existsAccount.isPresent()) {
+//                log.info("Account with ID {} already exists", accountDto.getId());
+//                return Optional.of(AccountMapper.toDto(existsAccount.get()));
+//            }
+//        }
 
         //проверка есть ли такой еще
         Optional<Account> existingAccount = accountDao.findByValue(accountDto.getAccountNumber());
         if (existingAccount.isPresent()) {
-            log.info("Account with ID {} already exists", accountDto.getId());
-            return Optional.of(AccountMapper.toDto(existingAccount.get()));
+            log.info("Account with ID {} already exists", existingAccount.get().getId());
+            return Optional.empty();
         }
         //иначе создаем новый
         // но сразу проверяем есть ли для него currency и issuingBank
+        accountDto.setId(null);
         Currency currency = currencyDao.findById(accountDto.getCurrencyId()).orElse(Currency.builder().build()); // или заглушка
         IssuingBank issuingBank = issuingBankDao.findById(accountDto.getIssuingBankId()).orElse(IssuingBank.builder().build()); //то же
 
@@ -54,37 +55,41 @@ public class AccountDtoSpringService {
         Account account = AccountMapper.toEntity(accountDto, currency, issuingBank);
         Account accountSaved = accountDao.insert(account);
 
-        log.info("Account with ID {} saved", accountDto.getId());
-        return Optional.of(AccountMapper.toDto(accountSaved));
+        log.info("Account with ID {} saved", accountSaved.getId());
+        return Optional.of(accountSaved);
     }
 
-    public List<AccountDto> findAll() {
-        try{
-            return accountDao.findAll().stream().map(AccountMapper::toDto).collect(Collectors.toList());
-        }catch (Exception e) {
-            log.info("Error finding all accounts");
-            return new ArrayList<>();
-        }
+    public List<Account> findAll() {
+//        try{
+//            return accountDao.findAll().stream().map(AccountMapper::toDto).collect(Collectors.toList());
+//        }catch (Exception e) {
+//            log.info("Error finding all accounts");
+//            return new ArrayList<>();
+//        }
+        return accountDao.findAll();
     }
 
-    public Optional<AccountDto> findById(Long id) {
-        return accountDao.findById(id).map(AccountMapper::toDto);
+    public Optional<Account> findById(Long id) {
+
+       // return accountDao.findById(id).map(AccountMapper::toDto);
+        return accountDao.findById(id);
     }
 
-    public Optional<AccountDto> findByValue(String value) {
-        return accountDao.findByValue(value).map(AccountMapper::toDto);
+    public Optional<Account> findByValue(String value) {
+        return accountDao.findByValue(value);
     }
 
-    public Optional<AccountDto> update(AccountDto accountDto) {
-        if (accountDto.getId() == null) {
-            log.info("Account with ID {} does not exist", accountDto.getId());
+    public Optional<Account> update(Long id, AccountDto accountDto) {
+        if (id == null) {
+            log.info("Comparable Account must have an ID");
             return Optional.empty();
         }
-        Optional<Account> existingAccount = accountDao.findById(accountDto.getId());
+        Optional<Account> existingAccount = accountDao.findById(id);
         if (existingAccount.isEmpty()) {
-           log.info("Account with ID {} does not exist", accountDto.getId());
+           log.info("Account with ID {} does not exist", id);
            return Optional.empty();
         }
+
         Account accountEntity = existingAccount.get();
         Currency currency = currencyDao.findById(accountDto.getCurrencyId()).orElse(null);
         IssuingBank issuingBank = issuingBankDao.findById(accountDto.getIssuingBankId()).orElse(null);
@@ -93,8 +98,8 @@ public class AccountDtoSpringService {
         accountEntity.setCurrencyId(currency);
         accountEntity.setIssuingBankId(issuingBank);
         accountDao.update(accountEntity);
-        log.info("Account with ID {} updated", accountDto.getId());
-        return Optional.of(AccountMapper.toDto(accountEntity));
+        log.info("Account with ID {} updated", accountEntity.getId());
+        return Optional.of(accountEntity);
     }
 
     @Transactional

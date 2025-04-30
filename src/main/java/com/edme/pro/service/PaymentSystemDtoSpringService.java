@@ -26,67 +26,78 @@ public class PaymentSystemDtoSpringService {
 
 
     @Transactional
-    public Optional<PaymentSystemDto> save(PaymentSystemDto dto) {
+    public Optional<PaymentSystem> save(PaymentSystemDto paymentSystemDto) {
         // Проверяем, есть ли такая сущность в БД
-        Optional<PaymentSystem> existing = paymentSystemDao.findByValue(dto.getPaymentSystemName());
+        Optional<PaymentSystem> existing = paymentSystemDao.findByValue(paymentSystemDto.getPaymentSystemName());
         if (existing.isPresent()) {
-            log.info("PaymentSystem '{}' уже существует", dto.getPaymentSystemName());
-            return Optional.of(PaymentSystemMapper.toDto(existing.get()));
+            log.info("PaymentSystem '{}' уже существует", paymentSystemDto.getPaymentSystemName());
+            return existing;
         }
 
         // Обнуляем ID, чтобы Hibernate не думал, что это уже существующий объект
-        dto.setId(null);
+        paymentSystemDto.setId(null);
 
         // Маппим в entity
-        PaymentSystem entity = PaymentSystemMapper.toEntity(dto);
+        PaymentSystem entity = PaymentSystemMapper.toEntity(paymentSystemDto);
 
         // Используем merge вместо persist
         PaymentSystem saved = paymentSystemDao.insert(entity);
-
-        return Optional.of(PaymentSystemMapper.toDto(saved));
-    }
-
-    public List<PaymentSystemDto> findAll() {
-        List<PaymentSystemDto> paymentSystems = new ArrayList<>();
-        try {
-            return paymentSystemDao.findAll()
-                    .stream()
-                    .map(PaymentSystemMapper::toDto)
-                    .collect(Collectors.toList());
-        }catch (Exception e) {
-            log.info("Error while fetching all payment systems", e);
-            return paymentSystems;
-        }
+        log.info("Saved payment system '{}'", saved.getPaymentSystemName());
+        return Optional.of(saved);
     }
 
 
-    public Optional<PaymentSystemDto> findById(Long id) {
-       return paymentSystemDao.findById(id)
-               .map(PaymentSystemMapper::toDto);
+    public Optional<PaymentSystem> findById(Long id) {
+        //return paymentSystemDao.findById(id).map(PaymentSystemMapper::toDto);
+        return paymentSystemDao.findById(id);
     }
 
 
-    public Optional<PaymentSystemDto> findByValue(String value) {
-        return paymentSystemDao.findByValue(value)
-                .map(PaymentSystemMapper::toDto);
+    public List<PaymentSystem> findAll() {
+//        List<PaymentSystemDto> paymentSystems = new ArrayList<>();
+//        try {
+//            return paymentSystemDao.findAll()
+//                    .stream()
+//                    .map(PaymentSystemMapper::toDto)
+//                    .collect(Collectors.toList());
+//        } catch (Exception e) {
+//            log.info("Error while fetching all payment systems", e);
+//            return paymentSystems;
+//        }
+        return paymentSystemDao.findAll();
+    }
+
+
+
+
+    public Optional<PaymentSystem> findByValue(String value) {
+        //return paymentSystemDao.findByValue(value).map(PaymentSystemMapper::toDto);
+        return paymentSystemDao.findByValue(value);
     }
 
     @Transactional
-    public Optional<PaymentSystemDto> update(PaymentSystemDto paymentSystemDto) {
-        if (paymentSystemDto.getId() == null) {
-            log.info("Payment system with ID {} not found", paymentSystemDto.getId());
+    public Optional<PaymentSystem> update(Long id, PaymentSystemDto paymentSystemDto) {
+        if (id == null) {//если id не задан
+            log.info("Comparable PaymentSystem must have an ID");
+            //throw new IllegalArgumentException("ID должен быть задан для обновления");
             return Optional.empty();
         }
-        Optional<PaymentSystem> existingById = paymentSystemDao.findById(paymentSystemDto.getId());
+
+//        if (paymentSystemDto.getId() == null) {
+//            log.info("Payment system with ID {} not found", paymentSystemDto.getId());
+//            return Optional.empty();
+//        }
+        Optional<PaymentSystem> existingById = paymentSystemDao.findById(id);
         if (existingById.isEmpty()) {
-            log.info("Payment system with ID {} not found", paymentSystemDto.getId());
+            log.info("Payment system with ID {} not found", id);
             return Optional.empty();
         }
-        PaymentSystem paymentSystemEntity = existingById.get();
-        paymentSystemEntity.setPaymentSystemName(paymentSystemDto.getPaymentSystemName());
-        paymentSystemDao.update(paymentSystemEntity);
-        log.info("Payment system with ID {} updated", paymentSystemDto.getId());
-        return Optional.of(PaymentSystemMapper.toDto(paymentSystemEntity));
+
+        PaymentSystem newPaymentSystemEntity = existingById.get();
+        newPaymentSystemEntity.setPaymentSystemName(paymentSystemDto.getPaymentSystemName());
+        paymentSystemDao.update(newPaymentSystemEntity);
+        log.info("Payment system with ID {} updated", newPaymentSystemEntity.getId());
+        return Optional.of(newPaymentSystemEntity);
     }
 
     @Transactional
@@ -96,11 +107,11 @@ public class PaymentSystemDtoSpringService {
 
     @Transactional
     public boolean deleteAll() {
-       return paymentSystemDao.deleteAll();
+        return paymentSystemDao.deleteAll();
     }
 
     @Transactional
-    public boolean dropTable(){
+    public boolean dropTable() {
         return paymentSystemDao.dropTable();
     }
 }

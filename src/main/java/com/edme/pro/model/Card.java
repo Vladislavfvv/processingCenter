@@ -41,17 +41,17 @@ public class Card{
     private Timestamp sentToIssuingBank;
 
 
-    public Card(String cardNumber, Date expirationDate, String holderName,
-                CardStatus cardStatusId, PaymentSystem paymentSystemId, Account accountId,
-                Timestamp receivedFromIssuingBank, Timestamp sentToIssuingBank) {
-        this.cardNumber = cardNumber;
-        this.expirationDate = expirationDate;
-        this.holderName = holderName;
-        this.cardStatusId = cardStatusId;
-        this.paymentSystemId = paymentSystemId;
-        this.accountId = accountId;
-        this.receivedFromIssuingBank = receivedFromIssuingBank;
-        this.sentToIssuingBank = sentToIssuingBank;
-    }
+//    public Card(String cardNumber, Date expirationDate, String holderName,
+//                CardStatus cardStatusId, PaymentSystem paymentSystemId, Account accountId,
+//                Timestamp receivedFromIssuingBank, Timestamp sentToIssuingBank) {
+//        this.cardNumber = cardNumber;
+//        this.expirationDate = expirationDate;
+//        this.holderName = holderName;
+//        this.cardStatusId = cardStatusId;
+//        this.paymentSystemId = paymentSystemId;
+//        this.accountId = accountId;
+//        this.receivedFromIssuingBank = receivedFromIssuingBank;
+//        this.sentToIssuingBank = sentToIssuingBank;
+//    }
 
 }
