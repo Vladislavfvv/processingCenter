@@ -30,7 +30,10 @@ public class CardMapper {
         dto.setId(card.getId());
         dto.setCardNumber(card.getCardNumber());
         //dto.setExpirationDate(card.getExpirationDate());
-        dto.setExpirationDate(card.getExpirationDate().toLocalDate());
+//        dto.setExpirationDate(card.getExpirationDate().toLocalDate());
+        dto.setExpirationDate(card.getExpirationDate() != null
+                ? card.getExpirationDate().toLocalDate()
+                : null);
         dto.setHolderName(card.getHolderName());
         dto.setCardStatusId(card.getCardStatusId().getId());
         dto.setPaymentSystemId(card.getPaymentSystemId().getId());

@@ -186,6 +186,10 @@ public class CardDtoSpringService {
            return Optional.empty();
         }
 
+        if (!CardValidator.validateCardNumber(cardDto.getCardNumber())) {
+            log.warn("Invalid card number, card didn't update");
+            return Optional.empty();
+        }
 
         CardStatus cardStatus = cardStatusDao.findById(cardDto.getCardStatusId()).orElse(null);
         PaymentSystem paymentSystem = paymentSystemDao.findById(cardDto.getPaymentSystemId()).orElse(null);
@@ -212,11 +216,11 @@ public class CardDtoSpringService {
         card.setSentToIssuingBank(Timestamp.valueOf(cardDto.getSentToIssuingBank()));
 
 
-        //валидация номера карты напоследок
-        if (!CardValidator.validateCardNumber(cardDto.getCardNumber())){
-            log.warn("Invalid card number, card didnt update");
-            return Optional.empty();
-        }
+//        //валидация номера карты напоследок
+//        if (!CardValidator.validateCardNumber(cardDto.getCardNumber())){
+//            log.warn("Invalid card number, card didnt update");
+//            return Optional.empty();
+//        }
 
         // Обновляем в базе
         Card updatedCard = cardDao.update(card);

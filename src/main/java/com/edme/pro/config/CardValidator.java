@@ -7,16 +7,19 @@ public class CardValidator {
 // умноженных на 2, при этом, если произведение таких чисел больше 9, то из него вычитается 9.
 // Если полученная сумма делится на 10 без остатка, значит начальное число введено верно.
     public static boolean validateCardNumber(String cardNumber) {
-        cardNumber = cardNumber.replaceAll("\\s+", ""); // Удаление пробелов
         // Проверяем, что строка не null и состоит только из цифр
         if (cardNumber == null) {
             System.out.println("Card number is null");
             return false;
         }
+
+        cardNumber = cardNumber.replaceAll("\\s+", ""); // Удаление пробелов
+
         if (!cardNumber.matches("\\d+")) {
             System.out.println("Card number is not a number");
             return false;
         }
+
         if (cardNumber.length() != 16) {
             System.out.println("Card number is shorter than 16 characters");
             return false; // Если null или есть нецифровые символы или мало цифр — номер некорректен
