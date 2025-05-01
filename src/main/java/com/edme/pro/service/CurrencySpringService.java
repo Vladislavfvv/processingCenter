@@ -21,18 +21,6 @@ public class CurrencySpringService {
         this.currencyDao = currencyDao;
     }
 
-//    @Transactional
-//    public Optional<Currency> save(String digitalCode, String letterCode, String currencyName) {
-//        if (currencyDao.findByValue(currencyName).isPresent()) {
-//            return Optional.empty();
-//        }
-//        Currency currency = new Currency();
-//        currency.setCurrencyDigitalCode(digitalCode);
-//        currency.setCurrencyLetterCode(letterCode);
-//        currency.setCurrencyName(currencyName);
-//        Currency saved = currencyDao.insert(currency);
-//        return Optional.ofNullable(saved);
-//    }
 
     @Transactional
     public boolean createTable() {
@@ -89,13 +77,6 @@ public class CurrencySpringService {
             return Optional.empty();
         }
 
-
-//        Optional<Currency> existing = currencyDao.findById(currency.getId());
-//        if (existing.isEmpty()) {
-//            log.info("Currency does not exist with value: " + currency.getCurrencyName());
-//            return Optional.empty();
-//        }
-        //Currency updated = currencyDao.update(currency);
         Currency updated = new Currency();
         updated.setId(id);
         updated.setCurrencyDigitalCode(currencyDto.getCurrencyDigitalCode());

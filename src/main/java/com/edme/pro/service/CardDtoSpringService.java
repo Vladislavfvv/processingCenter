@@ -261,27 +261,6 @@ public class CardDtoSpringService {
         return result;
     }
 
-//    @Transactional
-//    public List<Card> initializeTable(List<CardDto> cardDtos) {
-//        List<Card> insertedCards = new ArrayList<>();
-//        for (CardDto dto : cardDtos) {
-//            if (!CardValidator.validateCardNumber(dto.getCardNumber())) continue;
-//            if (cardDao.findByValue(dto.getCardNumber()).isPresent()) continue;
-//
-//            CardStatus cardStatus = cardStatusDao.findById(dto.getCardStatusId()).orElse(null);
-//            PaymentSystem paymentSystem = paymentSystemDao.findById(dto.getPaymentSystemId()).orElse(null);
-//            Account account = accountDao.findById(dto.getAccountId()).orElse(null);
-//
-//            if (cardStatus == null || paymentSystem == null || account == null) continue;
-//
-//            Card card = CardMapper.toEntity(dto, cardStatus, paymentSystem, account);
-//            card.setId(null);
-//            Card saved = cardDao.insert(card);
-//            insertedCards.add(saved);
-//        }
-//        return insertedCards;
-//    }
-
     @Transactional
     public boolean initializeTable() {
         boolean tableCreated = cardDao.createTable();

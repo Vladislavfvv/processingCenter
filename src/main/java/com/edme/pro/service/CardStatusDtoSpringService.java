@@ -15,11 +15,10 @@ import java.util.Optional;
 @Slf4j
 @Service
 public class CardStatusDtoSpringService {
-    //private final DaoInterfaceSpring<Long, CardStatus> cardStatusDao;
     private final DaoInterfaceSpring<Long, CardStatus> cardStatusDao;
 
     @Autowired
-    //public CardStatusDtoSpringService(DaoInterfaceSpring<Long, CardStatus> cardStatusDao) {
+
     public CardStatusDtoSpringService(DaoInterfaceSpring<Long, CardStatus> cardStatusDao) {
         this.cardStatusDao = cardStatusDao;
     }
@@ -63,12 +62,6 @@ public class CardStatusDtoSpringService {
 
     @Transactional
     public Optional<CardStatus> update(Long id, CardStatusDto cardStatusDto) {
-//        if (dto.getId() == null) {//если id не задан
-//            log.info("CardStatus must have an ID");
-//            //throw new IllegalArgumentException("ID должен быть задан для обновления");
-//            return Optional.empty();
-//        }
-
         if (id == null) {//если id не задан
             log.info("Comparable CardStatus must have an ID");
             //throw new IllegalArgumentException("ID должен быть задан для обновления");
