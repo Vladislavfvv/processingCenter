@@ -94,7 +94,12 @@ public class CardStatusDtoSpringService {
 
     @Transactional
     public boolean deleteAll() {
-        return cardStatusDao.deleteAll();
+        try {
+            return cardStatusDao.deleteAll();
+        } catch (Exception e) {
+            log.error("Ошибка при удалении всех записей из card_statuses", e);
+            throw e; // важно пробросить, чтобы Spring знал о причине rollback
+        }
     }
 
 //    public Optional<CardStatusDto> getByName(String name) {
@@ -108,7 +113,30 @@ public class CardStatusDtoSpringService {
     }
 
     @Transactional
+    public boolean createTable() {
+        return cardStatusDao.createTable();
+    }
+
+    @Transactional
     public boolean dropTable() {
         return cardStatusDao.dropTable();
+    }
+
+    @Transactional
+    public boolean initializeTable() {
+        boolean tableCreated = cardStatusDao.createTable();
+        if (!tableCreated) {
+            log.warn("Не удалось создать таблицу card_statuses");
+            return false;
+        }
+
+        boolean valuesInserted = cardStatusDao.insertDefaultValues();
+        if (!valuesInserted) {
+            log.warn("Таблица создана, но значения не вставлены");
+            return false;
+        }
+
+        log.info("Таблица создана и значения успешно добавлены");
+        return true;
     }
 }

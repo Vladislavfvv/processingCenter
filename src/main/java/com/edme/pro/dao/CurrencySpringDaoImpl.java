@@ -59,13 +59,23 @@ public class CurrencySpringDaoImpl  implements DaoInterfaceSpring<Long, Currency
 
     @Override
     public boolean createTable() {
-        String sqlCreate = "CREATE TABLE IF NOT EXISTS processingCenterSchema.currency\n" +
-                "(\n" +
-                "    id                    bigserial primary key,\n" +
-                "    currency_digital_code varchar(3)   not null,\n" +
-                "    currency_letter_code  varchar(3)   not null,\n" +
-                "    currency_name         varchar(255) not null\n" +
-                "    );";
+//        String sqlCreate = "CREATE TABLE IF NOT EXISTS processingCenterSchema.currency\n" +
+//                "(\n" +
+//                "    id                    bigserial primary key,\n" +
+//                "    currency_digital_code varchar(3)   not null,\n" +
+//                "    currency_letter_code  varchar(3)   not null,\n" +
+//                "    currency_name         varchar(255) not null\n" +
+//                "    );";
+
+        String sqlCreate = "CREATE TABLE IF NOT EXISTS processingcenterschema.currency (\n" +
+                           "                id                    bigserial PRIMARY KEY,\n" +
+                           "                currency_digital_code varchar(3)   NOT NULL,\n" +
+                           "                currency_letter_code  varchar(3)   NOT NULL,\n" +
+                           "                currency_name         varchar(255) NOT NULL,\n" +
+                           "                CONSTRAINT unique_currency_fields\n" +
+                           "                UNIQUE (currency_digital_code, currency_letter_code, currency_name)\n" +
+                           "        );";
+
         try {
             em.createNativeQuery(sqlCreate).executeUpdate();
             log.info("Table {} created", CurrencySpringDaoImpl.class.getName());
@@ -105,7 +115,7 @@ public class CurrencySpringDaoImpl  implements DaoInterfaceSpring<Long, Currency
     public boolean dropTable() {
         try {
            // em.createNativeQuery("DROP TABLE IF EXISTS Currency").executeUpdate();
-            Query query =  em.createNativeQuery("DROP TABLE IF EXISTS processingcenterschema.currency CASCADE ");
+            Query query =  em.createNativeQuery("DROP TABLE IF EXISTS processingcenterschema.currency CASCADE");
            log.info("Table {} dropped", CurrencySpringDaoImpl.class.getName());
             int result = query.executeUpdate();
             return result > 0;  // return true if records were deleted, otherwise false
@@ -134,8 +144,45 @@ public class CurrencySpringDaoImpl  implements DaoInterfaceSpring<Long, Currency
 
         return result.stream().findFirst();
     }
+
     public Optional<Currency> findById(Long id) {
         return Optional.ofNullable(em.find(Currency.class, id));
+    }
+
+    @Override
+    public boolean insertDefaultValues() {
+ //       String sql = """
+//        INSERT INTO processingcenterschema.currency(currency_digital_code, currency_letter_code, currency_name)
+//                               VALUES ('643', 'RUB', 'Russian Ruble'),
+//                                      ('980', 'UAN', 'Hryvnia'),
+//                                      ('840', 'USD', 'US Dollar'),
+//                                      ('978', 'EUR', 'Euro'),
+//                                      ('392', 'JPY', 'Yen'),
+//                                      ('156', 'CNY', 'Yuan Renminbi'),
+//                                      ('826', 'GBP', 'Pound Sterling')
+//        ON CONFLICT (currency_digital_code, currency_letter_code, currency_name) DO NOTHING;
+//        """;
+        String sql = """
+        INSERT INTO processingcenterschema.currency(currency_digital_code, currency_letter_code, currency_name)
+                               VALUES ('643', 'RUB', 'Russian Ruble'),
+                                      ('980', 'UAN', 'Hryvnia'),
+                                      ('840', 'USD', 'US Dollar'),
+                                      ('978', 'EUR', 'Euro'),
+                                      ('392', 'JPY', 'Yen'),
+                                      ('156', 'CNY', 'Yuan Renminbi'),
+                                      ('826', 'GBP', 'Pound Sterling'),
+                                       ('899', 'GDR', 'New Sterling'),
+                                       ('911', 'BSS', 'New SpecCurrency')
+        ON CONFLICT (currency_digital_code, currency_letter_code, currency_name) DO NOTHING;
+        """;
+        try {
+            em.createNativeQuery(sql).executeUpdate();
+            log.info("Default currencies inserted");
+            return true;
+        } catch (Exception e) {
+            log.error("Failed to insert default currencies", e);
+            return false;
+        }
     }
 }
 

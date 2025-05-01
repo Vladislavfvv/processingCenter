@@ -5,6 +5,7 @@ import com.edme.pro.mapper.CardMapper;
 import com.edme.pro.model.Card;
 import com.edme.pro.service.CardDtoSpringService;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
 //в classе WebConfig можно настроить конкретные пути  ->  .allowedOrigins( // "https://myfrontend.com",
 // и       "http://localhost:3000"
 
-
+@Slf4j
 //ResponseEntity — это обёртка для HTTP-ответа (с кодом ответа, телом и заголовками)
 @RestController// то же что и @Controller + @ResponseBody
 // То есть, все методы автоматически возвращают JSON/объект, а не страницу HTML
@@ -108,5 +109,50 @@ public class CardController {
         return cardService.delete(id)
                 ? ResponseEntity.noContent().build()//Если удаление прошло успешно: вернёт HTTP 204 No Content (успешно, но тело пустое).
                 : ResponseEntity.notFound().build(); //Если карточки нет: вернёт HTTP 404 Not Found.
+    }
+
+
+    @PostMapping("/createTable")
+    public ResponseEntity<String> createCardTable() {
+        log.info("Creating Cards table");
+        boolean result = cardService.createTable();
+        if (result) {
+            return ResponseEntity.ok("Таблица Cards успешно создана");
+        } else {
+            return ResponseEntity.status(500).body("Ошибка при создании таблицы");
+        }
+    }
+
+    @DeleteMapping("/deleteAll")
+    public ResponseEntity<String> deleteAllCards() {
+        log.info("Deleting all Cards");
+        boolean result = cardService.deleteAll();
+        if (result) {
+            return ResponseEntity.ok("Все записи удалены");
+        } else {
+            return ResponseEntity.status(500).body("Ошибка при удалении всех записей");
+        }
+    }
+
+    @DeleteMapping("/drop")
+    public ResponseEntity<String> dropCardsTable() {
+        log.info("Dropping Cards table");
+        boolean result = cardService.dropTable();
+        if (result) {
+            return ResponseEntity.ok("Таблица Cards удалена");
+        } else {
+            return ResponseEntity.status(500).body("Ошибка при удалении таблицы");
+        }
+    }
+
+    @PostMapping("/fillTable")
+    public ResponseEntity<String> fillDefaultCards() {
+        log.info("Inserting default Cards...");
+        boolean success = cardService.initializeTable();
+        if (success) {
+            return ResponseEntity.ok("Значения по умолчанию успешно добавлены.");
+        } else {
+            return ResponseEntity.status(500).body("Не удалось добавить значения по умолчанию.");
+        }
     }
 }

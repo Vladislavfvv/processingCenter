@@ -91,11 +91,39 @@ public class IssuingBankDtoSpringService {
 
     @Transactional
     public boolean deleteAll(){
-        return issuingBankDao.deleteAll();
+        try {
+            return issuingBankDao.deleteAll();
+        } catch (Exception e) {
+            log.error("Ошибка при удалении всех записей из issuing_banks", e);
+            throw e; // важно пробросить, чтобы Spring знал о причине rollback
+        }
     }
 
     @Transactional
     public boolean dropTable() {
         return issuingBankDao.dropTable();
+    }
+
+    @Transactional
+    public boolean initializeTable() {
+        boolean tableCreated = issuingBankDao.createTable();
+        if (!tableCreated) {
+            log.warn("Не удалось создать таблицу issuing_banks");
+            return false;
+        }
+
+        boolean valuesInserted = issuingBankDao.insertDefaultValues();
+        if (!valuesInserted) {
+            log.warn("Таблица создана, но значения не вставлены");
+            return false;
+        }
+
+        log.info("Таблица создана и значения успешно добавлены");
+        return true;
+    }
+
+    @Transactional
+    public boolean createTable() {
+        return issuingBankDao.createTable();
     }
 }

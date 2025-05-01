@@ -85,7 +85,7 @@ public class PaymentSystemSpringDaoImpl implements DaoInterfaceSpring<Long, Paym
             log.info("Tables PaymentSystem cleared");
             return true;
         } catch (Exception e) {
-            log.info("Tables PaymentSystem not cleared");
+            log.error("Tables PaymentSystem not cleared");
             return false;
         }
     }
@@ -93,7 +93,7 @@ public class PaymentSystemSpringDaoImpl implements DaoInterfaceSpring<Long, Paym
     @Override
     public boolean dropTable() {
         try {
-            em.createNativeQuery("DROP TABLE IF EXISTS processingcenterschema.payment_system").executeUpdate();
+            em.createNativeQuery("DROP TABLE IF EXISTS processingcenterschema.payment_system CASCADE").executeUpdate();
             log.info("Tables dropped");
             return true;
         } catch (Exception e) {
@@ -110,4 +110,28 @@ public class PaymentSystemSpringDaoImpl implements DaoInterfaceSpring<Long, Paym
                 .getResultList();
         return paymentSystem.stream().findFirst();
     }
+
+    @Override
+    public boolean insertDefaultValues() {
+        String sql = """
+        INSERT INTO processingcenterschema.payment_system (payment_system_name)
+        VALUES 
+            ('VISA International Service Association'),
+            ('Mastercard'),
+            ('JCB'),
+            ('American Express'),
+            ('Diners Club International'),
+            ('China UnionPay ')
+        ON CONFLICT (payment_system_name) DO NOTHING;
+        """;
+        try {
+            em.createNativeQuery(sql).executeUpdate();
+            log.info("Default payment systems inserted");
+            return true;
+        } catch (Exception e) {
+            log.error("Failed to insert default payment systems", e);
+            return false;
+        }
+    }
+
 }

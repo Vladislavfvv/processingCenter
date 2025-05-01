@@ -118,4 +118,25 @@ public class CardStatusSpringDaoImpl implements DaoInterfaceSpring<Long, CardSta
                 .getResultList();
         return cardStatuses.stream().findFirst();
     }
+
+    @Override
+    public boolean insertDefaultValues() {
+        String sql = """
+        INSERT INTO processingcenterschema.card_status(card_status_name)
+                               VALUES ('Card is not active'),
+                                      ('Card is valid'),
+                                      ('Card is temporarily blocked'),
+                                      ('Card is lost'),
+                                      ('Card is compromised')
+        ON CONFLICT (card_status_name) DO NOTHING;
+        """;
+        try {
+            em.createNativeQuery(sql).executeUpdate();
+            log.info("Default card_statuses inserted");
+            return true;
+        } catch (Exception e) {
+            log.error("Failed to insert default card_statuses", e);
+            return false;
+        }
+    }
 }

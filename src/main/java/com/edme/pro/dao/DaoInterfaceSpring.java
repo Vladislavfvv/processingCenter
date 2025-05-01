@@ -15,5 +15,5 @@ public interface DaoInterfaceSpring <K, E>{
     boolean deleteAll();
     boolean dropTable();
     Optional<E> findByValue(String name);
-
+    boolean insertDefaultValues();
 }

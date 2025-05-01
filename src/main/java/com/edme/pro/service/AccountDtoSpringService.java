@@ -109,11 +109,39 @@ public class AccountDtoSpringService {
 
     @Transactional
     public boolean deleteAll() {
-        return accountDao.deleteAll();
+        try {
+            return accountDao.deleteAll();
+        } catch (Exception e) {
+            log.error("Ошибка при удалении всех записей из accounts", e);
+            throw e; // важно пробросить, чтобы Spring знал о причине rollback
+        }
     }
 
     @Transactional
     public boolean dropTable() {
         return accountDao.dropTable();
+    }
+
+    @Transactional
+    public boolean initializeTable() {
+        boolean tableCreated = accountDao.createTable();
+        if (!tableCreated) {
+            log.warn("Не удалось создать таблицу accounts");
+            return false;
+        }
+
+        boolean valuesInserted = accountDao.insertDefaultValues();
+        if (!valuesInserted) {
+            log.warn("Таблица создана, но значения не вставлены");
+            return false;
+        }
+
+        log.info("Таблица создана и значения успешно добавлены");
+        return true;
+    }
+
+    @Transactional
+    public boolean createTable() {
+        return accountDao.createTable();
     }
 }

@@ -16,7 +16,7 @@ import java.util.Optional;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/currency")
+@RequestMapping("/api/currencies")
 public class CurrencyController {
     private final CurrencySpringService currencySpringService;
 
@@ -68,5 +68,51 @@ public class CurrencyController {
     return currencySpringService.delete(id)
             ? ResponseEntity.noContent().build()
             : ResponseEntity.notFound().build();
+    }
+
+
+
+    @PostMapping("/createTable")
+    public ResponseEntity<String> createCurrencyTable() {
+        log.info("Creating Currency table");
+        boolean result = currencySpringService.createTable();
+        if (result) {
+            return ResponseEntity.ok("Таблица Currency успешно создана");
+        } else {
+            return ResponseEntity.status(500).body("Ошибка при создании таблицы");
+        }
+    }
+
+    @DeleteMapping("/deleteAll")
+    public ResponseEntity<String> deleteAllCurrencies() {
+        log.info("Deleting all Currency");
+        boolean result = currencySpringService.deleteAll();
+        if (result) {
+            return ResponseEntity.ok("Все записи удалены");
+        } else {
+            return ResponseEntity.status(500).body("Ошибка при удалении всех записей");
+        }
+    }
+
+    @DeleteMapping("/drop")
+    public ResponseEntity<String> dropCurrencyTable() {
+        log.info("Dropping Currency table");
+        boolean result = currencySpringService.dropTable();
+        if (result) {
+            return ResponseEntity.ok("Таблица Currency удалена");
+        } else {
+            return ResponseEntity.status(500).body("Ошибка при удалении таблицы");
+        }
+    }
+
+    @PostMapping("/fillTable")
+    public ResponseEntity<String> fillDefaultCurrencies() {
+        log.info("Inserting default Currency...");
+        boolean success = currencySpringService.initializeTable();
+        if (success) {
+            return ResponseEntity.ok("Значения по умолчанию успешно добавлены.");
+        } else {
+            return ResponseEntity.status(500).body("Не удалось добавить значения по умолчанию.");
+        }
     }
 }

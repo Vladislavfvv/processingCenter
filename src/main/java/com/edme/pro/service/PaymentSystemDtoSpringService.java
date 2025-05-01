@@ -101,17 +101,47 @@ public class PaymentSystemDtoSpringService {
     }
 
     @Transactional
+    public boolean createTable() {
+        return paymentSystemDao.createTable();
+    }
+
+    @Transactional
     public boolean delete(Long id) {
         return paymentSystemDao.delete(id);
     }
 
     @Transactional
     public boolean deleteAll() {
-        return paymentSystemDao.deleteAll();
+
+//        return paymentSystemDao.deleteAll();
+        try {
+            return paymentSystemDao.deleteAll();
+        } catch (Exception e) {
+            log.error("Ошибка при удалении всех записей из payment_system", e);
+            throw e; // важно пробросить, чтобы Spring знал о причине rollback
+        }
     }
 
     @Transactional
     public boolean dropTable() {
         return paymentSystemDao.dropTable();
+    }
+
+    @Transactional
+    public boolean initializeTable() {
+        boolean tableCreated = paymentSystemDao.createTable();
+        if (!tableCreated) {
+            log.warn("Не удалось создать таблицу payment_system");
+            return false;
+        }
+
+        boolean valuesInserted = paymentSystemDao.insertDefaultValues();
+        if (!valuesInserted) {
+            log.warn("Таблица создана, но значения не вставлены");
+            return false;
+        }
+
+        log.info("Таблица создана и значения успешно добавлены");
+        return true;
     }
 }

@@ -1,4 +1,4 @@
-package com.edme.pro.controller;
+package com.edme.pro.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

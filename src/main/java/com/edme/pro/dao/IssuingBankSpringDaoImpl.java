@@ -67,18 +67,17 @@ public class IssuingBankSpringDaoImpl implements DaoInterfaceSpring<Long, Issuin
                     id               bigserial primary key,
                     bic              varchar(9)   not null,
                     bin              varchar(5)   not null,
-                    abbreviated_name varchar(255) not null
+                    abbreviated_name varchar(255) not null,
+                    CONSTRAINT unique_issuing_bank\s
+                        UNIQUE (bin, abbreviated_name)
                     );
-                """;
+               \s""";
         try {
-            em.getTransaction().begin();
             em.createNativeQuery(sql).executeUpdate();
-            em.getTransaction().commit();
             log.info("IssuingBank table created");
             return true;
         } catch (Exception e) {
             log.info("IssuingBank table failed to create");
-            em.getTransaction().rollback();
             return false;
         }
     }
@@ -99,7 +98,7 @@ public class IssuingBankSpringDaoImpl implements DaoInterfaceSpring<Long, Issuin
     @Override
     public boolean dropTable() {
         try {
-            em.createNativeQuery("DROP TABLE IF EXISTS processingCenterSchema.issuing_bank").executeUpdate();
+            em.createNativeQuery("DROP TABLE IF EXISTS processingCenterSchema.issuing_bank CASCADE").executeUpdate();
             log.info("IssuingBank table dropped");
             return true;
         } catch (Exception e) {
@@ -113,5 +112,24 @@ public class IssuingBankSpringDaoImpl implements DaoInterfaceSpring<Long, Issuin
         List<IssuingBank> issuingBankList  = em.createQuery("FROM IssuingBank ib WHERE ib.abbreviatedName = :name", IssuingBank.class)
                 .setParameter("name", name).getResultList();
         return issuingBankList.stream().findFirst();
+    }
+
+    @Override
+    public boolean insertDefaultValues() {
+        String sql = """
+                INSERT INTO processingcenterschema.issuing_bank (bic, bin, abbreviated_name)
+                                       VALUES ('041234569', '12345', 'ОАО Приорбанк '),
+                                              ('041234570', '45256', 'ОАО Сбербанк '),
+                                              ('041234571', '98725', 'ЗАО МТБ Банк ')
+                ON CONFLICT (bin, abbreviated_name) DO NOTHING;
+                """;
+        try {
+            em.createNativeQuery(sql).executeUpdate();
+            log.info("Default issuing_bank inserted");
+            return true;
+        } catch (Exception e) {
+            log.error("Failed to insert default issuing_bank", e);
+            return false;
+        }
     }
 }

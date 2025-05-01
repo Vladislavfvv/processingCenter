@@ -34,7 +34,10 @@ public class CurrencySpringService {
 //        return Optional.ofNullable(saved);
 //    }
 
-
+    @Transactional
+    public boolean createTable() {
+        return currencyDao.createTable();
+    }
 
     @Transactional
     public Optional<Currency> save(CurrencyDto currencyDto) {
@@ -105,7 +108,12 @@ public class CurrencySpringService {
 
     @Transactional
     public boolean deleteAll() {
-        return currencyDao.deleteAll();
+        try {
+            return currencyDao.deleteAll();
+        } catch (Exception e) {
+            log.error("Ошибка при удалении всех записей из currencies", e);
+            throw e;
+        }
     }
 
     @Transactional
@@ -113,6 +121,24 @@ public class CurrencySpringService {
         return currencyDao.dropTable();
     }
 
+
+    @Transactional
+    public boolean initializeTable() {
+        boolean tableCreated = currencyDao.createTable();
+        if (!tableCreated) {
+            log.warn("Не удалось создать таблицу currencies");
+            return false;
+        }
+
+        boolean valuesInserted = currencyDao.insertDefaultValues();
+        if (!valuesInserted) {
+            log.warn("Таблица создана, но значения не вставлены");
+            return false;
+        }
+
+        log.info("Таблица создана и значения успешно добавлены");
+        return true;
+    }
 }
 
 

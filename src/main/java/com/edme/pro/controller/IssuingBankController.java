@@ -67,4 +67,50 @@ public class IssuingBankController {
                 ? ResponseEntity.noContent().build()
                 : ResponseEntity.notFound().build();
     }
+
+
+
+    @PostMapping("/createTable")
+    public ResponseEntity<String> createIssuingBankTable() {
+        log.info("Creating IssuingBank table");
+        boolean result = issuingBankService.createTable();
+        if (result) {
+            return ResponseEntity.ok("Таблица IssuingBank успешно создана");
+        } else {
+            return ResponseEntity.status(500).body("Ошибка при создании таблицы");
+        }
+    }
+
+    @DeleteMapping("/deleteAll")
+    public ResponseEntity<String> deleteAllIssuingBanks() {
+        log.info("Deleting all IssuingBanks");
+        boolean result = issuingBankService.deleteAll();
+        if (result) {
+            return ResponseEntity.ok("Все записи удалены");
+        } else {
+            return ResponseEntity.status(500).body("Ошибка при удалении всех записей");
+        }
+    }
+
+    @DeleteMapping("/drop")
+    public ResponseEntity<String> dropIssuingBankTable() {
+        log.info("Dropping IssuingBank table");
+        boolean result = issuingBankService.dropTable();
+        if (result) {
+            return ResponseEntity.ok("Таблица IssuingBank удалена");
+        } else {
+            return ResponseEntity.status(500).body("Ошибка при удалении таблицы");
+        }
+    }
+
+    @PostMapping("/fillTable")
+    public ResponseEntity<String> fillDefaultIssuingBanks() {
+        log.info("Inserting default IssuingBank...");
+        boolean success = issuingBankService.initializeTable();
+        if (success) {
+            return ResponseEntity.ok("Значения по умолчанию успешно добавлены.");
+        } else {
+            return ResponseEntity.status(500).body("Не удалось добавить значения по умолчанию.");
+        }
+    }
 }

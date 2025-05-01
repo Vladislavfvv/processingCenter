@@ -90,9 +90,11 @@ public class AccountSpringDaoImpl implements DaoInterfaceSpring<Long, Account> {
                     currency_id     bigint REFERENCES processingcenterschema.currency (id) ON DELETE CASCADE
                                                                     ON UPDATE CASCADE,
                     issuing_bank_id bigint REFERENCES processingcenterschema.issuing_bank (id) ON DELETE CASCADE
-                                                                    ON UPDATE CASCADE
+                                                                    ON UPDATE CASCADE,
+                                                                    CONSTRAINT unique_account\s
+                UNIQUE(account_number)
                     );
-                """;
+               \s""";
         try {
             em.createNativeQuery(sql).executeUpdate();
             log.info("Table created");
@@ -134,5 +136,33 @@ public class AccountSpringDaoImpl implements DaoInterfaceSpring<Long, Account> {
                 .getResultList();
 
         return accountList.stream().findFirst();
+    }
+
+    @Override
+    public boolean insertDefaultValues() {
+//        String sql = """
+//        INSERT INTO processingcenterschema.account (account_number, balance, currency_id, issuing_bank_id)
+//                               VALUES ('40817810800000000001', 649.7, 1, 1),
+//                                      ('40817810100000000002', 48702.07, 1, 1),
+//                                      ('40817810400000000003', 715000.01, 1, 1),
+//                                      ('40817810400000000003', 10000.0, 3, 1)
+//        ON CONFLICT (account_number, balance, currency_id, issuing_bank_id) DO NOTHING;
+//        """;
+        String sql = """
+        INSERT INTO processingcenterschema.account (account_number, balance, currency_id, issuing_bank_id)
+                               VALUES ('40817810800000000001', 649.7, 1, 1),
+                                      ('40817810100000000002', 48702.07, 1, 1),
+                                      ('40817810400000000003', 715000.01, 1, 1),
+                                      ('40817810400000000003', 10000.0, 3, 1)
+        ON CONFLICT (account_number) DO NOTHING;
+        """;
+        try {
+            em.createNativeQuery(sql).executeUpdate();
+            log.info("Default accounts inserted");
+            return true;
+        } catch (Exception e) {
+            log.error("Failed to insert default accounts", e);
+            return false;
+        }
     }
 }

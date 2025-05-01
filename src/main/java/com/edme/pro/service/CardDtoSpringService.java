@@ -14,6 +14,7 @@ import com.edme.pro.config.CardValidator;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -33,6 +34,11 @@ public class CardDtoSpringService {
         this.cardDao = cardDao;
     }
 
+
+    @Transactional
+    public boolean createTable() {
+        return cardDao.createTable();
+    }
 //    @Transactional
 //    public Optional<CardDto> save(CardDto cardDto) {
 //        if (cardDto.getId() != null) {
@@ -238,9 +244,14 @@ public class CardDtoSpringService {
 
     @Transactional
     public boolean deleteAll() {
-        boolean result = cardDao.deleteAll();
-        log.warn("All cards deleted: {}", result);
-        return result;
+        try {
+            boolean result = cardDao.deleteAll();
+            log.warn("All cards deleted: {}", result);
+            return result;
+        } catch (Exception e) {
+            log.error("Ошибка при удалении всех записей из cards", e);
+            throw e; // важно пробросить, чтобы Spring знал о причине rollback
+        }
     }
 
     @Transactional
@@ -248,6 +259,45 @@ public class CardDtoSpringService {
         boolean result = cardDao.dropTable();
         log.warn("Table was deleted: {}", result);
         return result;
+    }
+
+//    @Transactional
+//    public List<Card> initializeTable(List<CardDto> cardDtos) {
+//        List<Card> insertedCards = new ArrayList<>();
+//        for (CardDto dto : cardDtos) {
+//            if (!CardValidator.validateCardNumber(dto.getCardNumber())) continue;
+//            if (cardDao.findByValue(dto.getCardNumber()).isPresent()) continue;
+//
+//            CardStatus cardStatus = cardStatusDao.findById(dto.getCardStatusId()).orElse(null);
+//            PaymentSystem paymentSystem = paymentSystemDao.findById(dto.getPaymentSystemId()).orElse(null);
+//            Account account = accountDao.findById(dto.getAccountId()).orElse(null);
+//
+//            if (cardStatus == null || paymentSystem == null || account == null) continue;
+//
+//            Card card = CardMapper.toEntity(dto, cardStatus, paymentSystem, account);
+//            card.setId(null);
+//            Card saved = cardDao.insert(card);
+//            insertedCards.add(saved);
+//        }
+//        return insertedCards;
+//    }
+
+    @Transactional
+    public boolean initializeTable() {
+        boolean tableCreated = cardDao.createTable();
+        if (!tableCreated) {
+            log.warn("Не удалось создать таблицу cards");
+            return false;
+        }
+
+        boolean valuesInserted = cardDao.insertDefaultValues();
+        if (!valuesInserted) {
+            log.warn("Таблица создана, но значения не вставлены");
+            return false;
+        }
+
+        log.info("Таблица создана и значения успешно добавлены");
+        return true;
     }
 
 }

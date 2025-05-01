@@ -77,10 +77,58 @@ public class AccountController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Account> delete(@PathVariable Long id) {
         return accountService.delete(id)
                 ? ResponseEntity.noContent().build()
                 : ResponseEntity.notFound().build();
     }
+
+
+    @PostMapping("/createTable")
+    public ResponseEntity<String> createAccountsTable() {
+        log.info("Creating Accounts table");
+        boolean result = accountService.createTable();
+        if (result) {
+            return ResponseEntity.ok("Таблица Accounts успешно создана");
+        } else {
+            return ResponseEntity.status(500).body("Ошибка при создании таблицы");
+        }
+    }
+
+    @DeleteMapping("/deleteAll")
+    public ResponseEntity<String> deleteAllAccounts() {
+        log.info("Deleting all Accounts");
+        boolean result = accountService.deleteAll();
+        if (result) {
+            return ResponseEntity.ok("Все записи удалены");
+        } else {
+            return ResponseEntity.status(500).body("Ошибка при удалении всех записей");
+        }
+    }
+
+    @DeleteMapping("/drop")
+    public ResponseEntity<String> dropAccountsTable() {
+        log.info("Dropping Accounts table");
+        boolean result = accountService.dropTable();
+        if (result) {
+            return ResponseEntity.ok("Таблица Accounts удалена");
+        } else {
+            return ResponseEntity.status(500).body("Ошибка при удалении таблицы");
+        }
+    }
+
+    @PostMapping("/fillTable")
+    public ResponseEntity<String> fillDefaultAccounts() {
+        log.info("Inserting default Accounts...");
+        boolean success = accountService.initializeTable();
+        if (success) {
+            return ResponseEntity.ok("Значения по умолчанию успешно добавлены.");
+        } else {
+            return ResponseEntity.status(500).body("Не удалось добавить значения по умолчанию.");
+        }
+    }
+
 }

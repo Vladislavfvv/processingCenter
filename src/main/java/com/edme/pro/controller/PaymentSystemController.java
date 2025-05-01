@@ -68,4 +68,49 @@ public class PaymentSystemController {
                 ? ResponseEntity.noContent().build()
                 : ResponseEntity.notFound().build();
     }
+
+
+    @PostMapping("/createTable")
+    public ResponseEntity<String> createPaymentSystemTable() {
+        log.info("Creating PaymentSystem table");
+        boolean result = paymentSystemService.createTable();
+        if (result) {
+            return ResponseEntity.ok("Таблица PaymentSystem успешно создана");
+        } else {
+            return ResponseEntity.status(500).body("Ошибка при создании таблицы");
+        }
+    }
+
+    @DeleteMapping("/deleteAll")
+    public ResponseEntity<String> deleteAllPaymentSystems() {
+        log.info("Deleting all payment systems");
+        boolean result = paymentSystemService.deleteAll();
+        if (result) {
+            return ResponseEntity.ok("Все записи удалены");
+        } else {
+            return ResponseEntity.status(500).body("Ошибка при удалении всех записей");
+        }
+    }
+
+    @DeleteMapping("/drop")
+    public ResponseEntity<String> dropPaymentSystemTable() {
+        log.info("Dropping PaymentSystem table");
+        boolean result = paymentSystemService.dropTable();
+        if (result) {
+            return ResponseEntity.ok("Таблица PaymentSystem удалена");
+        } else {
+            return ResponseEntity.status(500).body("Ошибка при удалении таблицы");
+        }
+    }
+
+    @PostMapping("/fillTable")
+    public ResponseEntity<String> fillDefaultPaymentSystems() {
+        log.info("Inserting default payment systems...");
+        boolean success = paymentSystemService.initializeTable();
+        if (success) {
+            return ResponseEntity.ok("Значения по умолчанию успешно добавлены.");
+        } else {
+            return ResponseEntity.status(500).body("Не удалось добавить значения по умолчанию.");
+        }
+    }
 }
