@@ -3,6 +3,8 @@ package com.edme.pro.service;
 import com.edme.pro.dao.DaoInterfaceSpring;
 import com.edme.pro.dto.PaymentSystemDto;
 
+import com.edme.pro.repository.PaymentSystemRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import com.edme.pro.mapper.PaymentSystemMapper;
@@ -18,17 +20,19 @@ import java.util.stream.Collectors;
 @Service
 public class PaymentSystemDtoSpringService {
 
-    private final DaoInterfaceSpring<Long, PaymentSystem> paymentSystemDao;
-
-    public PaymentSystemDtoSpringService(DaoInterfaceSpring<Long, PaymentSystem> paymentSystemDao) {
-        this.paymentSystemDao = paymentSystemDao;
-    }
+    @Autowired
+    private PaymentSystemRepository paymentSystemRepository;
+//    private final DaoInterfaceSpring<Long, PaymentSystem> paymentSystemDao;
+//
+//    public PaymentSystemDtoSpringService(DaoInterfaceSpring<Long, PaymentSystem> paymentSystemDao) {
+//        this.paymentSystemDao = paymentSystemDao;
+//    }
 
 
     @Transactional
     public Optional<PaymentSystem> save(PaymentSystemDto paymentSystemDto) {
         // Проверяем, есть ли такая сущность в БД
-        Optional<PaymentSystem> existing = paymentSystemDao.findByValue(paymentSystemDto.getPaymentSystemName());
+        Optional<PaymentSystem> existing = paymentSystemRepository.findById(paymentSystemDto.getId());
         if (existing.isPresent()) {
             log.info("PaymentSystem '{}' уже существует", paymentSystemDto.getPaymentSystemName());
             return existing;
@@ -41,7 +45,7 @@ public class PaymentSystemDtoSpringService {
         PaymentSystem entity = PaymentSystemMapper.toEntity(paymentSystemDto);
 
         // Используем merge вместо persist
-        PaymentSystem saved = paymentSystemDao.insert(entity);
+        PaymentSystem saved = paymentSystemRepository.saveAndFlush(entity);
         log.info("Saved payment system '{}'", saved.getPaymentSystemName());
         return Optional.of(saved);
     }
@@ -49,7 +53,7 @@ public class PaymentSystemDtoSpringService {
 
     public Optional<PaymentSystem> findById(Long id) {
         //return paymentSystemDao.findById(id).map(PaymentSystemMapper::toDto);
-        return paymentSystemDao.findById(id);
+        return paymentSystemRepository.findById(id);
     }
 
 
@@ -64,15 +68,15 @@ public class PaymentSystemDtoSpringService {
 //            log.info("Error while fetching all payment systems", e);
 //            return paymentSystems;
 //        }
-        return paymentSystemDao.findAll();
+        return paymentSystemRepository.findAll();
     }
 
 
 
 
     public Optional<PaymentSystem> findByValue(String value) {
-        //return paymentSystemDao.findByValue(value).map(PaymentSystemMapper::toDto);
-        return paymentSystemDao.findByValue(value);
+       // return paymentSystemRepository.findByValue(value).map(PaymentSystemMapper::toDto);
+        return paymentSystemRepository.findBy(value);
     }
 
     @Transactional
@@ -87,7 +91,7 @@ public class PaymentSystemDtoSpringService {
 //            log.info("Payment system with ID {} not found", paymentSystemDto.getId());
 //            return Optional.empty();
 //        }
-        Optional<PaymentSystem> existingById = paymentSystemDao.findById(id);
+        Optional<PaymentSystem> existingById = paymentSystemRepository.findById(id);
         if (existingById.isEmpty()) {
             log.info("Payment system with ID {} not found", id);
             return Optional.empty();
@@ -95,27 +99,27 @@ public class PaymentSystemDtoSpringService {
 
         PaymentSystem newPaymentSystemEntity = existingById.get();
         newPaymentSystemEntity.setPaymentSystemName(paymentSystemDto.getPaymentSystemName());
-        paymentSystemDao.update(newPaymentSystemEntity);
+        paymentSystemRepository.save(newPaymentSystemEntity);
         log.info("Payment system with ID {} updated", newPaymentSystemEntity.getId());
         return Optional.of(newPaymentSystemEntity);
     }
 
     @Transactional
     public boolean createTable() {
-        return paymentSystemDao.createTable();
+        return paymentSystemRepository.createTable();
     }
 
     @Transactional
     public boolean delete(Long id) {
-        return paymentSystemDao.delete(id);
+        return paymentSystemRepository.delete(id);
     }
 
     @Transactional
-    public boolean deleteAll() {
+    public void deleteAll() {
 
-//        return paymentSystemDao.deleteAll();
+         paymentSystemRepository.deleteAll();
         try {
-            return paymentSystemDao.deleteAll();
+            return paymentSystemRepository.deleteAll();
         } catch (Exception e) {
             log.error("Ошибка при удалении всех записей из payment_system", e);
             throw e; // важно пробросить, чтобы Spring знал о причине rollback
