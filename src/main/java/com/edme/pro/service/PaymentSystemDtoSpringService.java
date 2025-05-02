@@ -32,7 +32,8 @@ public class PaymentSystemDtoSpringService {
     @Transactional
     public Optional<PaymentSystem> save(PaymentSystemDto paymentSystemDto) {
         // Проверяем, есть ли такая сущность в БД
-        Optional<PaymentSystem> existing = paymentSystemRepository.findById(paymentSystemDto.getId());
+        //Optional<PaymentSystem> existing = paymentSystemRepository.findById(paymentSystemDto.getId());
+        Optional<PaymentSystem> existing = paymentSystemRepository.findByPaymentSystemName(paymentSystemDto.getPaymentSystemName());
         if (existing.isPresent()) {
             log.info("PaymentSystem '{}' уже существует", paymentSystemDto.getPaymentSystemName());
             return existing;
@@ -72,20 +73,18 @@ public class PaymentSystemDtoSpringService {
     }
 
 
-
-
-    public Optional<PaymentSystem> findByValue(String value) {
-       // return paymentSystemRepository.findByValue(value).map(PaymentSystemMapper::toDto);
-        return paymentSystemRepository.findBy(value);
-    }
+//    public Optional<PaymentSystem> findByValue(String value) {
+//       // return paymentSystemRepository.findByValue(value).map(PaymentSystemMapper::toDto);
+//        return paymentSystemRepository.findBy(value);
+//    }
 
     @Transactional
     public Optional<PaymentSystem> update(Long id, PaymentSystemDto paymentSystemDto) {
-        if (id == null) {//если id не задан
-            log.info("Comparable PaymentSystem must have an ID");
-            //throw new IllegalArgumentException("ID должен быть задан для обновления");
-            return Optional.empty();
-        }
+//        if (id == null) {//если id не задан
+//            log.info("Comparable PaymentSystem must have an ID");
+//            //throw new IllegalArgumentException("ID должен быть задан для обновления");
+//            return Optional.empty();
+//        }
 
 //        if (paymentSystemDto.getId() == null) {
 //            log.info("Payment system with ID {} not found", paymentSystemDto.getId());
@@ -105,47 +104,64 @@ public class PaymentSystemDtoSpringService {
     }
 
     @Transactional
-    public boolean createTable() {
-        return paymentSystemRepository.createTable();
-    }
-
-    @Transactional
     public boolean delete(Long id) {
-        return paymentSystemRepository.delete(id);
+        Optional<PaymentSystem> existingById = paymentSystemRepository.findById(id);
+        if (existingById.isPresent()) {
+            paymentSystemRepository.delete(existingById.get());
+            log.info("Payment system with ID {} deleted", id);
+            return true;
+        } else {
+            log.info("Payment system with ID {} not deleted", id);
+            return false;
+        }
     }
 
     @Transactional
-    public void deleteAll() {
-
-         paymentSystemRepository.deleteAll();
+    public boolean deleteAll() {
         try {
-            return paymentSystemRepository.deleteAll();
+            paymentSystemRepository.deleteAll();
+            log.info("Payment system list was deleted");
+            return true;
         } catch (Exception e) {
-            log.error("Ошибка при удалении всех записей из payment_system", e);
-            throw e; // важно пробросить, чтобы Spring знал о причине rollback
+            log.error("Error when attempt to delete all payment_systems", e);
+            return false;
+        }
+    }
+
+    @Transactional
+    public boolean createTable() {
+        try {
+            paymentSystemRepository.createTable();
+            log.info("Payment system table was created");
+            return true;
+        } catch (Exception e) {
+            log.error("Error when attempt to create table paymentSystem: {}", e.getMessage());
+            return false;
         }
     }
 
     @Transactional
     public boolean dropTable() {
-        return paymentSystemDao.dropTable();
+        try {
+            paymentSystemRepository.dropTable(); // возвращает int, но мы игнорируем
+            log.info("Payment system table was dropped");
+            return true;
+        } catch (Exception e) {
+            log.error("Error when attempt to drop table: {}", e.getMessage());
+            return false;
+        }
     }
 
     @Transactional
     public boolean initializeTable() {
-        boolean tableCreated = paymentSystemDao.createTable();
-        if (!tableCreated) {
-            log.warn("Не удалось создать таблицу payment_system");
+        createTable();
+        try {
+            paymentSystemRepository.insertDefaultValues();
+            log.info("In Payment system table was inserted with default values");
+            return true;
+        } catch (Exception e) {
+            log.error("Error when attempt to insert to table: {}", e.getMessage());
             return false;
         }
-
-        boolean valuesInserted = paymentSystemDao.insertDefaultValues();
-        if (!valuesInserted) {
-            log.warn("Таблица создана, но значения не вставлены");
-            return false;
-        }
-
-        log.info("Таблица создана и значения успешно добавлены");
-        return true;
     }
 }
