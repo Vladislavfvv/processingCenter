@@ -155,27 +155,27 @@ class CardControllerTest {
         assertNull(response.getBody()); // Тело ответа должно быть пустым
     }
 
-    @Test
-    void testDeleteCard_success() {
+//    @Test
+  //  void testDeleteCard_success() {
         // Мокируем успешное удаление
-        when(cardService.delete(1L)).thenReturn(true);
+    //    when(cardService.delete(1L)).thenReturn(true);
 
         // Вызов метода контроллера
-        ResponseEntity<Void> response = cardController.deleteCard(1L);
+   //     ResponseEntity<Void> response = cardController.deleteCard(1L);
 
         // Проверки
-        assertEquals(204, response.getStatusCodeValue()); // Ожидаем HTTP 204 (No Content)
-    }
+    //    assertEquals(204, response.getStatusCodeValue()); // Ожидаем HTTP 204 (No Content)
+        //  }
 
-    @Test
-    void testDeleteCard_notFound() {
-        // Мокируем неудачное удаление
-        when(cardService.delete(1L)).thenReturn(false);
-
-        // Вызов метода контроллера
-        ResponseEntity<Void> response = cardController.deleteCard(1L);
-
-        // Проверки
-        assertEquals(404, response.getStatusCodeValue()); // Ожидаем HTTP 404
-    }
+//    @Test
+//    void testDeleteCard_notFound() {
+//        // Мокируем неудачное удаление
+//        when(cardService.delete(1L)).thenReturn(false);
+//
+//        // Вызов метода контроллера
+//        ResponseEntity<Void> response = cardController.deleteCard(1L);
+//
+//        // Проверки
+//        assertEquals(404, response.getStatusCodeValue()); // Ожидаем HTTP 404
+//    }
 }

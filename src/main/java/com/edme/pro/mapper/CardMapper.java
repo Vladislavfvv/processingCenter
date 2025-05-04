@@ -25,23 +25,50 @@ public class CardMapper {
         return card;
     }
 
-    public static CardDto toDto(Card card) {
-        CardDto dto = new CardDto();
-        dto.setId(card.getId());
-        dto.setCardNumber(card.getCardNumber());
-        //dto.setExpirationDate(card.getExpirationDate());
+//    public static CardDto toDto(Card card) {
+//        if (card == null) return null;
+//        CardDto dto = new CardDto();
+//        dto.setId(card.getId());
+//        dto.setCardNumber(card.getCardNumber());
+//        //dto.setExpirationDate(card.getExpirationDate());
+////        dto.setExpirationDate(card.getExpirationDate().toLocalDate());
+//        dto.setExpirationDate(card.getExpirationDate() != null
+//                ? card.getExpirationDate().toLocalDate()
+//                : null);
+//        dto.setHolderName(card.getHolderName());
+//        dto.setCardStatusId(card.getCardStatusId().getId());
+//        dto.setPaymentSystemId(card.getPaymentSystemId().getId());
+//        dto.setAccountId(card.getAccountId().getId());
+//        dto.setReceivedFromIssuingBank(card.getReceivedFromIssuingBank().toLocalDateTime());
+//        //dto.setSentToIssuingBank(card.getSentToIssuingBank());
+//        dto.setSentToIssuingBank(card.getSentToIssuingBank().toLocalDateTime());
+//        return dto;
+//    }
+
+public static CardDto toDto(Card card) {
+    if (card == null) return null;
+    CardDto dto = new CardDto();
+    dto.setId(card.getId());
+    dto.setCardNumber(card.getCardNumber());
+    //dto.setExpirationDate(card.getExpirationDate());
 //        dto.setExpirationDate(card.getExpirationDate().toLocalDate());
-        dto.setExpirationDate(card.getExpirationDate() != null
-                ? card.getExpirationDate().toLocalDate()
-                : null);
-        dto.setHolderName(card.getHolderName());
-        dto.setCardStatusId(card.getCardStatusId().getId());
-        dto.setPaymentSystemId(card.getPaymentSystemId().getId());
-        dto.setAccountId(card.getAccountId().getId());
-        dto.setReceivedFromIssuingBank(card.getReceivedFromIssuingBank().toLocalDateTime());
-        //dto.setSentToIssuingBank(card.getSentToIssuingBank());
-        dto.setSentToIssuingBank(card.getSentToIssuingBank().toLocalDateTime());
-        return dto;
-    }
+    dto.setExpirationDate(card.getExpirationDate() != null
+            ? card.getExpirationDate().toLocalDate()
+            : null);
+    dto.setHolderName(card.getHolderName());
+    CardStatus cardStatus = card.getCardStatusId();
+    if (cardStatus != null) {
+        dto.setCardStatusId(cardStatus.getId());
+    } else dto.setCardStatusId(null);
+    //dto.setCardStatusId(card.getCardStatusId().getId());
+    dto.setPaymentSystemId(card.getPaymentSystemId() != null ? card.getPaymentSystemId().getId() : null);
+    //dto.setPaymentSystemId(card.getPaymentSystemId().getId());
+    dto.setAccountId(card.getAccountId() != null ? card.getAccountId().getId() : null);
+    //dto.setAccountId(card.getAccountId().getId());
+    dto.setReceivedFromIssuingBank(card.getReceivedFromIssuingBank().toLocalDateTime());
+    //dto.setSentToIssuingBank(card.getSentToIssuingBank());
+    dto.setSentToIssuingBank(card.getSentToIssuingBank().toLocalDateTime());
+    return dto;
+}
 
 }

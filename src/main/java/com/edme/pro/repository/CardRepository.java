@@ -5,8 +5,10 @@ import com.edme.pro.model.Card;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface CardRepository extends JpaRepository<Card, Long> {
@@ -15,6 +17,24 @@ public interface CardRepository extends JpaRepository<Card, Long> {
 
 
     Optional<Card> findByCardNumber(String cardNumber);
+
+    @Query("""
+    SELECT c FROM Card c
+    LEFT JOIN FETCH c.cardStatusId
+    LEFT JOIN FETCH c.paymentSystemId
+    LEFT JOIN FETCH c.accountId
+    WHERE c.id = :id
+""")
+    Optional<Card> findByIdWithRelations(@Param("id") Long id);
+
+    @Query("""
+        SELECT c FROM Card c
+        LEFT JOIN FETCH c.cardStatusId
+        LEFT JOIN FETCH c.paymentSystemId
+        LEFT JOIN FETCH c.accountId
+    """)
+    List<Card> findAllWithDetails();
+
 
     @Modifying
     @Transactional

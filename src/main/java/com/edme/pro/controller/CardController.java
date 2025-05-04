@@ -75,7 +75,8 @@ public class CardController {
     public ResponseEntity<?> createCard(@RequestBody @Valid CardDto cardDto) {//@RequestBody — говорит: "получи тело запроса в виде объекта CardDto"
         Optional<Card> optionalCard = cardService.save2(cardDto);
         if (optionalCard.isPresent()) {
-            return ResponseEntity.ok(optionalCard.get());
+            return ResponseEntity.ok(CardMapper.toDto(optionalCard.get()));
+            //  return ResponseEntity.ok(optionalCard.get());
         } else {
             return ResponseEntity.badRequest().body("Card с таким названием уже существует");
         }
@@ -104,13 +105,19 @@ public class CardController {
                 .orElse(ResponseEntity.notFound().build()); //Если нет такой карточки: вернёт HTTP 404 Not Found
     }
 
-    @DeleteMapping("/{id}") //@DeleteMapping("/{id}") — обработка DELETE запроса /api/cards/4
-    public ResponseEntity<Void> deleteCard(@PathVariable Long id) {
-        return cardService.delete(id)
-                ? ResponseEntity.noContent().build()//Если удаление прошло успешно: вернёт HTTP 204 No Content (успешно, но тело пустое).
-                : ResponseEntity.notFound().build(); //Если карточки нет: вернёт HTTP 404 Not Found.
-    }
-
+//    @DeleteMapping("/{id}") //@DeleteMapping("/{id}") — обработка DELETE запроса /api/cards/4
+//    public ResponseEntity<Void> deleteCard(@PathVariable Long id) {
+//        return cardService.delete(id)
+//                ? ResponseEntity.noContent().build()//Если удаление прошло успешно: вернёт HTTP 204 No Content (успешно, но тело пустое).
+//                : ResponseEntity.notFound().build(); //Если карточки нет: вернёт HTTP 404 Not Found.
+//    }
+@DeleteMapping("/{id}")
+public ResponseEntity<CardDto> deleteCard(@PathVariable Long id) {
+    Optional<Card> deletedCard = cardService.deleteAndReturnCard(id);
+    return deletedCard
+            .map(card -> ResponseEntity.ok(CardMapper.toDto(card)))
+            .orElseGet(() -> ResponseEntity.notFound().build());
+}
 
     @PostMapping("/createTable")
     public ResponseEntity<String> createCardTable() {

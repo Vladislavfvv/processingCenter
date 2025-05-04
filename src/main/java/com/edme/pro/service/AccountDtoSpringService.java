@@ -3,11 +3,15 @@ package com.edme.pro.service;
 
 import com.edme.pro.dao.DaoInterfaceSpring;
 import com.edme.pro.dto.AccountDto;
+import com.edme.pro.repository.AccountRepository;
+import com.edme.pro.repository.CurrencyRepository;
+import com.edme.pro.repository.IssuingBankRepository;
 import lombok.extern.slf4j.Slf4j;
 import com.edme.pro.mapper.AccountMapper;
 import com.edme.pro.model.Account;
 import com.edme.pro.model.Currency;
 import com.edme.pro.model.IssuingBank;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,129 +23,132 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class AccountDtoSpringService {
-    private final DaoInterfaceSpring<Long, Currency> currencyDao;
-    private final DaoInterfaceSpring<Long, IssuingBank> issuingBankDao;
-    private final DaoInterfaceSpring<Long, Account> accountDao;
+    @Autowired
+    private AccountRepository accountRepository;
 
-    public AccountDtoSpringService(DaoInterfaceSpring<Long, Currency> currencyDao, DaoInterfaceSpring<Long, IssuingBank> issuingBankDao, DaoInterfaceSpring<Long, Account> accountDao) {
-        this.currencyDao = currencyDao;
-        this.issuingBankDao = issuingBankDao;
-        this.accountDao = accountDao;
-    }
+    @Autowired
+    private CurrencyRepository currencyRepository;
+
+    @Autowired
+    private IssuingBankRepository issuingBankRepository;
 
     @Transactional
     public Optional<Account> save(AccountDto accountDto) {
-//        if (accountDto.getId() != null) {
-//            Optional<Account> existsAccount = accountDao.findById(accountDto.getId());
-//            if (existsAccount.isPresent()) {
-//                log.info("Account with ID {} already exists", accountDto.getId());
-//                return Optional.of(AccountMapper.toDto(existsAccount.get()));
-//            }
-//        }
-
-        //проверка есть ли такой еще
-        Optional<Account> existingAccount = accountDao.findByValue(accountDto.getAccountNumber());
-        if (existingAccount.isPresent()) {
-            log.info("Account with ID {} already exists", existingAccount.get().getId());
+        Optional<Account> existing = accountRepository.findByAccountNumber(accountDto.getAccountNumber());
+        if (existing.isPresent()) {
+            log.info("Account '{}' already exists", accountDto.getAccountNumber());
             return Optional.empty();
         }
-        //иначе создаем новый
-        // но сразу проверяем есть ли для него currency и issuingBank
-        accountDto.setId(null);
-        Currency currency = currencyDao.findById(accountDto.getCurrencyId()).orElse(Currency.builder().build()); // или заглушка
-        IssuingBank issuingBank = issuingBankDao.findById(accountDto.getIssuingBankId()).orElse(IssuingBank.builder().build()); //то же
 
+        accountDto.setId(null); // Обнуляем ID
+        Currency currency = currencyRepository.findById(accountDto.getCurrencyId())
+                .orElse(Currency.builder().build());
+        IssuingBank issuingBank = issuingBankRepository.findById(accountDto.getIssuingBankId())
+                .orElse(IssuingBank.builder().build());
 
         Account account = AccountMapper.toEntity(accountDto, currency, issuingBank);
-        Account accountSaved = accountDao.insert(account);
+        Account saved = accountRepository.saveAndFlush(account);
 
-        log.info("Account with ID {} saved", accountSaved.getId());
-        return Optional.of(accountSaved);
+        log.info("Account with ID {} saved", saved.getId());
+        return Optional.of(saved);
     }
 
     public List<Account> findAll() {
-//        try{
-//            return accountDao.findAll().stream().map(AccountMapper::toDto).collect(Collectors.toList());
-//        }catch (Exception e) {
-//            log.info("Error finding all accounts");
-//            return new ArrayList<>();
-//        }
-        return accountDao.findAll();
+        return accountRepository.findAll();
     }
 
     public Optional<Account> findById(Long id) {
-
-       // return accountDao.findById(id).map(AccountMapper::toDto);
-        return accountDao.findById(id);
+        return accountRepository.findById(id);
     }
 
-    public Optional<Account> findByValue(String value) {
-        return accountDao.findByValue(value);
+    public Optional<Account> findByValue(String accountNumber) {
+        return accountRepository.findByAccountNumber(accountNumber);
     }
 
+    @Transactional
     public Optional<Account> update(Long id, AccountDto accountDto) {
-        if (id == null) {
-            log.info("Comparable Account must have an ID");
+        Optional<Account> existing = accountRepository.findById(id);
+        if (existing.isEmpty()) {
+            log.info("Account with ID {} not found", id);
             return Optional.empty();
         }
-        Optional<Account> existingAccount = accountDao.findById(id);
-        if (existingAccount.isEmpty()) {
-           log.info("Account with ID {} does not exist", id);
-           return Optional.empty();
-        }
 
-        Account accountEntity = existingAccount.get();
-        Currency currency = currencyDao.findById(accountDto.getCurrencyId()).orElse(null);
-        IssuingBank issuingBank = issuingBankDao.findById(accountDto.getIssuingBankId()).orElse(null);
-        accountEntity.setAccountNumber(accountDto.getAccountNumber());
-        accountEntity.setBalance(accountDto.getBalance());
-        accountEntity.setCurrencyId(currency);
-        accountEntity.setIssuingBankId(issuingBank);
-        accountDao.update(accountEntity);
-        log.info("Account with ID {} updated", accountEntity.getId());
-        return Optional.of(accountEntity);
+        Account account = existing.get();
+        Currency currency = currencyRepository.findById(accountDto.getCurrencyId()).orElse(null);
+        IssuingBank issuingBank = issuingBankRepository.findById(accountDto.getIssuingBankId()).orElse(null);
+
+        account.setAccountNumber(accountDto.getAccountNumber());
+        account.setBalance(accountDto.getBalance());
+        account.setCurrencyId(currency);
+        account.setIssuingBankId(issuingBank);
+
+        accountRepository.save(account);
+        log.info("Account with ID {} updated", account.getId());
+        return Optional.of(account);
     }
 
     @Transactional
     public boolean delete(Long id) {
-        return accountDao.delete(id);
+        Optional<Account> account = accountRepository.findById(id);
+        if (account.isPresent()) {
+            accountRepository.delete(account.get());
+            log.info("Account with ID {} deleted", id);
+            return true;
+        } else {
+            log.info("Account with ID {} not found", id);
+            return false;
+        }
     }
 
     @Transactional
     public boolean deleteAll() {
         try {
-            return accountDao.deleteAll();
+            accountRepository.deleteAll();
+            log.info("All accounts deleted");
+            return true;
         } catch (Exception e) {
-            log.error("Ошибка при удалении всех записей из accounts", e);
-            throw e; // важно пробросить, чтобы Spring знал о причине rollback
+            log.error("Error deleting all accounts: {}", e.getMessage());
+            return false;
         }
     }
 
     @Transactional
     public boolean dropTable() {
-        return accountDao.dropTable();
-    }
-
-    @Transactional
-    public boolean initializeTable() {
-        boolean tableCreated = accountDao.createTable();
-        if (!tableCreated) {
-            log.warn("Не удалось создать таблицу accounts");
+        try {
+            accountRepository.dropTable();
+            log.info("Account table dropped");
+            return true;
+        } catch (Exception e) {
+            log.error("Error dropping account table: {}", e.getMessage());
             return false;
         }
-
-        boolean valuesInserted = accountDao.insertDefaultValues();
-        if (!valuesInserted) {
-            log.warn("Таблица создана, но значения не вставлены");
-            return false;
-        }
-
-        log.info("Таблица создана и значения успешно добавлены");
-        return true;
     }
 
     @Transactional
     public boolean createTable() {
-        return accountDao.createTable();
+        try {
+            accountRepository.createTable();
+            log.info("Account table created");
+            return true;
+        } catch (Exception e) {
+            log.error("Error creating account table: {}", e.getMessage());
+            return false;
+        }
+    }
+
+    @Transactional
+    public boolean initializeTable() {
+        if (!createTable()) {
+            return false;
+        }
+
+        try {
+            accountRepository.insertDefaultValues();
+            log.info("Default values inserted into account table");
+            return true;
+        } catch (Exception e) {
+            log.error("Error inserting default values into account table: {}", e.getMessage());
+            return false;
+        }
     }
 }

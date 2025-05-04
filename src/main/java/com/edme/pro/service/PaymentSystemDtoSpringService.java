@@ -123,7 +123,7 @@ public class PaymentSystemDtoSpringService {
             log.info("Payment system list was deleted");
             return true;
         } catch (Exception e) {
-            log.error("Error when attempt to delete all payment_systems", e);
+            log.error("Error when attempt to delete all payment_systems {}", e.getMessage());
             return false;
         }
     }

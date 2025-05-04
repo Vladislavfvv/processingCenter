@@ -2,6 +2,7 @@ package com.edme.pro.service;
 
 import com.edme.pro.dao.DaoInterfaceSpring;
 import com.edme.pro.dto.CardStatusDto;
+import com.edme.pro.repository.CardStatusRepository;
 import lombok.extern.slf4j.Slf4j;
 import com.edme.pro.mapper.CardStatusMapper;
 import com.edme.pro.model.CardStatus;
@@ -15,19 +16,15 @@ import java.util.Optional;
 @Slf4j
 @Service
 public class CardStatusDtoSpringService {
-    private final DaoInterfaceSpring<Long, CardStatus> cardStatusDao;
 
     @Autowired
-
-    public CardStatusDtoSpringService(DaoInterfaceSpring<Long, CardStatus> cardStatusDao) {
-        this.cardStatusDao = cardStatusDao;
-    }
+    private CardStatusRepository cardStatusRepository;
 
 
     @Transactional
     public Optional<CardStatus> save(CardStatusDto cardStatusDto) {
         // Проверяем, есть ли уже сущность с таким именем
-        Optional<CardStatus> existing = cardStatusDao.findByValue(cardStatusDto.getCardStatusName());
+        Optional<CardStatus> existing = cardStatusRepository.findByCardStatusName(cardStatusDto.getCardStatusName());
         if (existing.isPresent()) {
             log.info("CardStatus '{}' уже существует", cardStatusDto.getCardStatusName());
             return existing;
@@ -39,36 +36,24 @@ public class CardStatusDtoSpringService {
 
 
         // Маппим в entity и сохраняем
-        CardStatus saved = cardStatusDao.insert(entity);
+        CardStatus saved = cardStatusRepository.saveAndFlush(entity);
         log.info("Saved card status '{}'", cardStatusDto.getCardStatusName());
         return Optional.of(saved);
     }
 
 
     public Optional<CardStatus> findById(Long id) {
-        //return cardStatusDao.findById(id).map(CardStatusMapper::toDto);
-        return cardStatusDao.findById(id);
-    }
-    public List<CardStatus> findAll() {
-       return cardStatusDao.findAll();
+        return cardStatusRepository.findById(id);
     }
 
-//    public List<CardStatusDto> findAll() {
-//        return cardStatus.findAll().stream()
-//                .map(CardStatusMapper::toDto)
-//                .collect(Collectors.toList());
-//    }
+    public List<CardStatus> findAll() {
+        return cardStatusRepository.findAll();
+    }
 
 
     @Transactional
     public Optional<CardStatus> update(Long id, CardStatusDto cardStatusDto) {
-        if (id == null) {//если id не задан
-            log.info("Comparable CardStatus must have an ID");
-            //throw new IllegalArgumentException("ID должен быть задан для обновления");
-            return Optional.empty();
-        }
-
-        Optional<CardStatus> existingEntityInDB = cardStatusDao.findById(id);
+        Optional<CardStatus> existingEntityInDB = cardStatusRepository.findById(id);
         if (existingEntityInDB.isEmpty()) {//если id не нашел
             log.info("CardStatus with Value = {} not found", cardStatusDto.getCardStatusName());
             return Optional.empty();
@@ -76,60 +61,72 @@ public class CardStatusDtoSpringService {
 
         CardStatus existingEntity = existingEntityInDB.get();
         existingEntity.setCardStatusName(cardStatusDto.getCardStatusName());
-
+        cardStatusRepository.save(existingEntity);
+        log.info("Updated card status '{}'", cardStatusDto.getCardStatusName());
         return Optional.of(existingEntity);
     }
 
     @Transactional
     public boolean delete(Long id) {
-        return cardStatusDao.delete(id);
+        Optional<CardStatus> existingEntityInDB = cardStatusRepository.findById(id);
+        if (existingEntityInDB.isPresent()) {
+            cardStatusRepository.delete(existingEntityInDB.get());
+            log.info("Deleted card status '{}'", existingEntityInDB.get().getCardStatusName());
+            return true;
+        } else {
+            log.info("CardStatus with Value = {} not found", id);
+            return false;
+        }
     }
 
     @Transactional
     public boolean deleteAll() {
         try {
-            return cardStatusDao.deleteAll();
+            cardStatusRepository.deleteAll();
+            log.info("Deleted card status list");
+            return true;
         } catch (Exception e) {
             log.error("Ошибка при удалении всех записей из card_statuses", e);
-            throw e; // важно пробросить, чтобы Spring знал о причине rollback
+            log.error("Error when attempt to delete all CardStatus {}", e.getMessage());
+            return false;
         }
     }
 
-//    public Optional<CardStatusDto> getByName(String name) {
-//        return cardStatusDao.findByValue(name)
-//                .map(CardStatusMapper::toDto);
-//    }
-
-    public Optional<CardStatusDto> getByValue(String name) {
-        return cardStatusDao.findByValue(name)
-                .map(CardStatusMapper::toDto);
-    }
 
     @Transactional
     public boolean createTable() {
-        return cardStatusDao.createTable();
+        try {
+            cardStatusRepository.createTable();
+            log.info("Created card status list");
+            return true;
+        } catch (Exception e) {
+            log.error("Error when attempt to create table CardStatus: {}", e.getMessage());
+            return false;
+        }
     }
 
     @Transactional
     public boolean dropTable() {
-        return cardStatusDao.dropTable();
+        try {
+            cardStatusRepository.dropTable();
+            log.info("Dropped card status list");
+            return true;
+        } catch (Exception e) {
+            log.error("Error when attempt to drop table CardStatus: {}", e.getMessage());
+            return false;
+        }
     }
 
     @Transactional
     public boolean initializeTable() {
-        boolean tableCreated = cardStatusDao.createTable();
-        if (!tableCreated) {
-            log.warn("Не удалось создать таблицу card_statuses");
-            return false;
-        }
-
-        boolean valuesInserted = cardStatusDao.insertDefaultValues();
-        if (!valuesInserted) {
-            log.warn("Таблица создана, но значения не вставлены");
-            return false;
-        }
-
-        log.info("Таблица создана и значения успешно добавлены");
-        return true;
+       createTable();
+       try {
+           cardStatusRepository.insertDefaultValues();
+           log.info("In CardStatus table was inserted with default values");
+           return true;
+       } catch (Exception e) {
+           log.error("Error when attempt to initialize table CardStatus: {}", e.getMessage());
+           return false;
+       }
     }
 }
