@@ -34,9 +34,9 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     @Modifying
     @Transactional
     @Query(value = "INSERT INTO processingcenterschema.account (account_number, balance, currency_id, issuing_bank_id) VALUES " +
-                   "('40817810800000000001', 649.7, 1, 1),\n" +
-                   "('40817810100000000002', 48702.07, 1, 1),\n" +
-                   "('40817810400000000003', 715000.01, 1, 1),\n" +
+                   "('40817810800000000001', 649.7, 1, 1)," +
+                   "('40817810100000000002', 48702.07, 1, 1)," +
+                   "('40817810400000000003', 715000.01, 1, 1)," +
                    "('40817810400000000003', 10000.0, 3, 1)", nativeQuery = true)
     int insertDefaultValues();
 }

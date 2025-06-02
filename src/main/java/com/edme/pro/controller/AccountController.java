@@ -117,7 +117,7 @@ public class AccountController {
         if (result) {
             return ResponseEntity.ok("Таблица Accounts удалена");
         } else {
-            return ResponseEntity.status(500).body("Ошибка при удалении таблицы");
+            return ResponseEntity.status(500).body("Ошибка при очистке таблицы");
         }
     }
 
